@@ -1274,6 +1274,34 @@
         </div>
     </section>
 
+    </section>
+
+    <!-- Live Disaster Tracking -->
+    <section class="section">
+        <div class="container">
+            <div class="location-section">
+                <h2 style="color: #FFFFFF; margin-bottom: 16px; font-weight: 300;">Live Natural Disasters</h2>
+                
+                <div class="location-controls">
+                    <div class="location-display">Location: <span id="disaster-location">Detecting your location...</span></div>
+                    <div class="location-display">Monitoring: <span id="disaster-radius">500 miles radius</span></div>
+                </div>
+                
+                <div id="disasters-container" class="alerts-container" style="margin: 20px 0; min-height: 200px;">
+                    <div class="loading-alerts">
+                        <div style="font-size: 18px; margin-bottom: 8px;">Scanning for active disasters...</div>
+                        <div style="color: #CCCCCC;">Fetching real-time data from NASA Earth Observatory</div>
+                    </div>
+                </div>
+                
+                <button class="refresh-btn" onclick="refreshDisasterData()">Refresh Disaster Data</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shareable Resources -->
+    <section class="section">
+
     <!-- Shareable Resources -->
     <section class="section">
         <div class="container">
