@@ -1386,3 +1386,319 @@
                 <h2 class="cta-title">Generate Your Emergency Plan</h2>
                 <p class="cta-subtitle">Create a personalized, location-specific emergency preparedness plan in minutes</p>
                 <button class="cta-button" onclick="generatePlan()">Start Planning</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Location-aware functionality for index page
+        let currentLatitude = 39.7392; // Default to Denver
+        let currentLongitude = -104.9903;
+        let currentLocationName = 'Denver, CO';
+        let locationDetected = false;
+
+        // Auto-detect user location on page load
+        async function detectUserLocation() {
+            if (!navigator.geolocation) {
+                console.log('Geolocation not supported');
+                setLocationStatus('Denver, CO (Default)', 'Geolocation not supported', 'error');
+                return;
+            }
+
+            try {
+                setLocationStatus('Detecting...', 'Getting your location...', 'loading');
+                
+                const position = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        timeout: 10000,
+                        enableHighAccuracy: true
+                    });
+                });
+
+                currentLatitude = position.coords.latitude;
+                currentLongitude = position.coords.longitude;
+                locationDetected = true;
+                
+                // Get city name from coordinates
+                const locationName = await getCityName(currentLatitude, currentLongitude);
+                currentLocationName = locationName;
+                
+                setLocationStatus(locationName, 'Location detected successfully', 'success');
+                
+                // Update risk assessment based on location
+                await updateRiskAssessment();
+                
+                // Update preparedness score based on location risks
+                updatePreparednessScore();
+                
+                console.log(`Location detected: ${locationName} (${currentLatitude}, ${currentLongitude})`);
+                
+            } catch (error) {
+                console.log('Location detection failed:', error.message);
+                setLocationStatus('Denver, CO (Default)', 'Location access denied - using default', 'error');
+                
+                // Still update risk assessment with default location
+                await updateRiskAssessment();
+                updatePreparednessScore();
+            }
+        }
+
+        // Get city name from coordinates
+        async function getCityName(lat, lon) {
+            try {
+                const response = await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&count=1`);
+                const data = await response.json();
+                
+                if (data.results && data.results.length > 0) {
+                    const result = data.results[0];
+                    const city = result.name || result.admin1 || 'Unknown City';
+                    const state = result.admin1 || result.country_code || '';
+                    return state ? `${city}, ${state}` : city;
+                }
+                return 'Your Location';
+            } catch (error) {
+                console.error('Reverse geocoding failed:', error);
+                return 'Your Location';
+            }
+        }
+
+        // Set location status in UI
+        function setLocationStatus(name, status, type) {
+            document.getElementById('location-name').textContent = name;
+            document.getElementById('location-status').textContent = status;
+            document.getElementById('status-text').textContent = status;
+            
+            const indicator = document.getElementById('location-indicator');
+            indicator.className = `status-indicator ${type}`;
+        }
+
+        // Update risk assessment based on location
+        async function updateRiskAssessment() {
+            try {
+                // Get location-based risk factors
+                const risks = await calculateLocationRisks(currentLatitude, currentLongitude);
+                
+                // Update UI with calculated risks
+                updateRiskCard('wildfire-risk', risks.wildfire);
+                updateRiskCard('flood-risk', risks.flood);
+                updateRiskCard('earthquake-risk', risks.earthquake);
+                updateRiskCard('hurricane-risk', risks.hurricane);
+                
+            } catch (error) {
+                console.error('Risk assessment failed:', error);
+                // Fallback to default risks
+                updateRiskCard('wildfire-risk', 'Medium');
+                updateRiskCard('flood-risk', 'Medium');
+                updateRiskCard('earthquake-risk', 'Medium');
+                updateRiskCard('hurricane-risk', 'Low');
+            }
+        }
+
+        // Calculate risks based on geographic location
+        async function calculateLocationRisks(lat, lon) {
+            // Simplified risk calculation based on US geographic regions
+            const risks = {
+                wildfire: 'Low',
+                flood: 'Low',
+                earthquake: 'Low',
+                hurricane: 'Low'
+            };
+
+            // Western US - Higher wildfire and earthquake risk
+            if (lon < -100) {
+                risks.wildfire = lat > 35 ? 'High' : 'Medium';
+                risks.earthquake = 'Medium';
+                
+                // California specific
+                if (lon < -115 && lat > 32 && lat < 42) {
+                    risks.wildfire = 'High';
+                    risks.earthquake = 'High';
+                }
+                
+                // Colorado/Mountain West
+                if (lon > -109 && lat > 37 && lat < 41) {
+                    risks.wildfire = 'High';
+                    risks.flood = 'Medium';
+                }
+            }
+
+            // Eastern US - Lower wildfire, varied flood risk
+            if (lon > -100) {
+                risks.wildfire = 'Low';
+                
+                // Gulf Coast - Hurricane risk
+                if (lat < 32 && lon > -100) {
+                    risks.hurricane = 'High';
+                    risks.flood = 'High';
+                }
+                
+                // Mississippi River basin - Flood risk
+                if (lon > -95 && lon < -85 && lat > 30 && lat < 40) {
+                    risks.flood = 'High';
+                }
+                
+                // East Coast - Hurricane risk
+                if (lon > -85 && lat < 40) {
+                    risks.hurricane = 'Medium';
+                }
+            }
+
+            // Central Plains - Tornado/Storm risks (represented as flood risk)
+            if (lon > -105 && lon < -95 && lat > 30 && lat < 45) {
+                risks.flood = 'Medium';
+            }
+
+            return risks;
+        }
+
+        // Update individual risk card
+        function updateRiskCard(elementId, riskLevel) {
+            const element = document.getElementById(elementId);
+            element.textContent = riskLevel;
+            element.className = `risk-level ${riskLevel.toLowerCase()}`;
+        }
+
+        // Update preparedness score based on location risks
+        function updatePreparednessScore() {
+            // Get current risk levels
+            const wildfireRisk = document.getElementById('wildfire-risk').textContent;
+            const floodRisk = document.getElementById('flood-risk').textContent;
+            const earthquakeRisk = document.getElementById('earthquake-risk').textContent;
+            const hurricaneRisk = document.getElementById('hurricane-risk').textContent;
+            
+            // Calculate base score
+            let baseScore = 65;
+            
+            // Adjust score based on location detection
+            if (locationDetected) {
+                baseScore += 10; // Bonus for enabling location
+            }
+            
+            // Adjust based on risk profile (higher risk areas need more preparation)
+            const highRiskCount = [wildfireRisk, floodRisk, earthquakeRisk, hurricaneRisk]
+                .filter(risk => risk === 'High').length;
+                
+            const mediumRiskCount = [wildfireRisk, floodRisk, earthquakeRisk, hurricaneRisk]
+                .filter(risk => risk === 'Medium').length;
+            
+            // Higher risk areas start with lower scores (need more preparation)
+            baseScore -= (highRiskCount * 8);
+            baseScore -= (mediumRiskCount * 4);
+            
+            // Ensure score stays within bounds
+            const finalScore = Math.max(45, Math.min(85, baseScore));
+            
+            // Update UI
+            document.getElementById('preparedness-score').textContent = `${finalScore}/100`;
+            document.getElementById('score-progress').style.width = `${finalScore}%`;
+            
+            // Update description based on score
+            let description = '';
+            if (finalScore >= 80) {
+                description = 'Excellent preparedness level for your area';
+            } else if (finalScore >= 70) {
+                description = 'Good preparedness, with some areas for improvement';
+            } else if (finalScore >= 60) {
+                description = 'Average preparedness, significant improvements needed';
+            } else {
+                description = 'Below average preparedness, immediate action recommended';
+            }
+            
+            document.getElementById('score-description').textContent = description;
+        }
+
+        // Manual location enable
+        function enableLocation() {
+            detectUserLocation();
+        }
+
+        // Emergency type selector functionality
+        document.querySelectorAll('.emergency-pill').forEach(pill => {
+            pill.addEventListener('click', function() {
+                document.querySelectorAll('.emergency-pill').forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Scenario tab functionality
+        document.querySelectorAll('.scenario-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.scenario-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                updateScenarioContent(this.dataset.scenario);
+            });
+        });
+
+        // Share button functionality
+        document.querySelectorAll('.share-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const card = this.closest('.resource-card');
+                const title = card.querySelector('.resource-title').textContent;
+                
+                if (navigator.share) {
+                    navigator.share({
+                        title: title,
+                        text: 'Emergency preparedness resource',
+                        url: window.location.href
+                    });
+                } else {
+                    navigator.clipboard.writeText(window.location.href);
+                    this.textContent = '✓';
+                    setTimeout(() => {
+                        this.textContent = '⎘';
+                    }, 2000);
+                }
+            });
+        });
+
+        // Generate plan functionality
+        function generatePlan() {
+            const locationText = locationDetected ? currentLocationName : 'your area';
+            alert(`Generating personalized emergency plan for ${locationText}...\n\nFeatures:\n• Location-specific risk assessment\n• Customized supply lists\n• Printable emergency contacts\n• Evacuation route mapping\n• Real-time emergency data integration`);
+        }
+
+        // Update scenario content (placeholder function)
+        function updateScenarioContent(scenario) {
+            // This could be expanded to show different content based on scenario
+            console.log(`Showing ${scenario} scenario content`);
+        }
+
+        // Initialize location detection when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            detectUserLocation();
+        });
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.essential-card, .expert-card, .timeline-point, .callout-item').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
