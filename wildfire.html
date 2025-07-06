@@ -372,6 +372,23 @@
             text-align: left;
         }
         
+        .refresh-btn {
+            background: transparent;
+            border: 1px solid #FFFFFF;
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 16px;
+        }
+        
+        .refresh-btn:hover {
+            background: #FFFFFF;
+            color: #000000;
+        }
+        
         /* Emergency Contacts */
         .emergency-contacts {
             background: #1a1a1a;
@@ -659,7 +676,7 @@
                 <div class="equipment-card">
                     <div class="equipment-priority critical">Critical</div>
                     <svg class="equipment-icon" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-15.355 21.213 0"/>
                     </svg>
                     <h3 class="equipment-title">NOAA Weather Radio</h3>
                     <p class="equipment-description">Hand-crank emergency radio with NOAA weather alerts specifically for fire weather warnings and evacuation orders.</p>
@@ -692,7 +709,7 @@
                     <div class="equipment-specs">
                         Specification: 360-degree coverage, metal construction, 50+ foot hose reach
                     </div>
-                    <a href="#" class="affiliate-link" onclick="trackAffiliate('sprinkler-system', 'homedepot')">View at Home Depot - $89.99</a>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('sprinkler-system', 'amazon')">View on Amazon - $89.99</a>
                 </div>
 
                 <div class="equipment-card">
@@ -718,7 +735,7 @@
                     <div class="equipment-specs">
                         Specification: 3000W minimum, fuel storage, proper ventilation setup for outdoor use
                     </div>
-                    <a href="#" class="affiliate-link" onclick="trackAffiliate('portable-generator', 'homedepot')">View at Home Depot - $449.99</a>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('portable-generator', 'amazon')">View on Amazon - $449.99</a>
                 </div>
             </div>
         </div>
@@ -729,16 +746,14 @@
         <div class="container">
             <div class="air-quality">
                 <h2 style="color: #FFFFFF; margin-bottom: 16px; font-weight: 300;">Current Air Quality</h2>
-                <div class="aqi-display aqi-unhealthy">187</div>
-                <div class="aqi-status">Unhealthy</div>
-                <p class="aqi-description">Air quality is unhealthy for sensitive groups. Everyone may experience health effects.</p>
+                <div class="aqi-display aqi-moderate">Loading...</div>
+                <div class="aqi-status">Checking conditions...</div>
+                <p class="aqi-description">Fetching real-time air quality data for Denver area</p>
                 <div class="aqi-actions">
-                    <strong>Recommended Actions:</strong><br>
-                    • Stay indoors with windows and doors closed<br>
-                    • Use air purifiers if available<br>
-                    • Avoid outdoor activities<br>
-                    • Wear N95 masks if you must go outside
+                    <strong>Loading current recommendations...</strong><br>
+                    Please wait while we fetch the latest air quality data from Open-Meteo.
                 </div>
+                <button class="refresh-btn" onclick="refreshAirQuality()">Refresh Data</button>
             </div>
         </div>
     </section>
@@ -823,34 +838,149 @@
             return false;
         }
 
-        // Air quality updates (simulated)
-        function updateAirQuality() {
-            const aqiValue = Math.floor(Math.random() * 300) + 50;
-            const display = document.querySelector('.aqi-display');
-            const status = document.querySelector('.aqi-status');
-            const description = document.querySelector('.aqi-description');
-            
-            display.textContent = aqiValue;
-            
-            display.className = 'aqi-display';
-            if (aqiValue <= 50) {
-                display.classList.add('aqi-good');
-                status.textContent = 'Good';
-                description.textContent = 'Air quality is satisfactory for most people.';
-            } else if (aqiValue <= 100) {
-                display.classList.add('aqi-moderate');
-                status.textContent = 'Moderate';
-                description.textContent = 'Air quality is acceptable for most people.';
-            } else if (aqiValue <= 200) {
-                display.classList.add('aqi-unhealthy');
-                status.textContent = 'Unhealthy';
-                description.textContent = 'Air quality is unhealthy for sensitive groups.';
-            } else {
-                display.classList.add('aqi-hazardous');
-                status.textContent = 'Hazardous';
-                description.textContent = 'Air quality is hazardous for everyone.';
+        // REAL Air Quality API Integration with Open-Meteo
+        async function updateAirQuality() {
+            try {
+                // Denver coordinates (you can change these to any location)
+                const latitude = 39.7392;
+                const longitude = -104.9903;
+                
+                // Open-Meteo Air Quality API call (completely free, no API key needed)
+                const response = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${latitude}&longitude=${longitude}&current=us_aqi&timezone=America/Denver`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch air quality data');
+                }
+                
+                const data = await response.json();
+                
+                // Get current AQI value
+                const currentAQI = data.current.us_aqi;
+                
+                // Update the display elements
+                const display = document.querySelector('.aqi-display');
+                const status = document.querySelector('.aqi-status');
+                const description = document.querySelector('.aqi-description');
+                const actions = document.querySelector('.aqi-actions');
+                
+                // Update AQI number
+                display.textContent = currentAQI;
+                
+                // Reset classes
+                display.className = 'aqi-display';
+                
+                // Set status and color based on AQI value
+                if (currentAQI <= 50) {
+                    display.classList.add('aqi-good');
+                    status.textContent = 'Good';
+                    description.textContent = 'Air quality is satisfactory for most people.';
+                    actions.innerHTML = `
+                        <strong>Current Recommendations:</strong><br>
+                        • Enjoy outdoor activities<br>
+                        • Normal ventilation is fine<br>
+                        • No special precautions needed<br>
+                        • Good conditions for exercise
+                    `;
+                } else if (currentAQI <= 100) {
+                    display.classList.add('aqi-moderate');
+                    status.textContent = 'Moderate';
+                    description.textContent = 'Air quality is acceptable for most people, sensitive individuals may experience minor issues.';
+                    actions.innerHTML = `
+                        <strong>Current Recommendations:</strong><br>
+                        • Unusually sensitive people should limit outdoor exertion<br>
+                        • Generally safe for outdoor activities<br>
+                        • Consider reducing time outdoors if sensitive<br>
+                        • Monitor conditions if planning extended outdoor time
+                    `;
+                } else if (currentAQI <= 150) {
+                    display.classList.add('aqi-unhealthy');
+                    status.textContent = 'Unhealthy for Sensitive Groups';
+                    description.textContent = 'Sensitive groups may experience health effects. General public less likely to be affected.';
+                    actions.innerHTML = `
+                        <strong>Current Recommendations:</strong><br>
+                        • Sensitive groups should limit outdoor exertion<br>
+                        • Children and elderly should stay indoors<br>
+                        • Consider wearing N95 masks if going outside<br>
+                        • Keep windows closed, use air purifiers
+                    `;
+                } else if (currentAQI <= 200) {
+                    display.classList.add('aqi-unhealthy');
+                    status.textContent = 'Unhealthy';
+                    description.textContent = 'Everyone may begin to experience health effects. Sensitive groups may experience more serious effects.';
+                    actions.innerHTML = `
+                        <strong>Current Recommendations:</strong><br>
+                        • Everyone should limit outdoor exertion<br>
+                        • Wear N95 masks when outside<br>
+                        • Keep windows and doors closed<br>
+                        • Use air purifiers indoors if available
+                    `;
+                } else if (currentAQI <= 300) {
+                    display.classList.add('aqi-hazardous');
+                    status.textContent = 'Very Unhealthy';
+                    description.textContent = 'Health warnings of emergency conditions. Everyone more likely to be affected.';
+                    actions.innerHTML = `
+                        <strong>Current Recommendations:</strong><br>
+                        • Avoid all outdoor activities<br>
+                        • Stay indoors with windows closed<br>
+                        • Use high-efficiency air purifiers<br>
+                        • Wear N95+ masks if you must go outside
+                    `;
+                } else {
+                    display.classList.add('aqi-hazardous');
+                    status.textContent = 'Hazardous';
+                    description.textContent = 'Health alert: everyone may experience serious health effects.';
+                    actions.innerHTML = `
+                        <strong>EMERGENCY CONDITIONS:</strong><br>
+                        • Stay indoors at all times<br>
+                        • Seal gaps around doors and windows<br>
+                        • Run air purifiers on high<br>
+                        • Seek medical attention if experiencing symptoms
+                    `;
+                }
+                
+                console.log('Air quality updated successfully:', currentAQI);
+                
+            } catch (error) {
+                console.error('Error fetching air quality data:', error);
+                
+                // Fallback to show an error message
+                const display = document.querySelector('.aqi-display');
+                const status = document.querySelector('.aqi-status');
+                const description = document.querySelector('.aqi-description');
+                const actions = document.querySelector('.aqi-actions');
+                
+                display.textContent = '---';
+                display.className = 'aqi-display';
+                status.textContent = 'Data Unavailable';
+                description.textContent = 'Unable to fetch current air quality data. Please check your connection.';
+                actions.innerHTML = `
+                    <strong>Service Temporarily Unavailable:</strong><br>
+                    • Try refreshing in a few minutes<br>
+                    • Check local news for air quality updates<br>
+                    • Follow general wildfire safety precautions<br>
+                    • Contact local authorities for current conditions
+                `;
             }
         }
+
+        // Manual refresh function
+        function refreshAirQuality() {
+            const status = document.querySelector('.aqi-status');
+            const originalText = status.textContent;
+            status.textContent = 'Refreshing...';
+            
+            updateAirQuality().then(() => {
+                // Success handled in updateAirQuality function
+            }).catch(() => {
+                // Error handled in updateAirQuality function
+            });
+        }
+
+        // Update air quality immediately when page loads
+        document.addEventListener('DOMContentLoaded', updateAirQuality);
+
+        // Update every 30 minutes (1800000 milliseconds) - reasonable for air quality
+        setInterval(updateAirQuality, 1800000);
 
         // Smooth scrolling for navigation
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -882,9 +1012,6 @@
         document.querySelectorAll('.equipment-card, .contact-card, .timeline-stage').forEach(el => {
             observer.observe(el);
         });
-
-        // Update air quality every 30 seconds (simulated)
-        setInterval(updateAirQuality, 30000);
 
         // Emergency contact click to call (on mobile)
         document.querySelectorAll('.contact-number').forEach(number => {
