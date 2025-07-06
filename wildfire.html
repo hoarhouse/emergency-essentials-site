@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wildfire Emergency Preparedness - EmergencyEssentials</title>
+    <meta name="description" content="Comprehensive wildfire preparedness guide with defense strategies, evacuation planning, and professional equipment recommendations.">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000000;
+            color: #FFFFFF;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 100;
+            border-bottom: 1px solid #333333;
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #FFFFFF;
+            letter-spacing: -0.5px;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: #CCCCCC;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover,
+        .nav-link.active {
+            color: #FFFFFF;
+        }
+        
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 120px 0;
+            background: linear-gradient(180deg, #000000 0%, #111111 100%);
+            position: relative;
+        }
+        
+        .fire-warning {
+            display: inline-block;
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid #FF4444;
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: #FF4444;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .hero h1 {
+            font-size: 72px;
+            font-weight: 300;
+            margin-bottom: 24px;
+            letter-spacing: -2px;
+            line-height: 1.1;
+        }
+        
+        .hero p {
+            font-size: 24px;
+            color: #CCCCCC;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            font-weight: 300;
+        }
+        
+        .threat-level {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .threat-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #FF4444;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Section Styling */
+        .section {
+            padding: 100px 0;
+        }
+        
+        .section-title {
+            font-size: 56px;
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: 80px;
+            color: #FFFFFF;
+            letter-spacing: -1px;
+        }
+        
+        /* Critical Actions Timeline */
+        .critical-timeline {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 60px;
+            margin: 60px 0;
+        }
+        
+        .timeline-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .timeline-title {
+            font-size: 36px;
+            font-weight: 300;
+            margin-bottom: 16px;
+            color: #FFFFFF;
+        }
+        
+        .timeline-subtitle {
+            color: #CCCCCC;
+            font-size: 18px;
+            font-weight: 300;
+        }
+        
+        .timeline-stages {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+        }
+        
+        .timeline-stage {
+            background: #161616;
+            border: 1px solid #444444;
+            border-left: 4px solid;
+            padding: 32px;
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .timeline-stage:hover {
+            background: #242424;
+            border-color: #666666;
+        }
+        
+        .timeline-stage.immediate { border-left-color: #FF4444; }
+        .timeline-stage.prepare { border-left-color: #FFAA44; }
+        .timeline-stage.monitor { border-left-color: #44AAFF; }
+        .timeline-stage.evacuate { border-left-color: #FF4444; }
+        
+        .stage-time {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stage-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #FFFFFF;
+        }
+        
+        .stage-actions {
+            color: #CCCCCC;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .stage-actions ul {
+            padding-left: 16px;
+            margin-top: 8px;
+        }
+        
+        .stage-actions li {
+            margin-bottom: 4px;
+        }
+        
+        /* Wildfire-Specific Equipment */
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+        
+        .equipment-card {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 40px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .equipment-card:hover {
+            background: #2a2a2a;
+            border-color: #555555;
+            transform: translateY(-2px);
+        }
+        
+        .equipment-priority {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .equipment-priority.critical {
+            background: rgba(255, 68, 68, 0.1);
+            color: #FF4444;
+            border: 1px solid #FF4444;
+        }
+        
+        .equipment-priority.important {
+            background: rgba(255, 170, 68, 0.1);
+            color: #FFAA44;
+            border: 1px solid #FFAA44;
+        }
+        
+        .equipment-priority.recommended {
+            background: rgba(68, 170, 255, 0.1);
+            color: #44AAFF;
+            border: 1px solid #44AAFF;
+        }
+        
+        .equipment-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 24px;
+            stroke: #FFFFFF;
+            stroke-width: 1.5;
+            fill: none;
+        }
+        
+        .equipment-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #FFFFFF;
+        }
+        
+        .equipment-description {
+            color: #CCCCCC;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .equipment-specs {
+            font-size: 12px;
+            color: #999999;
+            background: #161616;
+            padding: 12px;
+            border-radius: 4px;
+            border-left: 2px solid #333333;
+        }
+        
+        .affiliate-link {
+            display: inline-block;
+            margin-top: 16px;
+            background: #FF9900;
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+        
+        .affiliate-link:hover {
+            background: #E68900;
+        }
+        
+        /* Air Quality Monitor */
+        .air-quality {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 40px;
+            margin: 40px 0;
+            text-align: center;
+        }
+        
+        .aqi-display {
+            font-size: 64px;
+            font-weight: 300;
+            margin: 20px 0;
+            letter-spacing: -2px;
+        }
+        
+        .aqi-good { color: #44AA44; }
+        .aqi-moderate { color: #FFDD44; }
+        .aqi-unhealthy { color: #FFAA44; }
+        .aqi-hazardous { color: #FF4444; }
+        
+        .aqi-status {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .aqi-description {
+            color: #CCCCCC;
+            margin-bottom: 24px;
+        }
+        
+        .aqi-actions {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: left;
+        }
+        
+        /* Emergency Contacts */
+        .emergency-contacts {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 60px;
+            margin: 60px 0;
+        }
+        
+        .contacts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        
+        .contact-card {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 8px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-card:hover {
+            background: #242424;
+            border-color: #666666;
+        }
+        
+        .contact-type {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #999999;
+            margin-bottom: 8px;
+        }
+        
+        .contact-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #FFFFFF;
+        }
+        
+        .contact-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 8px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .contact-description {
+            font-size: 14px;
+            color: #CCCCCC;
+            line-height: 1.5;
+        }
+        
+        /* Call to Action */
+        .cta-section {
+            background: #FFFFFF;
+            color: #000000;
+            text-align: center;
+            padding: 80px 40px;
+            border-radius: 8px;
+            margin: 80px 0;
+        }
+        
+        .cta-title {
+            font-size: 48px;
+            font-weight: 300;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+        
+        .cta-subtitle {
+            font-size: 20px;
+            margin-bottom: 32px;
+            color: #666666;
+            font-weight: 300;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .cta-button {
+            background: #000000;
+            color: #FFFFFF;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .cta-button:hover {
+            background: #333333;
+        }
+        
+        .cta-button.secondary {
+            background: transparent;
+            color: #000000;
+            border: 1px solid #000000;
+        }
+        
+        .cta-button.secondary:hover {
+            background: #000000;
+            color: #FFFFFF;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 48px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .section-title {
+                font-size: 36px;
+            }
+            
+            .timeline-stages {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .cta-title {
+                font-size: 32px;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="index.html" class="logo">EmergencyEssentials</a>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">All Emergencies</a>
+                    <a href="wildfire.html" class="nav-link active">Wildfire</a>
+                    <a href="flood.html" class="nav-link">Flood</a>
+                    <a href="#" class="nav-link">Power Outage</a>
+                    <a href="#" class="nav-link">Earthquake</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="fire-warning">🔥 High Fire Danger</div>
+            <h1>Wildfire Preparedness</h1>
+            <p>Comprehensive defense strategies for wildfire threats in high-risk areas</p>
+            <div class="threat-level">
+                <div class="threat-indicator"></div>
+                <span>Current Fire Danger: <strong>EXTREME</strong> - Denver Metro Area</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Critical Actions Timeline -->
+    <section class="section">
+        <div class="container">
+            <div class="critical-timeline">
+                <div class="timeline-header">
+                    <h2 class="timeline-title">Critical Action Timeline</h2>
+                    <p class="timeline-subtitle">Time-sensitive actions based on wildfire proximity and conditions</p>
+                </div>
+                <div class="timeline-stages">
+                    <div class="timeline-stage immediate">
+                        <div class="stage-time" style="color: #FF4444;">Fire Spotted (0-30 minutes)</div>
+                        <h3 class="stage-title">Immediate Assessment</h3>
+                        <div class="stage-actions">
+                            Monitor fire location and wind conditions
+                            <ul>
+                                <li>Check official evacuation alerts</li>
+                                <li>Assess escape routes</li>
+                                <li>Prepare go-bags</li>
+                                <li>Alert family members</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-stage prepare">
+                        <div class="stage-time" style="color: #FFAA44;">Fire Approaching (30-60 minutes)</div>
+                        <h3 class="stage-title">Active Preparation</h3>
+                        <div class="stage-actions">
+                            Implement defensive measures
+                            <ul>
+                                <li>Close all windows and doors</li>
+                                <li>Turn on sprinkler systems</li>
+                                <li>Move flammable items away from house</li>
+                                <li>Fill bathtubs and containers with water</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-stage monitor">
+                        <div class="stage-time" style="color: #44AAFF;">Standby Mode (1-6 hours)</div>
+                        <h3 class="stage-title">Continuous Monitoring</h3>
+                        <div class="stage-actions">
+                            Stay alert and ready to evacuate
+                            <ul>
+                                <li>Monitor radio and emergency alerts</li>
+                                <li>Watch for ember showers</li>
+                                <li>Keep vehicles loaded and ready</li>
+                                <li>Maintain communication with authorities</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-stage evacuate">
+                        <div class="stage-time" style="color: #FF4444;">Evacuation Order</div>
+                        <h3 class="stage-title">Immediate Evacuation</h3>
+                        <div class="stage-actions">
+                            Execute evacuation plan immediately
+                            <ul>
+                                <li>Grab go-bags and essential items</li>
+                                <li>Follow designated evacuation routes</li>
+                                <li>Check on neighbors if safe to do so</li>
+                                <li>Do not return until officially cleared</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Wildfire-Specific Equipment -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Wildfire Defense Equipment</h2>
+            <div class="equipment-grid">
+                <div class="equipment-card">
+                    <div class="equipment-priority critical">Critical</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                    </svg>
+                    <h3 class="equipment-title">N95/P100 Respirators</h3>
+                    <p class="equipment-description">Essential protection against smoke inhalation during evacuation and fire approach. Multiple masks per family member required.</p>
+                    <div class="equipment-specs">
+                        Specification: NIOSH-approved N95 minimum, P100 preferred for heavy smoke conditions
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('n95-respirators', 'amazon')">View on Amazon - $24.99</a>
+                </div>
+
+                <div class="equipment-card">
+                    <div class="equipment-priority critical">Critical</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/>
+                    </svg>
+                    <h3 class="equipment-title">NOAA Weather Radio</h3>
+                    <p class="equipment-description">Hand-crank emergency radio with NOAA weather alerts specifically for fire weather warnings and evacuation orders.</p>
+                    <div class="equipment-specs">
+                        Specification: SAME alert capability, solar/hand-crank power, battery backup
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('noaa-weather-radio', 'amazon')">View on Amazon - $39.99</a>
+                </div>
+
+                <div class="equipment-card">
+                    <div class="equipment-priority critical">Critical</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                    </svg>
+                    <h3 class="equipment-title">High-Output LED Flashlights</h3>
+                    <p class="equipment-description">Powerful LED flashlights for navigation during smoke-obscured evacuations. Multiple units with extra batteries essential.</p>
+                    <div class="equipment-specs">
+                        Specification: 1000+ lumens, multiple light modes, waterproof IPX7 rating
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('led-flashlight', 'amazon')">View on Amazon - $32.99</a>
+                </div>
+
+                <div class="equipment-card">
+                    <div class="equipment-priority important">Important</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                    </svg>
+                    <h3 class="equipment-title">Emergency Sprinkler System</h3>
+                    <p class="equipment-description">Portable sprinkler heads and hoses for roof and perimeter protection against ember showers and radiant heat.</p>
+                    <div class="equipment-specs">
+                        Specification: 360-degree coverage, metal construction, 50+ foot hose reach
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('sprinkler-system', 'homedepot')">View at Home Depot - $89.99</a>
+                </div>
+
+                <div class="equipment-card">
+                    <div class="equipment-priority important">Important</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                    <h3 class="equipment-title">Fire-Resistant Blankets</h3>
+                    <p class="equipment-description">Wool or specially treated fire-resistant blankets for emergency shelter and protection during last-resort situations.</p>
+                    <div class="equipment-specs">
+                        Specification: 100% wool or fire-retardant treated material, large enough to cover 2 people
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('fire-blanket', 'amazon')">View on Amazon - $45.99</a>
+                </div>
+
+                <div class="equipment-card">
+                    <div class="equipment-priority recommended">Recommended</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    <h3 class="equipment-title">Portable Generator</h3>
+                    <p class="equipment-description">Backup power for well pumps, communication devices, and essential systems during power outages common with wildfires.</p>
+                    <div class="equipment-specs">
+                        Specification: 3000W minimum, fuel storage, proper ventilation setup for outdoor use
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('portable-generator', 'homedepot')">View at Home Depot - $449.99</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Air Quality Monitor -->
+    <section class="section">
+        <div class="container">
+            <div class="air-quality">
+                <h2 style="color: #FFFFFF; margin-bottom: 16px; font-weight: 300;">Current Air Quality</h2>
+                <div class="aqi-display aqi-unhealthy">187</div>
+                <div class="aqi-status">Unhealthy</div>
+                <p class="aqi-description">Air quality is unhealthy for sensitive groups. Everyone may experience health effects.</p>
+                <div class="aqi-actions">
+                    <strong>Recommended Actions:</strong><br>
+                    • Stay indoors with windows and doors closed<br>
+                    • Use air purifiers if available<br>
+                    • Avoid outdoor activities<br>
+                    • Wear N95 masks if you must go outside
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency Contacts -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Critical Emergency Contacts</h2>
+            <div class="emergency-contacts">
+                <div class="contacts-grid">
+                    <div class="contact-card">
+                        <div class="contact-type">Emergency Services</div>
+                        <div class="contact-name">Fire Department</div>
+                        <div class="contact-number">911</div>
+                        <div class="contact-description">For immediate life-threatening emergencies and active fire reports</div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-type">Evacuation Info</div>
+                        <div class="contact-name">Jefferson County Sheriff</div>
+                        <div class="contact-number">(303) 277-0211</div>
+                        <div class="contact-description">Non-emergency line for evacuation status and road closures</div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-type">Fire Information</div>
+                        <div class="contact-name">CO Fire Information</div>
+                        <div class="contact-number">(303) 275-5360</div>
+                        <div class="contact-description">Current fire conditions, restrictions, and weather updates</div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-type">Utilities Emergency</div>
+                        <div class="contact-name">Xcel Energy</div>
+                        <div class="contact-number">(800) 895-1999</div>
+                        <div class="contact-description">Report power lines down or request emergency shutoffs</div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-type">Red Cross Shelter</div>
+                        <div class="contact-name">American Red Cross</div>
+                        <div class="contact-number">(303) 722-7474</div>
+                        <div class="contact-description">Emergency shelter locations and disaster relief services</div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-type">Animal Services</div>
+                        <div class="contact-name">Jefferson County Animal Control</div>
+                        <div class="contact-number">(303) 271-5070</div>
+                        <div class="contact-description">Emergency pet sheltering and large animal evacuation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="section">
+        <div class="container">
+            <div class="cta-section">
+                <h2 class="cta-title">Create Your Wildfire Action Plan</h2>
+                <p class="cta-subtitle">Generate a customized wildfire preparedness plan for your specific location and risk level</p>
+                <div class="cta-buttons">
+                    <button class="cta-button" onclick="generateWildfirePlan()">Generate Plan</button>
+                    <a href="#" class="cta-button secondary">Download Checklist</a>
+                    <a href="#" class="cta-button secondary">Find Local Resources</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Generate wildfire plan functionality
+        function generateWildfirePlan() {
+            alert('Generating your personalized wildfire action plan...\n\nThis will include:\n• Property-specific defense strategies\n• Evacuation route planning\n• Equipment recommendations\n• Emergency contact lists\n• Seasonal preparation timeline');
+        }
+
+        // Affiliate tracking function
+        function trackAffiliate(productId, retailer) {
+            console.log(`Affiliate click tracked: ${productId} -> ${retailer}`);
+            alert(`Redirecting to ${retailer} for ${productId}...\n\nIn production, this would:\n• Track the affiliate click\n• Redirect to the actual product page\n• Earn commission if purchase is made`);
+            return false;
+        }
+
+        // Air quality updates (simulated)
+        function updateAirQuality() {
+            const aqiValue = Math.floor(Math.random() * 300) + 50;
+            const display = document.querySelector('.aqi-display');
+            const status = document.querySelector('.aqi-status');
+            const description = document.querySelector('.aqi-description');
+            
+            display.textContent = aqiValue;
+            
+            display.className = 'aqi-display';
+            if (aqiValue <= 50) {
+                display.classList.add('aqi-good');
+                status.textContent = 'Good';
+                description.textContent = 'Air quality is satisfactory for most people.';
+            } else if (aqiValue <= 100) {
+                display.classList.add('aqi-moderate');
+                status.textContent = 'Moderate';
+                description.textContent = 'Air quality is acceptable for most people.';
+            } else if (aqiValue <= 200) {
+                display.classList.add('aqi-unhealthy');
+                status.textContent = 'Unhealthy';
+                description.textContent = 'Air quality is unhealthy for sensitive groups.';
+            } else {
+                display.classList.add('aqi-hazardous');
+                status.textContent = 'Hazardous';
+                description.textContent = 'Air quality is hazardous for everyone.';
+            }
+        }
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.equipment-card, .contact-card, .timeline-stage').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Update air quality every 30 seconds (simulated)
+        setInterval(updateAirQuality, 30000);
+
+        // Emergency contact click to call (on mobile)
+        document.querySelectorAll('.contact-number').forEach(number => {
+            number.addEventListener('click', function() {
+                if (/Mobi|Android/i.test(navigator.userAgent)) {
+                    window.location.href = 'tel:' + this.textContent.replace(/\D/g, '');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
