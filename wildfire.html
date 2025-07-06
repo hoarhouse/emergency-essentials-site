@@ -16,7 +16,7 @@
         }
         
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+           font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: #000000;
             color: #FFFFFF;
             line-height: 1.6;
@@ -1449,11 +1449,6 @@ updateWeatherAlertsLocation();
                 // Error handled in updateAirQuality function
             });
         }
-
-        // Initialize location detection when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            detectUserLocation();
-        });
 
         // Update every 30 minutes (1800000 milliseconds) - reasonable for air quality
         setInterval(updateAirQuality, 1800000);
