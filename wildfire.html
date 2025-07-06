@@ -1115,6 +1115,7 @@ updateWeatherAlertsLocation();
                 
                 // Update air quality for detected location
                 updateAirQuality();
+                updateWeatherAlertsLocation(); // FIXED: Added this line
                 
             } catch (error) {
     console.log('Location detection failed:', error.message);
@@ -1198,6 +1199,7 @@ updateWeatherAlertsLocation();
             
             usingAutoLocation = false;
             updateAirQuality();
+            updateWeatherAlertsLocation(); // FIXED: Added this line
         }
 
         async function updateAirQuality() {
