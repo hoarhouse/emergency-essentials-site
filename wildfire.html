@@ -1207,6 +1207,7 @@
     updateLocationDisplay('Denver, CO (Default)');
     updateAirQuality();
 updateWeatherAlertsLocation();
+              updateWeatherDataLocation(); // FIXED: Added this line
     return;
             }
 
@@ -1238,6 +1239,8 @@ updateWeatherAlertsLocation();
     updateLocationDisplay('Denver, CO (Default - Location Access Denied)');
     updateAirQuality();
                 updateWeatherAlertsLocation();
+                updateWeatherDataLocation();
+
     showCitySelector();
 }
         }
@@ -1262,8 +1265,18 @@ updateWeatherAlertsLocation();
         }
 
         // Update location display
+       // Update location display
         function updateLocationDisplay(locationName) {
             document.getElementById('current-location').textContent = locationName;
+            // Also update weather location displays
+            const weatherLocation = document.getElementById('weather-current-location');
+            if (weatherLocation) {
+                weatherLocation.textContent = locationName;
+            }
+            const alertsLocation = document.getElementById('weather-location');
+            if (alertsLocation) {
+                alertsLocation.textContent = locationName;
+            }
         }
 
         // Show city selector
@@ -1317,6 +1330,7 @@ updateWeatherAlertsLocation();
             updateAirQuality();
             updateWeatherAlertsLocation(); // FIXED: Added this line
             updateWeatherDataLocation();
+            updateWeatherDataLocation(); // FIXED: Added this line
         }
 
         async function updateAirQuality() {
