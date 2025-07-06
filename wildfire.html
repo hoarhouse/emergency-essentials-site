@@ -1230,6 +1230,7 @@ updateWeatherAlertsLocation();
                 // Update air quality for detected location
                 updateAirQuality();
                 updateWeatherAlertsLocation(); // FIXED: Added this line
+                updateWeatherDataLocation(); // FIXED: Added this line for weather data
                 
             } catch (error) {
     console.log('Location detection failed:', error.message);
