@@ -148,94 +148,6 @@
             letter-spacing: -1px;
         }
         
-        /* Flood Stage Timeline */
-        .flood-stages {
-            background: #1a1a1a;
-            border: 1px solid #333333;
-            border-radius: 8px;
-            padding: 60px;
-            margin: 60px 0;
-        }
-        
-        .stages-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        
-        .stages-title {
-            font-size: 36px;
-            font-weight: 300;
-            margin-bottom: 16px;
-            color: #FFFFFF;
-        }
-        
-        .stages-subtitle {
-            color: #CCCCCC;
-            font-size: 18px;
-            font-weight: 300;
-        }
-        
-        .stages-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 32px;
-        }
-        
-        .stage-card {
-            background: #161616;
-            border: 1px solid #444444;
-            border-left: 4px solid;
-            padding: 32px;
-            border-radius: 0 8px 8px 0;
-            transition: all 0.3s ease;
-        }
-        
-        .stage-card:hover {
-            background: #242424;
-            border-color: #666666;
-        }
-        
-        .stage-card.minor { border-left-color: #44AA44; }
-        .stage-card.moderate { border-left-color: #FFDD44; }
-        .stage-card.major { border-left-color: #FFAA44; }
-        .stage-card.record { border-left-color: #FF4444; }
-        
-        .stage-level {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .stage-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #FFFFFF;
-        }
-        
-        .stage-description {
-            color: #CCCCCC;
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 16px;
-        }
-        
-        .stage-actions {
-            background: #111111;
-            border: 1px solid #333333;
-            border-radius: 4px;
-            padding: 12px;
-            font-size: 13px;
-        }
-        
-        .stage-actions strong {
-            color: #FFFFFF;
-            display: block;
-            margin-bottom: 4px;
-        }
-        
         /* Water Level Monitor */
         .water-level {
             background: #1a1a1a;
@@ -244,6 +156,74 @@
             padding: 40px;
             margin: 40px 0;
             text-align: center;
+        }
+        
+        .location-controls {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .location-display {
+            font-size: 16px;
+            color: #CCCCCC;
+            margin-bottom: 8px;
+        }
+        
+        .gauge-display {
+            font-size: 14px;
+            color: #999999;
+            margin-bottom: 12px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .location-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .location-btn {
+            background: transparent;
+            border: 1px solid #666666;
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .location-btn:hover {
+            background: #666666;
+            color: #FFFFFF;
+        }
+        
+        .location-btn.active {
+            background: #44AAFF;
+            border-color: #44AAFF;
+            color: #FFFFFF;
+        }
+        
+        .river-selector {
+            margin-top: 12px;
+            display: none;
+        }
+        
+        .river-selector select {
+            background: #1a1a1a;
+            border: 1px solid #666666;
+            color: #FFFFFF;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-right: 8px;
+            min-width: 250px;
         }
         
         .level-display {
@@ -277,7 +257,24 @@
             text-align: left;
         }
         
-        /* Flood Equipment */
+        .refresh-btn {
+            background: transparent;
+            border: 1px solid #FFFFFF;
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 16px;
+        }
+        
+        .refresh-btn:hover {
+            background: #FFFFFF;
+            color: #000000;
+        }
+        
+        /* Equipment Grid */
         .equipment-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -376,81 +373,6 @@
         
         .affiliate-link:hover {
             background: #E68900;
-        }
-        
-        /* Emergency Supplies Checklist */
-        .supplies-checklist {
-            background: #1a1a1a;
-            border: 1px solid #333333;
-            border-radius: 8px;
-            padding: 60px;
-            margin: 60px 0;
-        }
-        
-        .checklist-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 32px;
-        }
-        
-        .checklist-category {
-            background: #161616;
-            border: 1px solid #444444;
-            border-radius: 8px;
-            padding: 24px;
-        }
-        
-        .category-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: #FFFFFF;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .category-icon {
-            width: 20px;
-            height: 20px;
-            stroke: #44AAFF;
-            stroke-width: 2;
-        }
-        
-        .checklist-items {
-            list-style: none;
-        }
-        
-        .checklist-items li {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-            color: #CCCCCC;
-            font-size: 14px;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-        
-        .checklist-items li:hover {
-            color: #FFFFFF;
-        }
-        
-        .checkbox {
-            width: 16px;
-            height: 16px;
-            border: 1px solid #666666;
-            border-radius: 2px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-        
-        .checkbox.checked {
-            background: #44AAFF;
-            border-color: #44AAFF;
-            color: #FFFFFF;
         }
         
         /* Emergency Contacts */
@@ -618,10 +540,6 @@
                 font-size: 36px;
             }
             
-            .stages-grid {
-                grid-template-columns: 1fr;
-            }
-            
             .nav {
                 flex-direction: column;
                 gap: 20px;
@@ -678,68 +596,7 @@
             <p>Comprehensive flood defense and evacuation strategies for high-risk areas</p>
             <div class="flood-alert">
                 <div class="alert-indicator"></div>
-                <span>Current Status: <strong>FLOOD WATCH</strong> - South Platte River Basin</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- Flood Stage Awareness -->
-    <section class="section">
-        <div class="container">
-            <div class="flood-stages">
-                <div class="stages-header">
-                    <h2 class="stages-title">Flood Stage Classifications</h2>
-                    <p class="stages-subtitle">Understanding flood severity levels and appropriate response actions</p>
-                </div>
-                <div class="stages-grid">
-                    <div class="stage-card minor">
-                        <div class="stage-level" style="color: #44AA44;">Minor Flooding</div>
-                        <h3 class="stage-title">Action Stage</h3>
-                        <div class="stage-description">
-                            Minimal or no property damage, but possibly some public threat or inconvenience. Some overbank flooding of low-lying areas.
-                        </div>
-                        <div class="stage-actions">
-                            <strong>Actions:</strong>
-                            Monitor conditions, prepare supplies, avoid flooded roads
-                        </div>
-                    </div>
-                    
-                    <div class="stage-card moderate">
-                        <div class="stage-level" style="color: #FFDD44;">Moderate Flooding</div>
-                        <h3 class="stage-title">Minor Flood Stage</h3>
-                        <div class="stage-description">
-                            Some inundation of structures and roads near streams. Evacuations of people and transfer of property to higher elevations may be necessary.
-                        </div>
-                        <div class="stage-actions">
-                            <strong>Actions:</strong>
-                            Prepare to evacuate, move valuables to higher floors, secure property
-                        </div>
-                    </div>
-                    
-                    <div class="stage-card major">
-                        <div class="stage-level" style="color: #FFAA44;">Major Flooding</div>
-                        <h3 class="stage-title">Moderate Flood Stage</h3>
-                        <div class="stage-description">
-                            Extensive inundation and property damage. Large-scale evacuations and emergency services response required.
-                        </div>
-                        <div class="stage-actions">
-                            <strong>Actions:</strong>
-                            Evacuate immediately if ordered, avoid all flooded areas, emergency shelter
-                        </div>
-                    </div>
-                    
-                    <div class="stage-card record">
-                        <div class="stage-level" style="color: #FF4444;">Record Flooding</div>
-                        <h3 class="stage-title">Major Flood Stage</h3>
-                        <div class="stage-description">
-                            Rare flooding with significant threat to life and property. Catastrophic damage expected. Emergency response fully activated.
-                        </div>
-                        <div class="stage-actions">
-                            <strong>Actions:</strong>
-                            Follow all evacuation orders, seek highest ground, emergency services only
-                        </div>
-                    </div>
-                </div>
+                <span id="flood-alert-text">Current Status: <strong>MONITORING</strong> - Real-time data loading...</span>
             </div>
         </div>
     </section>
@@ -749,16 +606,42 @@
         <div class="container">
             <div class="water-level">
                 <h2 style="color: #FFFFFF; margin-bottom: 16px; font-weight: 300;">Current Water Level</h2>
-                <div class="level-display level-watch">8.7 ft</div>
-                <div class="level-status">Action Stage</div>
-                <p class="level-description">South Platte River at Denver - Water levels are rising but within normal parameters</p>
-                <div class="level-actions">
-                    <strong>Current Recommendations:</strong><br>
-                    • Monitor conditions closely<br>
-                    • Avoid recreational activities near waterways<br>
-                    • Prepare emergency supplies<br>
-                    • Stay informed through official channels
+                
+                <div class="location-controls">
+                    <div class="location-display">Location: <span id="current-location">Detecting your location...</span></div>
+                    <div class="gauge-display">Gauge: <span id="current-gauge">Finding nearest USGS monitoring station...</span></div>
+                    <div class="location-buttons">
+                        <button class="location-btn active" id="auto-location-btn" onclick="useAutoLocation()">Use My Location</button>
+                        <button class="location-btn" id="manual-location-btn" onclick="toggleRiverSelector()">Choose River</button>
+                    </div>
+                    <div class="river-selector" id="river-selector">
+                        <select id="river-select" onchange="useSelectedRiver()">
+                            <option value="">Select a monitoring station...</option>
+                            <option value="06719505">Clear Creek at Golden, CO</option>
+                            <option value="06758500">South Platte River at Sterling, CO</option>
+                            <option value="09019500">Colorado River near Granby, CO</option>
+                            <option value="09085000">Roaring Fork River at Glenwood Springs, CO</option>
+                            <option value="06752260">Cache La Poudre River at Fort Collins, CO</option>
+                            <option value="09180500">Colorado River near Cisco, UT</option>
+                            <option value="09380000">Colorado River at Lees Ferry, AZ</option>
+                            <option value="09429490">Colorado River below Parker Dam, AZ-CA</option>
+                            <option value="11074000">Santa Ana River at Santa Ana, CA</option>
+                            <option value="11447650">Sacramento River at Freeport, CA</option>
+                            <option value="12020000">Chehalis River at Centralia, WA</option>
+                            <option value="14211720">Willamette River at Portland, OR</option>
+                        </select>
+                        <button class="location-btn" onclick="useSelectedRiver()">Update</button>
+                    </div>
                 </div>
+                
+                <div class="level-display level-watch">Loading...</div>
+                <div class="level-status">Checking conditions...</div>
+                <p class="level-description">Fetching real-time water level data from USGS monitoring stations</p>
+                <div class="level-actions">
+                    <strong>Loading current recommendations...</strong><br>
+                    Please wait while we fetch the latest water level data from USGS.
+                </div>
+                <button class="refresh-btn" onclick="refreshWaterLevel()">Refresh Data</button>
             </div>
         </div>
     </section>
@@ -791,7 +674,7 @@
                     <div class="equipment-specs">
                         Specification: 1,000+ GPH capacity, no electricity required, connects to garden hose
                     </div>
-                    <a href="#" class="affiliate-link" onclick="trackAffiliate('sump-pump', 'homedepot')">View at Home Depot - $149.99</a>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('sump-pump', 'amazon')">View on Amazon - $149.99</a>
                 </div>
 
                 <div class="equipment-card">
@@ -804,7 +687,7 @@
                     <div class="equipment-specs">
                         Specification: 50lb bags, UV-resistant polypropylene, interlocking design for stability
                     </div>
-                    <a href="#" class="affiliate-link" onclick="trackAffiliate('sandbags', 'homedepot')">View at Home Depot - $4.99 each</a>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('sandbags', 'amazon')">View on Amazon - $4.99 each</a>
                 </div>
 
                 <div class="equipment-card">
@@ -844,84 +727,6 @@
                         Specification: NOAA weather band, solar/hand-crank power, LED flashlight, USB charging
                     </div>
                     <a href="#" class="affiliate-link" onclick="trackAffiliate('emergency-radio', 'amazon')">View on Amazon - $39.99</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Emergency Supplies Checklist -->
-    <section class="section">
-        <div class="container">
-            <h2 class="section-title">Flood Emergency Supplies</h2>
-            <div class="supplies-checklist">
-                <div class="checklist-grid">
-                    <div class="checklist-category">
-                        <h3 class="category-title">
-                            <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0V8.625a1.125 1.125 0 011.125-1.125h4.5V7.5a.75.75 0 011.5 0v10.5a1.5 1.5 0 01-3 0V13.5a.75.75 0 00-1.5 0v5.25z"/>
-                            </svg>
-                            Water & Safety
-                        </h3>
-                        <ul class="checklist-items">
-                            <li><span class="checkbox checked">✓</span>1 gallon water per person per day (3+ days)</li>
-                            <li><span class="checkbox"></span>Water purification tablets</li>
-                            <li><span class="checkbox"></span>Life jackets for each family member</li>
-                            <li><span class="checkbox"></span>Waterproof flashlights</li>
-                            <li><span class="checkbox"></span>Battery-powered radio</li>
-                            <li><span class="checkbox"></span>Emergency whistle</li>
-                        </ul>
-                    </div>
-
-                    <div class="checklist-category">
-                        <h3 class="category-title">
-                            <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0V8.625a1.125 1.125 0 011.125-1.125h4.5V7.5a.75.75 0 011.5 0v10.5a1.5 1.5 0 01-3 0V13.5a.75.75 0 00-1.5 0v5.25z"/>
-                            </svg>
-                            Food & Shelter
-                        </h3>
-                        <ul class="checklist-items">
-                            <li><span class="checkbox"></span>Non-perishable food (3+ days)</li>
-                            <li><span class="checkbox"></span>Manual can opener</li>
-                            <li><span class="checkbox"></span>Waterproof matches</li>
-                            <li><span class="checkbox"></span>Emergency blankets</li>
-                            <li><span class="checkbox"></span>Plastic sheeting and duct tape</li>
-                            <li><span class="checkbox"></span>Waterproof sleeping bags</li>
-                        </ul>
-                    </div>
-
-                    <div class="checklist-category">
-                        <h3 class="category-title">
-                            <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0V8.625a1.125 1.125 0 011.125-1.125h4.5V7.5a.75.75 0 011.5 0v10.5a1.5 1.5 0 01-3 0V13.5a.75.75 0 00-1.5 0v5.25z"/>
-                            </svg>
-                            Documents & Tools
-                        </h3>
-                        <ul class="checklist-items">
-                            <li><span class="checkbox"></span>Important documents (waterproof container)</li>
-                            <li><span class="checkbox"></span>Emergency contact list</li>
-                            <li><span class="checkbox"></span>Cash in small bills</li>
-                            <li><span class="checkbox"></span>Multi-tool or knife</li>
-                            <li><span class="checkbox"></span>Work gloves</li>
-                            <li><span class="checkbox"></span>Emergency rope (50+ feet)</li>
-                        </ul>
-                    </div>
-
-                    <div class="checklist-category">
-                        <h3 class="category-title">
-                            <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0V8.625a1.125 1.125 0 011.125-1.125h4.5V7.5a.75.75 0 011.5 0v10.5a1.5 1.5 0 01-3 0V13.5a.75.75 0 00-1.5 0v5.25z"/>
-                            </svg>
-                            Medical & Hygiene
-                        </h3>
-                        <ul class="checklist-items">
-                            <li><span class="checkbox"></span>First aid kit (waterproof)</li>
-                            <li><span class="checkbox"></span>Prescription medications</li>
-                            <li><span class="checkbox"></span>Personal hygiene items</li>
-                            <li><span class="checkbox"></span>Hand sanitizer</li>
-                            <li><span class="checkbox"></span>Disinfectant wipes</li>
-                            <li><span class="checkbox"></span>Plastic bags for waste</li>
-                        </ul>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1007,9 +812,315 @@
     </section>
 
     <script>
-        // Generate flood plan functionality
-        function generateFloodPlan() {
-            alert('Generating your personalized flood action plan...\n\nThis will include:\n• Property-specific flood risk assessment\n• Evacuation route planning\n• Equipment recommendations\n• Emergency contact lists\n• Seasonal preparation timeline');
+        // REAL USGS Water Level API Integration - Location Aware
+        let currentLatitude = 39.7392; // Default to Denver
+        let currentLongitude = -104.9903;
+        let currentLocationName = 'Denver, CO';
+        let currentGaugeId = '06719505'; // Clear Creek at Golden, CO (default)
+        let currentGaugeName = 'Clear Creek at Golden, CO';
+        let usingAutoLocation = true;
+
+        // Major USGS gauge stations across the US
+        const gaugeStations = {
+            '06719505': { name: 'Clear Creek at Golden, CO', lat: 39.7550, lon: -105.2247 },
+            '06758500': { name: 'South Platte River at Sterling, CO', lat: 40.6252, lon: -103.2066 },
+            '09019500': { name: 'Colorado River near Granby, CO', lat: 40.1252, lon: -105.8975 },
+            '09085000': { name: 'Roaring Fork River at Glenwood Springs, CO', lat: 39.5475, lon: -107.3247 },
+            '06752260': { name: 'Cache La Poudre River at Fort Collins, CO', lat: 40.5569, lon: -105.0608 },
+            '09180500': { name: 'Colorado River near Cisco, UT', lat: 38.8069, lon: -109.2944 },
+            '09380000': { name: 'Colorado River at Lees Ferry, AZ', lat: 36.8647, lon: -111.5939 },
+            '09429490': { name: 'Colorado River below Parker Dam, AZ-CA', lat: 34.2669, lon: -114.1358 },
+            '11074000': { name: 'Santa Ana River at Santa Ana, CA', lat: 33.7456, lon: -117.9000 },
+            '11447650': { name: 'Sacramento River at Freeport, CA', lat: 38.4558, lon: -121.5011 },
+            '12020000': { name: 'Chehalis River at Centralia, WA', lat: 46.7167, lon: -122.9597 },
+            '14211720': { name: 'Willamette River at Portland, OR', lat: 45.5152, lon: -122.6784 }
+        };
+
+        // Auto-detect user location on page load
+        async function detectUserLocation() {
+            if (!navigator.geolocation) {
+                console.log('Geolocation not supported');
+                updateLocationDisplay('Denver, CO (Default)');
+                updateGaugeDisplay(currentGaugeName);
+                return;
+            }
+
+            try {
+                const position = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        timeout: 10000,
+                        enableHighAccuracy: true
+                    });
+                });
+
+                currentLatitude = position.coords.latitude;
+                currentLongitude = position.coords.longitude;
+                
+                // Get city name from coordinates
+                const locationName = await getCityName(currentLatitude, currentLongitude);
+                currentLocationName = locationName;
+                updateLocationDisplay(locationName);
+                
+                // Find nearest USGS gauge
+                const nearestGauge = findNearestGauge(currentLatitude, currentLongitude);
+                if (nearestGauge) {
+                    currentGaugeId = nearestGauge.id;
+                    currentGaugeName = nearestGauge.name;
+                    updateGaugeDisplay(nearestGauge.name);
+                }
+                
+                console.log(`Location detected: ${locationName}, Nearest gauge: ${currentGaugeName}`);
+                
+                // Update water level for detected location
+                updateWaterLevel();
+                
+            } catch (error) {
+                console.log('Location detection failed:', error.message);
+                updateLocationDisplay('Denver, CO (Default - Location Access Denied)');
+                updateGaugeDisplay(currentGaugeName);
+                showRiverSelector();
+            }
+        }
+
+        // Find nearest USGS gauge station
+        function findNearestGauge(lat, lon) {
+            let nearest = null;
+            let minDistance = Infinity;
+            
+            for (const [id, station] of Object.entries(gaugeStations)) {
+                const distance = calculateDistance(lat, lon, station.lat, station.lon);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearest = { id, name: station.name, distance };
+                }
+            }
+            
+            return nearest;
+        }
+
+        // Calculate distance between two coordinates
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 3959; // Earth's radius in miles
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // Get city name from coordinates
+        async function getCityName(lat, lon) {
+            try {
+                const response = await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&count=1`);
+                const data = await response.json();
+                
+                if (data.results && data.results.length > 0) {
+                    const result = data.results[0];
+                    const city = result.name || result.admin1 || 'Unknown City';
+                    const state = result.admin1 || result.country_code || '';
+                    return state ? `${city}, ${state}` : city;
+                }
+                return 'Your Location';
+            } catch (error) {
+                console.error('Reverse geocoding failed:', error);
+                return 'Your Location';
+            }
+        }
+
+        // Update display functions
+        function updateLocationDisplay(locationName) {
+            document.getElementById('current-location').textContent = locationName;
+        }
+
+        function updateGaugeDisplay(gaugeName) {
+            document.getElementById('current-gauge').textContent = gaugeName;
+        }
+
+        // Show/hide river selector
+        function showRiverSelector() {
+            document.getElementById('river-selector').style.display = 'block';
+            document.getElementById('manual-location-btn').classList.add('active');
+            document.getElementById('auto-location-btn').classList.remove('active');
+            usingAutoLocation = false;
+        }
+
+        function hideRiverSelector() {
+            document.getElementById('river-selector').style.display = 'none';
+            document.getElementById('auto-location-btn').classList.add('active');
+            document.getElementById('manual-location-btn').classList.remove('active');
+            usingAutoLocation = true;
+        }
+
+        function toggleRiverSelector() {
+            if (document.getElementById('river-selector').style.display === 'none') {
+                showRiverSelector();
+            } else {
+                hideRiverSelector();
+            }
+        }
+
+        // Use auto location
+        function useAutoLocation() {
+            hideRiverSelector();
+            updateLocationDisplay('Detecting your location...');
+            updateGaugeDisplay('Finding nearest gauge...');
+            detectUserLocation();
+        }
+
+        // Use selected river
+        function useSelectedRiver() {
+            const select = document.getElementById('river-select');
+            const selectedValue = select.value;
+            
+            if (!selectedValue) return;
+            
+            currentGaugeId = selectedValue;
+            currentGaugeName = gaugeStations[selectedValue].name;
+            
+            updateGaugeDisplay(currentGaugeName);
+            updateLocationDisplay('Manual Selection');
+            
+            usingAutoLocation = false;
+            updateWaterLevel();
+        }
+
+        // Main water level update function
+        async function updateWaterLevel() {
+            try {
+                // USGS Instantaneous Values API call (completely free, no API key needed)
+                const response = await fetch(`https://waterservices.usgs.gov/nwis/iv/?format=json&sites=${currentGaugeId}&parameterCd=00065&siteType=ST&siteStatus=active`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch water level data');
+                }
+                
+                const data = await response.json();
+                
+                // Parse USGS data
+                if (!data.value || !data.value.timeSeries || data.value.timeSeries.length === 0) {
+                    throw new Error('No data available for this gauge');
+                }
+                
+                const timeSeries = data.value.timeSeries[0];
+                const values = timeSeries.values[0].value;
+                
+                if (!values || values.length === 0) {
+                    throw new Error('No recent measurements available');
+                }
+                
+                // Get most recent reading
+                const latestReading = values[values.length - 1];
+                const gageHeight = parseFloat(latestReading.value);
+                const unit = timeSeries.variable.unit.unitCode;
+                
+                // Update display elements
+                const display = document.querySelector('.level-display');
+                const status = document.querySelector('.level-status');
+                const description = document.querySelector('.level-description');
+                const actions = document.querySelector('.level-actions');
+                const alertText = document.getElementById('flood-alert-text');
+                
+                // Display water level
+                display.textContent = `${gageHeight.toFixed(1)} ${unit}`;
+                
+                // Reset classes
+                display.className = 'level-display';
+                
+                // Determine flood stage (simplified classification)
+                let floodStage = 'Normal';
+                let alertLevel = 'NORMAL';
+                
+                if (gageHeight > 15) {
+                    display.classList.add('level-emergency');
+                    status.textContent = 'Major Flood Stage';
+                    description.textContent = `${currentGaugeName} - Water levels indicate major flooding conditions`;
+                    floodStage = 'Major Flooding';
+                    alertLevel = 'MAJOR FLOOD WARNING';
+                    actions.innerHTML = `
+                        <strong>EMERGENCY ACTIONS REQUIRED:</strong><br>
+                        • Evacuate immediately if ordered<br>
+                        • Avoid all flooded areas and roads<br>
+                        • Seek high ground immediately<br>
+                        • Emergency services may be overwhelmed
+                    `;
+                } else if (gageHeight > 10) {
+                    display.classList.add('level-warning');
+                    status.textContent = 'Minor Flood Stage';
+                    description.textContent = `${currentGaugeName} - Water levels above normal, flooding possible`;
+                    floodStage = 'Minor Flooding';
+                    alertLevel = 'FLOOD WARNING';
+                    actions.innerHTML = `
+                        <strong>Current Recommendations:</strong><br>
+                        • Prepare to evacuate if necessary<br>
+                        • Avoid low-lying areas and flooded roads<br>
+                        • Move vehicles to higher ground<br>
+                        • Monitor emergency broadcasts closely
+                    `;
+                } else if (gageHeight > 7) {
+                    display.classList.add('level-watch');
+                    status.textContent = 'Action Stage';
+                    description.textContent = `${currentGaugeName} - Water levels elevated, monitor conditions`;
+                    floodStage = 'Action Stage';
+                    alertLevel = 'FLOOD WATCH';
+                    actions.innerHTML = `
+                        <strong>Current Recommendations:</strong><br>
+                        • Monitor water levels closely<br>
+                        • Prepare emergency supplies<br>
+                        • Avoid recreational activities near water<br>
+                        • Stay informed through official channels
+                    `;
+                } else {
+                    display.classList.add('level-normal');
+                    status.textContent = 'Normal';
+                    description.textContent = `${currentGaugeName} - Water levels within normal range`;
+                    floodStage = 'Normal';
+                    alertLevel = 'NORMAL CONDITIONS';
+                    actions.innerHTML = `
+                        <strong>Current Recommendations:</strong><br>
+                        • Normal recreational activities permitted<br>
+                        • Continue monitoring during storm seasons<br>
+                        • Maintain emergency preparedness supplies<br>
+                        • Check conditions before water activities
+                    `;
+                }
+                
+                // Update alert banner
+                alertText.innerHTML = `Current Status: <strong>${alertLevel}</strong> - ${currentGaugeName}`;
+                
+                console.log(`Water level updated for ${currentGaugeName}: ${gageHeight} ${unit} (${floodStage})`);
+                
+            } catch (error) {
+                console.error('Error fetching water level data:', error);
+                
+                // Fallback error display
+                const display = document.querySelector('.level-display');
+                const status = document.querySelector('.level-status');
+                const description = document.querySelector('.level-description');
+                const actions = document.querySelector('.level-actions');
+                const alertText = document.getElementById('flood-alert-text');
+                
+                display.textContent = '---';
+                display.className = 'level-display';
+                status.textContent = 'Data Unavailable';
+                description.textContent = 'Unable to fetch current water level data from USGS.';
+                actions.innerHTML = `
+                    <strong>Service Temporarily Unavailable:</strong><br>
+                    • Try refreshing in a few minutes<br>
+                    • Check local news for flood updates<br>
+                    • Follow general flood safety precautions<br>
+                    • Contact local authorities for current conditions
+                `;
+                alertText.innerHTML = 'Current Status: <strong>DATA UNAVAILABLE</strong> - Check local sources';
+            }
+        }
+
+        // Manual refresh function
+        function refreshWaterLevel() {
+            const status = document.querySelector('.level-status');
+            status.textContent = 'Refreshing...';
+            updateWaterLevel();
         }
 
         // Affiliate tracking function
@@ -1019,39 +1130,18 @@
             return false;
         }
 
-        // Checklist functionality
-        document.querySelectorAll('.checklist-items li').forEach(item => {
-            item.addEventListener('click', function() {
-                const checkbox = this.querySelector('.checkbox');
-                checkbox.classList.toggle('checked');
-                if (checkbox.classList.contains('checked')) {
-                    checkbox.textContent = '✓';
-                } else {
-                    checkbox.textContent = '';
-                }
-            });
+        // Generate flood plan functionality
+        function generateFloodPlan() {
+            alert('Generating your personalized flood action plan...\n\nThis will include:\n• Property-specific flood risk assessment\n• Evacuation route planning\n• Equipment recommendations\n• Emergency contact lists\n• Seasonal preparation timeline');
+        }
+
+        // Initialize location detection when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            detectUserLocation();
         });
 
-        // Water level updates (simulated)
-        function updateWaterLevel() {
-            const levels = [
-                { value: '6.2 ft', status: 'Normal', class: 'level-normal', description: 'Water levels are within normal parameters' },
-                { value: '8.7 ft', status: 'Action Stage', class: 'level-watch', description: 'Water levels are rising but within normal parameters' },
-                { value: '12.3 ft', status: 'Flood Warning', class: 'level-warning', description: 'Minor flooding is occurring or imminent' },
-                { value: '16.8 ft', status: 'Emergency', class: 'level-emergency', description: 'Major flooding - evacuate immediately' }
-            ];
-            
-            const randomLevel = levels[Math.floor(Math.random() * levels.length)];
-            
-            const display = document.querySelector('.level-display');
-            const status = document.querySelector('.level-status');
-            const description = document.querySelector('.level-description');
-            
-            display.textContent = randomLevel.value;
-            display.className = 'level-display ' + randomLevel.class;
-            status.textContent = randomLevel.status;
-            description.textContent = 'South Platte River at Denver - ' + randomLevel.description;
-        }
+        // Update every 30 minutes (1800000 milliseconds) - reasonable for water levels
+        setInterval(updateWaterLevel, 1800000);
 
         // Smooth scrolling for navigation
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -1080,12 +1170,9 @@
             });
         }, observerOptions);
 
-        document.querySelectorAll('.equipment-card, .contact-card, .stage-card').forEach(el => {
+        document.querySelectorAll('.equipment-card, .contact-card').forEach(el => {
             observer.observe(el);
         });
-
-        // Update water level every 45 seconds (simulated)
-        setInterval(updateWaterLevel, 45000);
 
         // Emergency contact click to call (on mobile)
         document.querySelectorAll('.contact-number').forEach(number => {
