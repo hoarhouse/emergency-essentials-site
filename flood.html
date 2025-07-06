@@ -569,6 +569,126 @@
         .animate-in {
             animation: fadeIn 0.6s ease forwards;
         }
+        /* Weather Alerts Styling */
+        .weather-alerts {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 40px;
+            margin: 40px 0;
+        }
+
+        .alerts-container {
+            margin: 20px 0;
+            min-height: 100px;
+        }
+
+        .loading-alerts {
+            text-align: center;
+            padding: 40px;
+            color: #CCCCCC;
+        }
+
+        .alert-card {
+            background: #161616;
+            border: 1px solid #444444;
+            border-left: 4px solid;
+            border-radius: 0 8px 8px 0;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .alert-card:hover {
+            background: #242424;
+            border-color: #666666;
+        }
+
+        .alert-card.severe { border-left-color: #FF4444; }
+        .alert-card.moderate { border-left-color: #FFAA44; }
+        .alert-card.minor { border-left-color: #44AAFF; }
+
+        .alert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .alert-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #FFFFFF;
+            flex-grow: 1;
+        }
+
+        .alert-severity {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 12px;
+        }
+
+        .alert-severity.severe {
+            background: rgba(255, 68, 68, 0.1);
+            color: #FF4444;
+            border: 1px solid #FF4444;
+        }
+
+        .alert-severity.moderate {
+            background: rgba(255, 170, 68, 0.1);
+            color: #FFAA44;
+            border: 1px solid #FFAA44;
+        }
+
+        .alert-severity.minor {
+            background: rgba(68, 170, 255, 0.1);
+            color: #44AAFF;
+            border: 1px solid #44AAFF;
+        }
+
+        .alert-meta {
+            font-size: 12px;
+            color: #999999;
+            margin-bottom: 12px;
+        }
+
+        .alert-description {
+            color: #CCCCCC;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .alert-instruction {
+            background: #0f0f0f;
+            border: 1px solid #333333;
+            border-radius: 4px;
+            padding: 12px;
+            font-size: 14px;
+            color: #FFFFFF;
+            font-weight: 500;
+        }
+
+        .no-alerts {
+            text-align: center;
+            padding: 40px;
+            color: #CCCCCC;
+        }
+
+        .no-alerts-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: #44AA44;
+        }
+
+        .alert-count {
+            font-size: 14px;
+            color: #999999;
+            margin-bottom: 12px;
+        }
     </style>
 </head>
 <body>
@@ -642,6 +762,29 @@
                     Please wait while we fetch the latest water level data from USGS.
                 </div>
                 <button class="refresh-btn" onclick="refreshWaterLevel()">Refresh Data</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Flood Weather Alerts -->
+    <section class="section">
+        <div class="container">
+            <div class="weather-alerts">
+                <h2 style="color: #FFFFFF; margin-bottom: 16px; font-weight: 300;">Flood Weather Alerts</h2>
+                
+                <div class="location-controls">
+                    <div class="location-display">Location: <span id="weather-location">Detecting your location...</span></div>
+                    <div class="alert-count">Active Alerts: <span id="alert-count">Loading...</span></div>
+                </div>
+                
+                <div id="alerts-container" class="alerts-container">
+                    <div class="loading-alerts">
+                        <div style="font-size: 18px; margin-bottom: 8px;">Checking for active weather alerts...</div>
+                        <div style="color: #CCCCCC;">Fetching official flood warnings from National Weather Service</div>
+                    </div>
+                </div>
+                
+                <button class="refresh-btn" onclick="refreshWeatherAlerts()">Refresh Alerts</button>
             </div>
         </div>
     </section>
@@ -843,6 +986,7 @@
     updateLocationDisplay('Denver, CO (Default)');
     updateGaugeDisplay(currentGaugeName);
     updateWaterLevel();
+    updateWeatherAlertsLocation();
     return;
 }
 
@@ -874,6 +1018,7 @@
                 
                 // Update water level for detected location
                 updateWaterLevel();
+                updateWeatherAlertsLocation();
                 
             } catch (error) {
     console.log('Location detection failed:', error.message);
@@ -881,6 +1026,7 @@
     updateGaugeDisplay(currentGaugeName);
     updateWaterLevel();
     showRiverSelector();
+    updateWeatherAlertsLocation();
 }
         }
 
@@ -1184,6 +1330,190 @@
                 }
             });
         });
+
+        // Flood Weather Alerts Integration
+        let weatherLatitude = 39.7392; // Default to Denver
+        let weatherLongitude = -104.9903;
+        let weatherLocationName = 'Denver, CO';
+
+        // Get state abbreviation from coordinates
+        async function getStateFromCoords(lat, lon) {
+            try {
+                const response = await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&count=1`);
+                const data = await response.json();
+                
+                if (data.results && data.results.length > 0) {
+                    const result = data.results[0];
+                    const admin1 = result.admin1;
+                    
+                    const stateAbbreviations = {
+                        'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR', 'California': 'CA',
+                        'Colorado': 'CO', 'Connecticut': 'CT', 'Delaware': 'DE', 'Florida': 'FL', 'Georgia': 'GA',
+                        'Hawaii': 'HI', 'Idaho': 'ID', 'Illinois': 'IL', 'Indiana': 'IN', 'Iowa': 'IA',
+                        'Kansas': 'KS', 'Kentucky': 'KY', 'Louisiana': 'LA', 'Maine': 'ME', 'Maryland': 'MD',
+                        'Massachusetts': 'MA', 'Michigan': 'MI', 'Minnesota': 'MN', 'Mississippi': 'MS', 'Missouri': 'MO',
+                        'Montana': 'MT', 'Nebraska': 'NE', 'Nevada': 'NV', 'New Hampshire': 'NH', 'New Jersey': 'NJ',
+                        'New Mexico': 'NM', 'New York': 'NY', 'North Carolina': 'NC', 'North Dakota': 'ND', 'Ohio': 'OH',
+                        'Oklahoma': 'OK', 'Oregon': 'OR', 'Pennsylvania': 'PA', 'Rhode Island': 'RI', 'South Carolina': 'SC',
+                        'South Dakota': 'SD', 'Tennessee': 'TN', 'Texas': 'TX', 'Utah': 'UT', 'Vermont': 'VT',
+                        'Virginia': 'VA', 'Washington': 'WA', 'West Virginia': 'WV', 'Wisconsin': 'WI', 'Wyoming': 'WY'
+                    };
+                    
+                    return stateAbbreviations[admin1] || admin1 || 'CO';
+                }
+                return 'CO';
+            } catch (error) {
+                console.error('Error getting state from coordinates:', error);
+                return 'CO';
+            }
+        }
+
+        // Update weather alerts location when main location changes
+        function updateWeatherAlertsLocation() {
+            weatherLatitude = currentLatitude;
+            weatherLongitude = currentLongitude;
+            weatherLocationName = currentLocationName;
+            document.getElementById('weather-location').textContent = weatherLocationName;
+            updateWeatherAlerts();
+        }
+
+        // Main flood weather alerts function
+        async function updateWeatherAlerts() {
+            try {
+                const state = await getStateFromCoords(weatherLatitude, weatherLongitude);
+                const response = await fetch(`https://api.weather.gov/alerts/active?area=${state}`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch weather alerts');
+                }
+                
+                const data = await response.json();
+                const alerts = data.features || [];
+                
+                // Filter for flood/water related alerts
+                const floodWeatherAlerts = alerts.filter(alert => {
+                    const event = alert.properties.event.toLowerCase();
+                    const description = alert.properties.description.toLowerCase();
+                    
+                    return event.includes('flood') || 
+                           event.includes('flash flood') || 
+                           event.includes('river flood') ||
+                           event.includes('urban flood') ||
+                           event.includes('coastal flood') ||
+                           event.includes('dam') ||
+                           event.includes('levee') ||
+                           event.includes('heavy rain') ||
+                           event.includes('excessive rainfall') ||
+                           description.includes('flood') ||
+                           description.includes('dam failure') ||
+                           description.includes('levee breach');
+                });
+                
+                document.getElementById('alert-count').textContent = floodWeatherAlerts.length;
+                renderWeatherAlerts(floodWeatherAlerts);
+                
+                console.log(`Flood weather alerts updated for ${weatherLocationName}: ${floodWeatherAlerts.length} flood alerts`);
+                
+            } catch (error) {
+                console.error('Error fetching weather alerts:', error);
+                document.getElementById('alert-count').textContent = 'Error';
+                document.getElementById('alerts-container').innerHTML = `
+                    <div class="loading-alerts">
+                        <div style="font-size: 18px; margin-bottom: 8px; color: #FF4444;">Unable to Load Alerts</div>
+                        <div style="color: #CCCCCC;">Could not fetch weather alerts from National Weather Service. Please try refreshing.</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Render flood weather alerts
+        function renderWeatherAlerts(alerts) {
+            const container = document.getElementById('alerts-container');
+            
+            if (alerts.length === 0) {
+                container.innerHTML = `
+                    <div class="no-alerts">
+                        <div class="no-alerts-icon">✅</div>
+                        <div style="font-size: 18px; margin-bottom: 8px; color: #44AA44;">No Flood Weather Alerts</div>
+                        <div>No active flood warnings or watches for your area.</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            let alertsHTML = '';
+            
+            alerts.forEach(alert => {
+                const properties = alert.properties;
+                const severity = getFloodSeverityClass(properties.severity, properties.event);
+                const severityLabel = properties.severity || 'Minor';
+                
+                const startTime = new Date(properties.onset || properties.sent).toLocaleString();
+                const endTime = properties.ends ? new Date(properties.ends).toLocaleString() : 'Until further notice';
+                
+                alertsHTML += `
+                    <div class="alert-card ${severity}">
+                        <div class="alert-header">
+                            <div class="alert-title">${properties.event}</div>
+                            <div class="alert-severity ${severity}">${severityLabel}</div>
+                        </div>
+                        <div class="alert-meta">
+                            <strong>Effective:</strong> ${startTime}<br>
+                            <strong>Expires:</strong> ${endTime}<br>
+                            <strong>Areas:</strong> ${properties.areaDesc}
+                        </div>
+                        <div class="alert-description">
+                            ${properties.description}
+                        </div>
+                        ${properties.instruction ? `
+                            <div class="alert-instruction">
+                                <strong>Recommended Actions:</strong><br>
+                                ${properties.instruction}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = alertsHTML;
+        }
+
+        // Determine severity class for flood alerts
+        function getFloodSeverityClass(severity, event) {
+            const eventLower = event.toLowerCase();
+            
+            if (eventLower.includes('flash flood warning') || 
+                eventLower.includes('flood warning') ||
+                eventLower.includes('dam failure') ||
+                severity === 'Extreme' || 
+                severity === 'Severe') {
+                return 'severe';
+            }
+            
+            if (eventLower.includes('flood watch') || 
+                eventLower.includes('heavy rain') ||
+                eventLower.includes('excessive rainfall') ||
+                severity === 'Moderate') {
+                return 'moderate';
+            }
+            
+            return 'minor';
+        }
+
+        // Manual refresh function
+        function refreshWeatherAlerts() {
+            document.getElementById('alert-count').textContent = 'Loading...';
+            document.getElementById('alerts-container').innerHTML = `
+                <div class="loading-alerts">
+                    <div style="font-size: 18px; margin-bottom: 8px;">Refreshing weather alerts...</div>
+                    <div style="color: #CCCCCC;">Fetching latest data from National Weather Service</div>
+                </div>
+            `;
+            updateWeatherAlerts();
+        }
+
+        // Update weather alerts every 15 minutes
+        setInterval(updateWeatherAlerts, 900000);
     </script>
 </body>
 </html>
