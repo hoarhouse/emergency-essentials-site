@@ -973,10 +973,11 @@
                 updateAirQuality();
                 
             } catch (error) {
-                console.log('Location detection failed:', error.message);
-                updateLocationDisplay('Denver, CO (Default - Location Access Denied)');
-                showCitySelector();
-            }
+    console.log('Location detection failed:', error.message);
+    updateLocationDisplay('Denver, CO (Default - Location Access Denied)');
+    updateAirQuality();
+    showCitySelector();
+}
         }
 
         // Get city name from coordinates
