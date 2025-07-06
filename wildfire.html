@@ -944,10 +944,11 @@
 
         // Auto-detect user location on page load
         async function detectUserLocation() {
-            if (!navigator.geolocation) {
-                console.log('Geolocation not supported');
-                updateLocationDisplay('Denver, CO (Default)');
-                return;
+           if (!navigator.geolocation) {
+    console.log('Geolocation not supported');
+    updateLocationDisplay('Denver, CO (Default)');
+    updateAirQuality();
+    return;
             }
 
             try {
