@@ -1632,6 +1632,9 @@
             }
             
             document.getElementById('score-description').textContent = description;
+            // Update disaster tracking with new location
+            updateDisasterLocation();
+        }
         }
 
         // Manual location enable
@@ -1695,6 +1698,152 @@
         document.addEventListener('DOMContentLoaded', function() {
             detectUserLocation();
         });
+
+        // Initialize location detection when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            detectUserLocation();
+        });
+
+        // NASA EONET Disaster Tracking
+        let disasterLatitude = 39.7392;
+        let disasterLongitude = -104.9903;
+        let disasterLocationName = 'Denver, CO';
+
+        // Update disaster tracking location when main location changes
+        function updateDisasterLocation() {
+            disasterLatitude = currentLatitude;
+            disasterLongitude = currentLongitude;
+            disasterLocationName = currentLocationName;
+            document.getElementById('disaster-location').textContent = disasterLocationName;
+            updateDisasterData();
+        }
+
+        // Main disaster tracking function
+        async function updateDisasterData() {
+            try {
+                const response = await fetch('https://eonet.gsfc.nasa.gov/api/v3/events?limit=100&days=30');
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch disaster data');
+                }
+                
+                const data = await response.json();
+                const events = data.events || [];
+                
+                // Filter events within 500 miles of user location
+                const nearbyDisasters = events.filter(event => {
+                    if (!event.geometry || event.geometry.length === 0) return false;
+                    
+                    const eventCoords = event.geometry[0].coordinates;
+                    const eventLat = eventCoords[1];
+                    const eventLon = eventCoords[0];
+                    
+                    const distance = calculateDistance(disasterLatitude, disasterLongitude, eventLat, eventLon);
+                    return distance <= 500; // Within 500 miles
+                });
+                
+                renderDisasterData(nearbyDisasters);
+                
+                console.log(`Disaster data updated for ${disasterLocationName}: ${nearbyDisasters.length} events found`);
+                
+            } catch (error) {
+                console.error('Error fetching disaster data:', error);
+                document.getElementById('disasters-container').innerHTML = `
+                    <div class="loading-alerts">
+                        <div style="font-size: 18px; margin-bottom: 8px; color: #FF4444;">Unable to Load Disaster Data</div>
+                        <div style="color: #CCCCCC;">Could not fetch data from NASA EONET. Please try refreshing.</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Render disaster data in the UI
+        function renderDisasterData(disasters) {
+            const container = document.getElementById('disasters-container');
+            
+            if (disasters.length === 0) {
+                container.innerHTML = `
+                    <div class="no-alerts">
+                        <div class="no-alerts-icon">✅</div>
+                        <div style="font-size: 18px; margin-bottom: 8px; color: #44AA44;">No Active Disasters Nearby</div>
+                        <div>No major natural disasters detected within 500 miles of your location.</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            let disastersHTML = '';
+            
+            disasters.forEach(disaster => {
+                const category = disaster.categories[0].title;
+                const severity = getDisasterSeverity(category);
+                const distance = getDisasterDistance(disaster);
+                const status = disaster.closed ? 'Resolved' : 'Active';
+                
+                disastersHTML += `
+                    <div class="alert-card ${severity}">
+                        <div class="alert-header">
+                            <div class="alert-title">${disaster.title}</div>
+                            <div class="alert-severity ${severity}">${category}</div>
+                        </div>
+                        <div class="alert-meta">
+                            <strong>Status:</strong> ${status}<br>
+                            <strong>Distance:</strong> ~${distance} miles<br>
+                            <strong>First Detected:</strong> ${new Date(disaster.geometry[0].date).toLocaleDateString()}
+                        </div>
+                        <div class="alert-description">
+                            Category: ${category}
+                            ${disaster.description ? `<br>${disaster.description}` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = disastersHTML;
+        }
+
+        // Determine severity class based on disaster type
+        function getDisasterSeverity(category) {
+            const categoryLower = category.toLowerCase();
+            
+            if (categoryLower.includes('wildfire') || 
+                categoryLower.includes('flood') ||
+                categoryLower.includes('hurricane') ||
+                categoryLower.includes('earthquake')) {
+                return 'severe';
+            }
+            
+            if (categoryLower.includes('storm') ||
+                categoryLower.includes('drought') ||
+                categoryLower.includes('landslide')) {
+                return 'moderate';
+            }
+            
+            return 'minor';
+        }
+
+        // Calculate approximate distance to disaster
+        function getDisasterDistance(disaster) {
+            if (!disaster.geometry || disaster.geometry.length === 0) return 'Unknown';
+            
+            const eventCoords = disaster.geometry[0].coordinates;
+            const eventLat = eventCoords[1];
+            const eventLon = eventCoords[0];
+            
+            const distance = calculateDistance(disasterLatitude, disasterLongitude, eventLat, eventLon);
+            return Math.round(distance);
+        }
+
+        // Manual refresh function
+        function refreshDisasterData() {
+            document.getElementById('disasters-container').innerHTML = `
+                <div class="loading-alerts">
+                    <div style="font-size: 18px; margin-bottom: 8px;">Refreshing disaster data...</div>
+                    <div style="color: #CCCCCC;">Fetching latest data from NASA EONET</div>
+                </div>
+            `;
+            updateDisasterData();
+        }
 
         // Smooth scrolling for navigation
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
