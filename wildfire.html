@@ -1690,6 +1690,99 @@ updateWeatherAlertsLocation();
 
         // Update weather alerts every 15 minutes
         setInterval(updateWeatherAlerts, 900000);
+        // Weather data variables
+let weatherLatitudeData = 39.7392;
+let weatherLongitudeData = -104.9903;
+let weatherLocationNameData = 'Denver, CO';
+
+// Update weather data location when main location changes
+function updateWeatherDataLocation() {
+    weatherLatitudeData = currentLatitude;
+    weatherLongitudeData = currentLongitude;
+    weatherLocationNameData = currentLocationName;
+    
+    const weatherLocationElement = document.getElementById('weather-current-location');
+    if (weatherLocationElement) {
+        weatherLocationElement.textContent = weatherLocationNameData;
+    }
+    
+    updateWeatherData();
+}
+
+// Main weather data function
+async function updateWeatherData() {
+    try {
+        const response = await fetch(`https://api.open-meteo.com/v1/current?latitude=${weatherLatitudeData}&longitude=${weatherLongitudeData}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto`);
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch weather data');
+        }
+        
+        const data = await response.json();
+        const current = data.current;
+        
+        document.getElementById('current-temp').textContent = Math.round(current.temperature_2m);
+        document.getElementById('current-humidity').textContent = Math.round(current.relative_humidity_2m);
+        document.getElementById('current-wind-speed').textContent = Math.round(current.wind_speed_10m);
+        
+        const windDirection = getWindDirection(current.wind_direction_10m);
+        document.getElementById('current-wind-direction').textContent = windDirection;
+        
+        const fireDanger = calculateFireDanger(current.temperature_2m, current.relative_humidity_2m, current.wind_speed_10m);
+        document.getElementById('fire-danger-index').textContent = fireDanger.level;
+        document.getElementById('fire-danger-level').textContent = fireDanger.description;
+        
+        const fireDangerCard = document.querySelector('.fire-danger .weather-value');
+        fireDangerCard.className = 'weather-value fire-danger-' + fireDanger.class;
+        
+    } catch (error) {
+        console.error('Error fetching weather data:', error);
+        document.getElementById('current-temp').textContent = '--';
+        document.getElementById('current-humidity').textContent = '--';
+        document.getElementById('current-wind-speed').textContent = '--';
+        document.getElementById('current-wind-direction').textContent = '--';
+        document.getElementById('fire-danger-index').textContent = 'Error';
+        document.getElementById('fire-danger-level').textContent = 'Data Unavailable';
+    }
+}
+
+function getWindDirection(degrees) {
+    const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+    const index = Math.round(degrees / 22.5) % 16;
+    return directions[index] + ' (' + Math.round(degrees) + '°)';
+}
+
+function calculateFireDanger(temp, humidity, windSpeed) {
+    let score = 0;
+    
+    if (temp >= 90) score += 40;
+    else if (temp >= 80) score += 30;
+    else if (temp >= 70) score += 20;
+    else if (temp >= 60) score += 10;
+    
+    if (humidity <= 15) score += 40;
+    else if (humidity <= 25) score += 30;
+    else if (humidity <= 35) score += 20;
+    else if (humidity <= 50) score += 10;
+    
+    if (windSpeed >= 25) score += 20;
+    else if (windSpeed >= 15) score += 15;
+    else if (windSpeed >= 10) score += 10;
+    else if (windSpeed >= 5) score += 5;
+    
+    if (score >= 80) return { level: 'EXTREME', description: 'Critical Fire Weather', class: 'extreme' };
+    else if (score >= 60) return { level: 'HIGH', description: 'Dangerous Conditions', class: 'high' };
+    else if (score >= 40) return { level: 'MODERATE', description: 'Elevated Risk', class: 'moderate' };
+    else return { level: 'LOW', description: 'Minimal Risk', class: 'low' };
+}
+
+function refreshWeatherData() {
+    document.getElementById('current-temp').textContent = 'Loading...';
+    document.getElementById('fire-danger-index').textContent = 'Calculating...';
+    updateWeatherData();
+}
+
+setInterval(updateWeatherData, 600000);
     </script>
 </body>
 </html>
