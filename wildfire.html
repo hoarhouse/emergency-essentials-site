@@ -1266,17 +1266,22 @@
         // Update location display
        // Update location display
         function updateLocationDisplay(locationName) {
-            document.getElementById('current-location').textContent = locationName;
-            // Also update weather location displays
-            const weatherLocation = document.getElementById('weather-current-location');
-            if (weatherLocation) {
-                weatherLocation.textContent = locationName;
-            }
-            const alertsLocation = document.getElementById('weather-location');
-            if (alertsLocation) {
-                alertsLocation.textContent = locationName;
-            }
-        }
+    // Update all location displays
+    const currentLocation = document.getElementById('current-location');
+    if (currentLocation) {
+        currentLocation.textContent = locationName;
+    }
+    
+    const weatherLocation = document.getElementById('weather-current-location');
+    if (weatherLocation) {
+        weatherLocation.textContent = locationName;
+    }
+    
+    const alertsLocation = document.getElementById('weather-location');
+    if (alertsLocation) {
+        alertsLocation.textContent = locationName;
+    }
+}
 
         // Show city selector
         function showCitySelector() {
