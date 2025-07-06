@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flood Emergency Preparedness - EmergencyEssentials</title>
+    <meta name="description" content="Comprehensive flood preparedness guide with protection strategies, evacuation planning, and professional equipment recommendations.">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000000;
+            color: #FFFFFF;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 100;
+            border-bottom: 1px solid #333333;
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #FFFFFF;
+            letter-spacing: -0.5px;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: #CCCCCC;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover,
+        .nav-link.active {
+            color: #FFFFFF;
+        }
+        
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 120px 0;
+            background: linear-gradient(180deg, #000000 0%, #111111 100%);
+            position: relative;
+        }
+        
+        .flood-warning {
+            display: inline-block;
+            background: rgba(68, 170, 255, 0.1);
+            border: 1px solid #44AAFF;
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: #44AAFF;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .hero h1 {
+            font-size: 72px;
+            font-weight: 300;
+            margin-bottom: 24px;
+            letter-spacing: -2px;
+            line-height: 1.1;
+        }
+        
+        .hero p {
+            font-size: 24px;
+            color: #CCCCCC;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            font-weight: 300;
+        }
+        
+        .flood-alert {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .alert-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #44AAFF;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Section Styling */
+        .section {
+            padding: 100px 0;
+        }
+        
+        .section-title {
+            font-size: 56px;
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: 80px;
+            color: #FFFFFF;
+            letter-spacing: -1px;
+        }
+        
+        /* Flood Stage Timeline */
+        .flood-stages {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 60px;
+            margin: 60px 0;
+        }
+        
+        .stages-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .stages-title {
+            font-size: 36px;
+            font-weight: 300;
+            margin-bottom: 16px;
+            color: #FFFFFF;
+        }
+        
+        .stages-subtitle {
+            color: #CCCCCC;
+            font-size: 18px;
+            font-weight: 300;
+        }
+        
+        .stages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+        }
+        
+        .stage-card {
+            background: #161616;
+            border: 1px solid #444444;
+            border-left: 4px solid;
+            padding: 32px;
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .stage-card:hover {
+            background: #242424;
+            border-color: #666666;
+        }
+        
+        .stage-card.minor { border-left-color: #44AA44; }
+        .stage-card.moderate { border-left-color: #FFDD44; }
+        .stage-card.major { border-left-color: #FFAA44; }
+        .stage-card.record { border-left-color: #FF4444; }
+        
+        .stage-level {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stage-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #FFFFFF;
+        }
+        
+        .stage-description {
+            color: #CCCCCC;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        
+        .stage-actions {
+            background: #111111;
+            border: 1px solid #333333;
+            border-radius: 4px;
+            padding: 12px;
+            font-size: 13px;
+        }
+        
+        .stage-actions strong {
+            color: #FFFFFF;
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        /* Water Level Monitor */
+        .water-level {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 40px;
+            margin: 40px 0;
+            text-align: center;
+        }
+        
+        .level-display {
+            font-size: 64px;
+            font-weight: 300;
+            margin: 20px 0;
+            letter-spacing: -2px;
+        }
+        
+        .level-normal { color: #44AA44; }
+        .level-watch { color: #FFDD44; }
+        .level-warning { color: #FFAA44; }
+        .level-emergency { color: #FF4444; }
+        
+        .level-status {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .level-description {
+            color: #CCCCCC;
+            margin-bottom: 24px;
+        }
+        
+        .level-actions {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: left;
+        }
+        
+        /* Flood Equipment */
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+        
+        .equipment-card {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 40px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .equipment-card:hover {
+            background: #2a2a2a;
+            border-color: #555555;
+            transform: translateY(-2px);
+        }
+        
+        .equipment-priority {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .equipment-priority.critical {
+            background: rgba(68, 170, 255, 0.1);
+            color: #44AAFF;
+            border: 1px solid #44AAFF;
+        }
+        
+        .equipment-priority.important {
+            background: rgba(255, 221, 68, 0.1);
+            color: #FFDD44;
+            border: 1px solid #FFDD44;
+        }
+        
+        .equipment-priority.recommended {
+            background: rgba(68, 170, 68, 0.1);
+            color: #44AA44;
+            border: 1px solid #44AA44;
+        }
+        
+        .equipment-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 24px;
+            stroke: #FFFFFF;
+            stroke-width: 1.5;
+            fill: none;
+        }
+        
+        .equipment-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #FFFFFF;
+        }
+        
+        .equipment-description {
+            color: #CCCCCC;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .equipment-specs {
+            font-size: 12px;
+            color: #999999;
+            background: #161616;
+            padding: 12px;
+            border-radius: 4px;
+            border-left: 2px solid #333333;
+        }
+        
+        .affiliate-link {
+            display: inline-block;
+            margin-top: 16px;
+            background: #FF9900;
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+        
+        .affiliate-link:hover {
+            background: #E68900;
+        }
+        
+        /* Emergency Supplies Checklist */
+        .supplies-checklist {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 60px;
+            margin: 60px 0;
+        }
+        
+        .checklist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+        }
+        
+        .checklist-category {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 8px;
+            padding: 24px;
+        }
+        
+        .category-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .category-icon {
+            width: 20px;
+            height: 20px;
+            stroke: #44AAFF;
+            stroke-width: 2;
+        }
+        
+        .checklist-items {
+            list-style: none;
+        }
+        
+        .checklist-items li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            color: #CCCCCC;
+            font-size: 14px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .checklist-items li:hover {
+            color: #FFFFFF;
+        }
+        
+        .checkbox {
+            width: 16px;
+            height: 16px;
+            border: 1px solid #666666;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .checkbox.checked {
+            background: #44AAFF;
+            border-color: #44AAFF;
+            color: #FFFFFF;
+        }
+        
+        /* Emergency Contacts */
+        .emergency-contacts {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 60px;
+            margin: 60px 0;
+        }
+        
+        .contacts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        
+        .contact-card {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 8px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-card:hover {
+            background: #242424;
+            border-color: #666666;
+        }
+        
+        .contact-type {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #999999;
+            margin-bottom: 8px;
+        }
+        
+        .contact-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #FFFFFF;
+        }
+        
+        .contact-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 8px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .contact-description {
+            font-size: 14px;
+            color: #CCCCCC;
+            line-height: 1.5;
+        }
+        
+        /* Warning Callouts */
+        .warning-box {
+            background: rgba(255, 170, 68, 0.1);
+            border: 1px solid #FFAA44;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+        
+        .warning-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .warning-icon {
+            width: 20px;
+            height: 20px;
+            stroke: #FFAA44;
+            stroke-width: 2;
+        }
+        
+        .warning-title {
+            font-weight: 600;
+            color: #FFAA44;
+        }
+        
+        .warning-text {
+            color: #CCCCCC;
+            line-height: 1.6;
+        }
+        
+        /* Call to Action */
+        .cta-section {
+            background: #FFFFFF;
+            color: #000000;
+            text-align: center;
+            padding: 80px 40px;
+            border-radius: 8px;
+            margin: 80px 0;
+        }
+        
+        .cta-title {
+            font-size: 48px;
+            font-weight: 300;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+        
+        .cta-subtitle {
+            font-size: 20px;
+            margin-bottom: 32px;
+            color: #666666;
+            font-weight: 300;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .cta-button {
+            background: #000000;
+            color: #FFFFFF;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .cta-button:hover {
+            background: #333333;
+        }
+        
+        .cta-button.secondary {
+            background: transparent;
+            color: #000000;
+            border: 1px solid #000000;
+        }
+        
+        .cta-button.secondary:hover {
+            background: #000000;
+            color: #FFFFFF;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 48px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .section-title {
+                font-size: 36px;
+            }
+            
+            .stages-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .cta-title {
+                font-size: 32px;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="index.html" class="logo">EmergencyEssentials</a>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">All Emergencies</a>
+                    <a href="wildfire.html" class="nav-link">Wildfire</a>
+                    <a href="flood.html" class="nav-link active">Flood</a>
+                    <a href="#" class="nav-link">Power Outage</a>
+                    <a href="#" class="nav-link">Earthquake</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="flood-warning">💧 Flood Watch Active</div>
+            <h1>Flood Preparedness</h1>
+            <p>Comprehensive flood defense and evacuation strategies for high-risk areas</p>
+            <div class="flood-alert">
+                <div class="alert-indicator"></div>
+                <span>Current Status: <strong>FLOOD WATCH</strong> - South Platte River Basin</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Flood Stage Awareness -->
+    <section class="section">
+        <div class="container">
+            <div class="flood-stages">
+                <div class="stages-header">
+                    <h2 class="stages-title">Flood Stage Classifications</h2>
+                    <p class="stages-subtitle">Understanding flood severity levels and appropriate response actions</p>
+                </div>
+                <div class="stages-grid">
+                    <div class="stage-card minor">
+                        <div class="stage-level" style="color: #44AA44;">Minor Flooding</div>
+                        <h3 class="stage-title">Action Stage</h3>
+                        <div class="stage-description">
+                            Minimal or no property damage, but possibly some public threat or inconvenience. Some overbank flooding of low-lying areas.
+                        </div>
+                        <div class="stage-actions">
+                            <strong>Actions:</strong>
+                            Monitor conditions, prepare supplies, avoid flooded roads
+                        </div>
+                    </div>
+                    
+                    <div class="stage-card moderate">
+                        <div class="stage-level" style="color: #FFDD44;">Moderate Flooding</div>
+                        <h3 class="stage-title">Minor Flood Stage</h3>
+                        <div class="stage-description">
+                            Some inundation of structures and roads near streams. Evacuations of people and transfer of property to higher elevations may be necessary.
+                        </div>
+                        <div class="stage-actions">
+                            <strong>Actions:</strong>
+                            Prepare to evacuate, move valuables to higher floors, secure property
+                        </div>
+                    </div>
+                    
+                    <div class="stage-card major">
+                        <div class="stage-level" style="color: #FFAA44;">Major Flooding</div>
+                        <h3 class="stage-title">Moderate Flood Stage</h3>
+                        <div class="stage-description">
+                            Extensive inundation and property damage. Large-scale evacuations and emergency services response required.
+                        </div>
+                        <div class="stage-actions">
+                            <strong>Actions:</strong>
+                            Evacuate immediately if ordered, avoid all flooded areas, emergency shelter
+                        </div>
+                    </div>
+                    
+                    <div class="stage-card record">
+                        <div class="stage-level" style="color: #FF4444;">Record Flooding</div>
+                        <h3 class="stage-title">Major Flood Stage</h3>
+                        <div class="stage-description">
+                            Rare flooding with significant threat to life and property. Catastrophic damage expected. Emergency response fully activated.
+                        </div>
+                        <div class="stage-actions">
+                            <strong>Actions:</strong>
+                            Follow all evacuation orders, seek highest ground, emergency services only
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Water Level Monitor -->
+    <section class="section">
+        <div class="container">
+            <div class="water-level">
+                <h2 style="color: #FFFFFF; margin-bottom: 16px; font-weight: 300;">Current Water Level</h2>
+                <div class="level-display level-watch">8.7 ft</div>
+                <div class="level-status">Action Stage</div>
+                <p class="level-description">South Platte River at Denver - Water levels are rising but within normal parameters</p>
+                <div class="level-actions">
+                    <strong>Current Recommendations:</strong><br>
+                    • Monitor conditions closely<br>
+                    • Avoid recreational activities near waterways<br>
+                    • Prepare emergency supplies<br>
+                    • Stay informed through official channels
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Flood-Specific Equipment -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Flood Defense Equipment</h2>
+            <div class="equipment-grid">
+                <div class="equipment-card">
+                    <div class="equipment-priority critical">Critical</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0V8.625a1.125 1.125 0 011.125-1.125h4.5V7.5a.75.75 0 011.5 0v10.5a1.5 1.5 0 01-3 0V13.5a.75.75 0 00-1.5 0v5.25z"/>
+                    </svg>
+                    <h3 class="equipment-title">Waterproof Emergency Kit</h3>
+                    <p class="equipment-description">Sealed, floating emergency bag containing 72-hour supplies. Essential for rapid evacuation scenarios when traditional storage may be compromised.</p>
+                    <div class="equipment-specs">
+                        Specification: IPX8 waterproof rating, 30L capacity, high-visibility orange, reflective strips
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('waterproof-kit', 'amazon')">View on Amazon - $89.99</a>
+                </div>
+
+                <div class="equipment-card">
+                    <div class="equipment-priority critical">Critical</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0V8.625a1.125 1.125 0 011.125-1.125h4.5V7.5a.75.75 0 011.5 0v10.5a1.5 1.5 0 01-3 0V13.5a.75.75 0 00-1.5 0v5.25z"/>
+                    </svg>
+                    <h3 class="equipment-title">Water-Powered Sump Pump</h3>
+                    <p class="equipment-description">Emergency backup sump pump powered by water pressure. Operates when electricity fails, critical for basement flooding prevention.</p>
+                    <div class="equipment-specs">
+                        Specification: 1,000+ GPH capacity, no electricity required, connects to garden hose
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('sump-pump', 'homedepot')">View at Home Depot - $149.99</a>
+                </div>
+
+                <div class="equipment-card">
+                    <div class="equipment-priority critical">Critical</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0V8.625a1.125 1.125 0 011.125-1.125h4.5V7.5a.75.75 0 011.5 0v10.5a1.5 1.5 0 01-3 0V13.5a.75.75 0 00-1.5 0v5.25z"/>
+                    </svg>
+                    <h3 class="equipment-title">Emergency Sandbags</h3>
+                    <p class="equipment-description">Pre-filled sandbags for rapid flood barrier construction. Essential for protecting property entrances and directing water flow.</p>
+                    <div class="equipment-specs">
+                        Specification: 50lb bags, UV-resistant polypropylene, interlocking design for stability
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('sandbags', 'homedepot')">View at Home Depot - $4.99 each</a>
+                </div>
+
+                <div class="equipment-card">
+                    <div class="equipment-priority important">Important</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0V8.625a1.125 1.125 0 011.125-1.125h4.5V7.5a.75.75 0 011.5 0v10.5a1.5 1.5 0 01-3 0V13.5a.75.75 0 00-1.5 0v5.25z"/>
+                    </svg>
+                    <h3 class="equipment-title">Inflatable Flood Barriers</h3>
+                    <p class="equipment-description">Rapid-deployment flood barriers that inflate with water. Reusable alternative to sandbags for doorway and garage protection.</p>
+                    <div class="equipment-specs">
+                        Specification: 10-foot sections, 12-inch height, PVC construction, quick-connect system
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('flood-barriers', 'amazon')">View on Amazon - $199.99</a>
+                </div>
+
+                <div class="equipment-card">
+                    <div class="equipment-priority important">Important</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0V8.625a1.125 1.125 0 011.125-1.125h4.5V7.5a.75.75 0 011.5 0v10.5a1.5 1.5 0 01-3 0V13.5a.75.75 0 00-1.5 0v5.25z"/>
+                    </svg>
+                    <h3 class="equipment-title">Emergency Life Vest</h3>
+                    <p class="equipment-description">Coast Guard approved personal flotation devices for each family member. Essential for evacuation through flooded areas.</p>
+                    <div class="equipment-specs">
+                        Specification: Type III PFD, 90+ lbs buoyancy, reflective tape, whistle included
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('life-vest', 'amazon')">View on Amazon - $29.99</a>
+                </div>
+
+                <div class="equipment-card">
+                    <div class="equipment-priority recommended">Recommended</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0V8.625a1.125 1.125 0 011.125-1.125h4.5V7.5a.75.75 0 011.5 0v10.5a1.5 1.5 0 01-3 0V13.5a.75.75 0 00-1.5 0v5.25z"/>
+                    </svg>
+                    <h3 class="equipment-title">Portable Emergency Radio</h3>
+                    <p class="equipment-description">Hand-crank weather radio with NOAA alerts. Essential for flood warnings and evacuation orders when power is out.</p>
+                    <div class="equipment-specs">
+                        Specification: NOAA weather band, solar/hand-crank power, LED flashlight, USB charging
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('emergency-radio', 'amazon')">View on Amazon - $39.99</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency Supplies Checklist -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Flood Emergency Supplies</h2>
+            <div class="supplies-checklist">
+                <div class="checklist-grid">
+                    <div class="checklist-category">
+                        <h3 class="category-title">
+                            <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0V8.625a1.125 1.125 0 011.125-1.125h4.5V7.5a.75.75 0 011.5 0v10.5a1.5 1.5 0 01-3 0V13.5a.75.75 0 00-1.5 0v5.25z"/>
+                            </svg>
+                            Water & Safety
+                        </h3>
+                        <ul class="checklist-items">
+                            <li><span class="checkbox checked">✓</span>1 gallon water per person per day (3+ days)</li>
+                            <li><span class="checkbox"></span>Water purification tablets</li>
+                            <li><span class="checkbox"></span>Life jackets for each family member</li>
+                            <li><span class="checkbox"></span>Waterproof flashlights</li>
+                            <li><span class="checkbox"></span>Battery-powered radio</li>
+                            <li><span class="checkbox"></span>Emergency whistle</li>
+                        </ul>
+                    </div>
+
+                    <div class="checklist-category">
+                        <h3 class="category-title">
+                            <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0V8.625a1.125 1.125 0 011.125-1.125h4.5V7.5a.75.75 0 011.5 0v10.5a1.5 1.5 0 01-3 0V13.5a.75.75 0 00-1.5 0v5.25z"/>
+                            </svg>
+                            Food & Shelter
+                        </h3>
+                        <ul class="checklist-items">
+                            <li><span class="checkbox"></span>Non-perishable food (3+ days)</li>
+                            <li><span class="checkbox"></span>Manual can opener</li>
+                            <li><span class="checkbox"></span>Waterproof matches</li>
+                            <li><span class="checkbox"></span>Emergency blankets</li>
+                            <li><span class="checkbox"></span>Plastic sheeting and duct tape</li>
+                            <li><span class="checkbox"></span>Waterproof sleeping bags</li>
+                        </ul>
+                    </div>
+
+                    <div class="checklist-category">
+                        <h3 class="category-title">
+                            <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0V8.625a1.125 1.125 0 011.125-1.125h4.5V7.5a.75.75 0 011.5 0v10.5a1.5 1.5 0 01-3 0V13.5a.75.75 0 00-1.5 0v5.25z"/>
+                            </svg>
+                            Documents & Tools
+                        </h3>
+                        <ul class="checklist-items">
+                            <li><span class="checkbox"></span>Important documents (waterproof container)</li>
+                            <li><span class="checkbox"></span>Emergency contact list</li>
+                            <li><span class="checkbox"></span>Cash in small bills</li>
+                            <li><span class="checkbox"></span>Multi-tool or knife</li>
+                            <li><span class="checkbox"></span>Work gloves</li>
+                            <li><span class="checkbox"></span>Emergency rope (50+ feet)</li>
+                        </ul>
+                    </div>
+
+                    <div class="checklist-category">
+                        <h3 class="category-title">
+                            <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0V8.625a1.125 1.125 0 011.125-1.125h4.5V7.5a.75.75 0 011.5 0v10.5a1.5 1.5 0 01-3 0V13.5a.75.75 0 00-1.5 0v5.25z"/>
+                            </svg>
+                            Medical & Hygiene
+                        </h3>
+                        <ul class="checklist-items">
+                            <li><span class="checkbox"></span>First aid kit (waterproof)</li>
+                            <li><span class="checkbox"></span>Prescription medications</li>
+                            <li><span class="checkbox"></span>Personal hygiene items</li>
+                            <li><span class="checkbox"></span>Hand sanitizer</li>
+                            <li><span class="checkbox"></span>Disinfectant wipes</li>
+                            <li><span class="checkbox"></span>Plastic bags for waste</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="warning-box">
+        <div class="warning-header">
+            <svg class="warning-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+            </svg>
+            <div class="warning-title">Critical Safety Warning</div>
+        </div>
+        <div class="warning-text">
+            Never attempt to drive through flooded roads. Just 6 inches of moving water can knock you down, and 12 inches can carry away a vehicle. Turn around, don't drown. Find an alternate route or wait for waters to recede.
+        </div>
+    </div>
+
+    <!-- Emergency Contacts -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Critical Emergency Contacts</h2>
+            <div class="emergency-contacts">
+                <div class="contacts-grid">
+                    <div class="contact-card">
+                        <div class="contact-type">Emergency Services</div>
+                        <div class="contact-name">Emergency Dispatch</div>
+                        <div class="contact-number">911</div>
+                        <div class="contact-description">For immediate life-threatening emergencies and swift water rescue</div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-type">Flood Information</div>
+                        <div class="contact-name">National Weather Service</div>
+                        <div class="contact-number">(303) 494-3210</div>
+                        <div class="contact-description">Denver office for current flood warnings and weather conditions</div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-type">Evacuation Info</div>
+                        <div class="contact-name">Denver Emergency Management</div>
+                        <div class="contact-number">(720) 913-1311</div>
+                        <div class="contact-description">Evacuation orders, shelter locations, and emergency information</div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-type">Utilities Emergency</div>
+                        <div class="contact-name">Xcel Energy</div>
+                        <div class="contact-number">(800) 895-1999</div>
+                        <div class="contact-description">Report downed power lines and electrical emergencies</div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-type">Red Cross Shelter</div>
+                        <div class="contact-name">American Red Cross</div>
+                        <div class="contact-number">(303) 722-7474</div>
+                        <div class="contact-description">Emergency shelter locations and disaster relief services</div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-type">Road Conditions</div>
+                        <div class="contact-name">CDOT Road Info</div>
+                        <div class="contact-number">511</div>
+                        <div class="contact-description">Current road closures and conditions throughout Colorado</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="section">
+        <div class="container">
+            <div class="cta-section">
+                <h2 class="cta-title">Create Your Flood Action Plan</h2>
+                <p class="cta-subtitle">Generate a customized flood preparedness plan based on your location and flood zone</p>
+                <div class="cta-buttons">
+                    <button class="cta-button" onclick="generateFloodPlan()">Generate Plan</button>
+                    <a href="#" class="cta-button secondary">Download Checklist</a>
+                    <a href="#" class="cta-button secondary">Find Flood Zone</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Generate flood plan functionality
+        function generateFloodPlan() {
+            alert('Generating your personalized flood action plan...\n\nThis will include:\n• Property-specific flood risk assessment\n• Evacuation route planning\n• Equipment recommendations\n• Emergency contact lists\n• Seasonal preparation timeline');
+        }
+
+        // Affiliate tracking function
+        function trackAffiliate(productId, retailer) {
+            console.log(`Affiliate click tracked: ${productId} -> ${retailer}`);
+            alert(`Redirecting to ${retailer} for ${productId}...\n\nIn production, this would:\n• Track the affiliate click\n• Redirect to the actual product page\n• Earn commission if purchase is made`);
+            return false;
+        }
+
+        // Checklist functionality
+        document.querySelectorAll('.checklist-items li').forEach(item => {
+            item.addEventListener('click', function() {
+                const checkbox = this.querySelector('.checkbox');
+                checkbox.classList.toggle('checked');
+                if (checkbox.classList.contains('checked')) {
+                    checkbox.textContent = '✓';
+                } else {
+                    checkbox.textContent = '';
+                }
+            });
+        });
+
+        // Water level updates (simulated)
+        function updateWaterLevel() {
+            const levels = [
+                { value: '6.2 ft', status: 'Normal', class: 'level-normal', description: 'Water levels are within normal parameters' },
+                { value: '8.7 ft', status: 'Action Stage', class: 'level-watch', description: 'Water levels are rising but within normal parameters' },
+                { value: '12.3 ft', status: 'Flood Warning', class: 'level-warning', description: 'Minor flooding is occurring or imminent' },
+                { value: '16.8 ft', status: 'Emergency', class: 'level-emergency', description: 'Major flooding - evacuate immediately' }
+            ];
+            
+            const randomLevel = levels[Math.floor(Math.random() * levels.length)];
+            
+            const display = document.querySelector('.level-display');
+            const status = document.querySelector('.level-status');
+            const description = document.querySelector('.level-description');
+            
+            display.textContent = randomLevel.value;
+            display.className = 'level-display ' + randomLevel.class;
+            status.textContent = randomLevel.status;
+            description.textContent = 'South Platte River at Denver - ' + randomLevel.description;
+        }
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.equipment-card, .contact-card, .stage-card').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Update water level every 45 seconds (simulated)
+        setInterval(updateWaterLevel, 45000);
+
+        // Emergency contact click to call (on mobile)
+        document.querySelectorAll('.contact-number').forEach(number => {
+            number.addEventListener('click', function() {
+                if (/Mobi|Android/i.test(navigator.userAgent)) {
+                    window.location.href = 'tel:' + this.textContent.replace(/\D/g, '');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
