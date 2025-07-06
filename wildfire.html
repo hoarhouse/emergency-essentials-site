@@ -1502,6 +1502,12 @@ updateWeatherAlertsLocation();
         let weatherLongitude = -104.9903;
         let weatherLocationName = 'Denver, CO';
 
+        // Initialize location detection when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    detectUserLocation();
+    updateWeatherData(); // Initialize weather data
+});
+
         // Get state abbreviation from coordinates
         async function getStateFromCoords(lat, lon) {
             try {
