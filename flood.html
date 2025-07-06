@@ -839,11 +839,12 @@
         // Auto-detect user location on page load
         async function detectUserLocation() {
             if (!navigator.geolocation) {
-                console.log('Geolocation not supported');
-                updateLocationDisplay('Denver, CO (Default)');
-                updateGaugeDisplay(currentGaugeName);
-                return;
-            }
+    console.log('Geolocation not supported');
+    updateLocationDisplay('Denver, CO (Default)');
+    updateGaugeDisplay(currentGaugeName);
+    updateWaterLevel();
+    return;
+}
 
             try {
                 const position = await new Promise((resolve, reject) => {
@@ -875,11 +876,12 @@
                 updateWaterLevel();
                 
             } catch (error) {
-                console.log('Location detection failed:', error.message);
-                updateLocationDisplay('Denver, CO (Default - Location Access Denied)');
-                updateGaugeDisplay(currentGaugeName);
-                showRiverSelector();
-            }
+    console.log('Location detection failed:', error.message);
+    updateLocationDisplay('Denver, CO (Default - Location Access Denied)');
+    updateGaugeDisplay(currentGaugeName);
+    updateWaterLevel();
+    showRiverSelector();
+}
         }
 
         // Find nearest USGS gauge station
