@@ -1621,7 +1621,7 @@
             // Create map with scroll zoom disabled by default (option #1)
             fireMap = L.map('fire-map', {
                 center: [currentLatitude, currentLongitude],
-                zoom: 5, // Zoomed out more to show wider area
+                zoom: 4, // Zoomed out even more to show continental view
                 scrollWheelZoom: false,  // Disabled by default
                 dragging: true,
                 touchZoom: true,
@@ -1803,7 +1803,7 @@
                     event.categories.some(cat => cat.title.toLowerCase().includes('wildfire'))
                 );
                 
-                // Filter by proximity (within 1000 miles for map display) and add distance
+                // Filter by proximity (within 2000 miles for map display) and add distance
                 const nearbyWildfires = wildfires.filter(fire => {
                     if (!fire.geometry || fire.geometry.length === 0) return false;
                     
@@ -1814,7 +1814,7 @@
                         fire.distance = distance;
                         fire.latitude = fireLat;
                         fire.longitude = fireLon;
-                        return distance <= 1000; // Within 1000 miles for compelling display
+                        return distance <= 2000; // Within 2000 miles for maximum visual impact
                     }
                     return false;
                 });
@@ -1832,19 +1832,19 @@
                 if (nearbyWildfires.length === 0) {
                     document.getElementById('wildfires-status').textContent = 'No Active Fires';
                     document.getElementById('wildfires-status').className = 'data-status status-normal';
-                    document.getElementById('wildfires-detail').textContent = 'No active wildfires within 1000 miles';
-                } else if (nearbyWildfires.length < 5) {
+                    document.getElementById('wildfires-detail').textContent = 'No active wildfires within 2000 miles';
+                } else if (nearbyWildfires.length < 10) {
                     document.getElementById('wildfires-status').textContent = 'Monitor Conditions';
                     document.getElementById('wildfires-status').className = 'data-status status-watch';
-                    document.getElementById('wildfires-detail').textContent = `${nearbyWildfires.length} active fire${nearbyWildfires.length > 1 ? 's' : ''} within 1000 miles`;
-                } else if (nearbyWildfires.length < 15) {
+                    document.getElementById('wildfires-detail').textContent = `${nearbyWildfires.length} active fire${nearbyWildfires.length > 1 ? 's' : ''} within 2000 miles`;
+                } else if (nearbyWildfires.length < 25) {
                     document.getElementById('wildfires-status').textContent = 'Regional Activity';
                     document.getElementById('wildfires-status').className = 'data-status status-watch';
-                    document.getElementById('wildfires-detail').textContent = `${nearbyWildfires.length} active fires detected across region`;
+                    document.getElementById('wildfires-detail').textContent = `${nearbyWildfires.length} active fires detected across continent`;
                 } else {
                     document.getElementById('wildfires-status').textContent = 'High Activity';
                     document.getElementById('wildfires-status').className = 'data-status status-warning';
-                    document.getElementById('wildfires-detail').textContent = `${nearbyWildfires.length} active fires detected nationwide`;
+                    document.getElementById('wildfires-detail').textContent = `${nearbyWildfires.length} active fires detected continent-wide`;
                 }
                 
                 // Update map and list
@@ -1924,7 +1924,7 @@
                     <div class="no-fires">
                         <div class="no-fires-icon">✅</div>
                         <div style="font-size: 18px; margin-bottom: 8px; color: #44AA44;">No Active Fires Nearby</div>
-                        <div>No active wildfires detected within 1000 miles of your location.</div>
+                        <div>No active wildfires detected within 2000 miles of your location.</div>
                     </div>
                 `;
                 return;
