@@ -1271,7 +1271,8 @@
         }
         
         // Update threat dashboard with live data
-        async function updateThreatDashboard() {
+        function updateThreatDashboard() {
+            console.log('Updating threat dashboard...');
             try {
                 // Simulate threat assessment data
                 const threatData = {
@@ -1281,49 +1282,58 @@
                     soilSaturation: Math.floor(Math.random() * 100)
                 };
                 
-                document.getElementById('active-warnings-count').textContent = threatData.activeWarnings;
-                document.getElementById('rainfall-24h').textContent = threatData.rainfall24h;
-                document.getElementById('stream-flow-trend').textContent = threatData.streamFlow;
-                document.getElementById('soil-saturation').textContent = threatData.soilSaturation + '%';
+                const warningsEl = document.getElementById('active-warnings-count');
+                const rainfallEl = document.getElementById('rainfall-24h');
+                const flowEl = document.getElementById('stream-flow-trend');
+                const soilEl = document.getElementById('soil-saturation');
+                
+                if (warningsEl) warningsEl.textContent = threatData.activeWarnings;
+                if (rainfallEl) rainfallEl.textContent = threatData.rainfall24h;
+                if (flowEl) flowEl.textContent = threatData.streamFlow;
+                if (soilEl) soilEl.textContent = threatData.soilSaturation + '%';
                 
                 // Update colors based on values
-                const warningsElement = document.getElementById('active-warnings-count');
-                if (threatData.activeWarnings > 2) {
-                    warningsElement.style.color = '#FF4444';
-                } else if (threatData.activeWarnings > 0) {
-                    warningsElement.style.color = '#FFAA44';
-                } else {
-                    warningsElement.style.color = '#44AA44';
+                if (warningsEl) {
+                    if (threatData.activeWarnings > 2) {
+                        warningsEl.style.color = '#FF4444';
+                    } else if (threatData.activeWarnings > 0) {
+                        warningsEl.style.color = '#FFAA44';
+                    } else {
+                        warningsEl.style.color = '#44AA44';
+                    }
                 }
                 
-                const rainfallElement = document.getElementById('rainfall-24h');
-                if (parseFloat(threatData.rainfall24h) > 1.5) {
-                    rainfallElement.style.color = '#FF4444';
-                } else if (parseFloat(threatData.rainfall24h) > 0.8) {
-                    rainfallElement.style.color = '#FFAA44';
-                } else {
-                    rainfallElement.style.color = '#44AAFF';
+                if (rainfallEl) {
+                    if (parseFloat(threatData.rainfall24h) > 1.5) {
+                        rainfallEl.style.color = '#FF4444';
+                    } else if (parseFloat(threatData.rainfall24h) > 0.8) {
+                        rainfallEl.style.color = '#FFAA44';
+                    } else {
+                        rainfallEl.style.color = '#44AAFF';
+                    }
                 }
                 
-                const flowElement = document.getElementById('stream-flow-trend');
-                if (threatData.streamFlow === 'Rising') {
-                    flowElement.style.color = '#FF4444';
-                } else if (threatData.streamFlow === 'Falling') {
-                    flowElement.style.color = '#44AA44';
-                } else {
-                    flowElement.style.color = '#FFDD44';
+                if (flowEl) {
+                    if (threatData.streamFlow === 'Rising') {
+                        flowEl.style.color = '#FF4444';
+                    } else if (threatData.streamFlow === 'Falling') {
+                        flowEl.style.color = '#44AA44';
+                    } else {
+                        flowEl.style.color = '#FFDD44';
+                    }
                 }
                 
-                const soilElement = document.getElementById('soil-saturation');
-                if (threatData.soilSaturation > 80) {
-                    soilElement.style.color = '#FF4444';
-                } else if (threatData.soilSaturation > 60) {
-                    soilElement.style.color = '#FFAA44';
-                } else {
-                    soilElement.style.color = '#44AA44';
+                if (soilEl) {
+                    if (threatData.soilSaturation > 80) {
+                        soilEl.style.color = '#FF4444';
+                    } else if (threatData.soilSaturation > 60) {
+                        soilEl.style.color = '#FFAA44';
+                    } else {
+                        soilEl.style.color = '#44AA44';
+                    }
                 }
                 
-                console.log('Threat dashboard updated', threatData);
+                console.log('Threat dashboard updated successfully', threatData);
                 
             } catch (error) {
                 console.error('Error updating threat dashboard:', error);
@@ -1332,148 +1342,194 @@
         
         // Update incident feed with simulated data
         function updateIncidentFeed() {
-            const incidents = [
-                { type: 'Road Closure', location: 'I-25 South at Exit 201', time: '2 min ago', severity: 'high' },
-                { type: 'Water Rescue', location: 'Clear Creek Trail', time: '8 min ago', severity: 'critical' },
-                { type: 'Evacuation', location: 'Riverside Mobile Home Park', time: '15 min ago', severity: 'critical' },
-                { type: 'Road Closure', location: 'US-36 between Boulder-Denver', time: '23 min ago', severity: 'moderate' },
-                { type: 'Flash Flood', location: 'Cherry Creek near downtown', time: '31 min ago', severity: 'high' },
-                { type: 'Stranded Vehicle', location: 'Federal Blvd & 6th Ave', time: '44 min ago', severity: 'moderate' }
-            ];
-            
-            let incidentHTML = '';
-            incidents.forEach(incident => {
-                const severityColor = incident.severity === 'critical' ? '#FF4444' : 
-                                    incident.severity === 'high' ? '#FFAA44' : '#44AAFF';
+            console.log('Updating incident feed...');
+            try {
+                const incidents = [
+                    { type: 'Road Closure', location: 'I-25 South at Exit 201', time: '2 min ago', severity: 'high' },
+                    { type: 'Water Rescue', location: 'Clear Creek Trail', time: '8 min ago', severity: 'critical' },
+                    { type: 'Evacuation', location: 'Riverside Mobile Home Park', time: '15 min ago', severity: 'critical' },
+                    { type: 'Road Closure', location: 'US-36 between Boulder-Denver', time: '23 min ago', severity: 'moderate' },
+                    { type: 'Flash Flood', location: 'Cherry Creek near downtown', time: '31 min ago', severity: 'high' },
+                    { type: 'Stranded Vehicle', location: 'Federal Blvd & 6th Ave', time: '44 min ago', severity: 'moderate' }
+                ];
                 
-                incidentHTML += `
-                    <div style="border-left: 3px solid ${severityColor}; padding: 12px; margin-bottom: 12px; background: #0f0f0f; border-radius: 0 4px 4px 0;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
-                            <strong style="color: #FFFFFF;">${incident.type}</strong>
-                            <span style="color: #999999; font-size: 12px;">${incident.time}</span>
+                let incidentHTML = '';
+                incidents.forEach(incident => {
+                    const severityColor = incident.severity === 'critical' ? '#FF4444' : 
+                                        incident.severity === 'high' ? '#FFAA44' : '#44AAFF';
+                    
+                    incidentHTML += `
+                        <div style="border-left: 3px solid ${severityColor}; padding: 12px; margin-bottom: 12px; background: #0f0f0f; border-radius: 0 4px 4px 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                                <strong style="color: #FFFFFF;">${incident.type}</strong>
+                                <span style="color: #999999; font-size: 12px;">${incident.time}</span>
+                            </div>
+                            <div style="color: #CCCCCC; font-size: 14px;">${incident.location}</div>
                         </div>
-                        <div style="color: #CCCCCC; font-size: 14px;">${incident.location}</div>
-                    </div>
-                `;
-            });
-            
-            document.getElementById('incident-feed').innerHTML = incidentHTML;
-            
-            // Update summary counts
-            document.getElementById('road-closures-count').textContent = incidents.filter(i => i.type === 'Road Closure').length;
-            document.getElementById('active-rescues').textContent = incidents.filter(i => i.type === 'Water Rescue').length;
-            document.getElementById('evacuation-orders').textContent = incidents.filter(i => i.type === 'Evacuation').length;
+                    `;
+                });
+                
+                const feedEl = document.getElementById('incident-feed');
+                if (feedEl) {
+                    feedEl.innerHTML = incidentHTML;
+                }
+                
+                // Update summary counts
+                const roadClosuresEl = document.getElementById('road-closures-count');
+                const rescuesEl = document.getElementById('active-rescues');
+                const evacuationsEl = document.getElementById('evacuation-orders');
+                
+                if (roadClosuresEl) roadClosuresEl.textContent = incidents.filter(i => i.type === 'Road Closure').length;
+                if (rescuesEl) rescuesEl.textContent = incidents.filter(i => i.type === 'Water Rescue').length;
+                if (evacuationsEl) evacuationsEl.textContent = incidents.filter(i => i.type === 'Evacuation').length;
+                
+                console.log('Incident feed updated successfully');
+                
+            } catch (error) {
+                console.error('Error updating incident feed:', error);
+            }
         }
         
         // Update precipitation forecast
         function updatePrecipitationForecast() {
-            // Simulate hourly precipitation data
-            const hours = [];
-            const now = new Date();
-            for (let i = 0; i < 48; i++) {
-                const time = new Date(now.getTime() + i * 60 * 60 * 1000);
-                const precipitation = Math.max(0, Math.random() * 0.5 - 0.1);
-                hours.push({
-                    time: time.toLocaleTimeString('en-US', { hour: 'numeric' }),
-                    precipitation: precipitation.toFixed(2),
-                    day: i < 24 ? 'Today' : 'Tomorrow'
-                });
-            }
-            
-            // Build hourly cards (show first 24 hours)
-            let hourlyHTML = '';
-            for (let i = 0; i < 24; i += 3) { // Show every 3rd hour
-                const hour = hours[i];
-                const intensity = parseFloat(hour.precipitation);
-                const intensityColor = intensity > 0.2 ? '#FF4444' : intensity > 0.1 ? '#FFAA44' : '#44AAFF';
+            console.log('Updating precipitation forecast...');
+            try {
+                // Simulate hourly precipitation data
+                const hours = [];
+                const now = new Date();
+                for (let i = 0; i < 48; i++) {
+                    const time = new Date(now.getTime() + i * 60 * 60 * 1000);
+                    const precipitation = Math.max(0, Math.random() * 0.5 - 0.1);
+                    hours.push({
+                        time: time.toLocaleTimeString('en-US', { hour: 'numeric' }),
+                        precipitation: precipitation.toFixed(2),
+                        day: i < 24 ? 'Today' : 'Tomorrow'
+                    });
+                }
                 
-                hourlyHTML += `
-                    <div style="text-align: center; padding: 8px; background: #0a0a0a; border-radius: 4px;">
-                        <div style="color: #999999; font-size: 10px; margin-bottom: 4px;">${hour.time}</div>
-                        <div style="color: ${intensityColor}; font-weight: 500; margin-bottom: 4px;">${hour.precipitation}"</div>
-                        <div style="color: #666666; font-size: 10px;">${hour.day}</div>
-                    </div>
-                `;
+                // Build hourly cards (show first 24 hours)
+                let hourlyHTML = '';
+                for (let i = 0; i < 24; i += 3) { // Show every 3rd hour
+                    const hour = hours[i];
+                    const intensity = parseFloat(hour.precipitation);
+                    const intensityColor = intensity > 0.2 ? '#FF4444' : intensity > 0.1 ? '#FFAA44' : '#44AAFF';
+                    
+                    hourlyHTML += `
+                        <div style="text-align: center; padding: 8px; background: #0a0a0a; border-radius: 4px;">
+                            <div style="color: #999999; font-size: 10px; margin-bottom: 4px;">${hour.time}</div>
+                            <div style="color: ${intensityColor}; font-weight: 500; margin-bottom: 4px;">${hour.precipitation}"</div>
+                            <div style="color: #666666; font-size: 10px;">${hour.day}</div>
+                        </div>
+                    `;
+                }
+                
+                const hourlyEl = document.getElementById('hourly-precipitation');
+                if (hourlyEl) {
+                    hourlyEl.innerHTML = hourlyHTML;
+                }
+                
+                // Simple precipitation chart simulation
+                const chartEl = document.getElementById('precipitation-chart');
+                if (chartEl) {
+                    chartEl.innerHTML = `
+                        <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; height: 60%; display: flex; align-items: end; gap: 4px;">
+                            ${hours.slice(0, 24).map((hour, i) => {
+                                const height = Math.max(5, parseFloat(hour.precipitation) * 200);
+                                const color = height > 40 ? '#FF4444' : height > 20 ? '#FFAA44' : '#44AAFF';
+                                return `<div style="flex: 1; height: ${height}px; background: ${color}; border-radius: 2px 2px 0 0; opacity: 0.8;"></div>`;
+                            }).join('')}
+                        </div>
+                        <div style="position: absolute; top: 16px; left: 16px; color: #CCCCCC; font-size: 12px;">
+                            <div><strong>48-Hour Precipitation Forecast</strong></div>
+                            <div style="color: #999999;">Peak: ${Math.max(...hours.map(h => parseFloat(h.precipitation))).toFixed(2)}" expected</div>
+                        </div>
+                    `;
+                }
+                
+                console.log('Precipitation forecast updated successfully');
+                
+            } catch (error) {
+                console.error('Error updating precipitation forecast:', error);
             }
-            
-            document.getElementById('hourly-precipitation').innerHTML = hourlyHTML;
-            
-            // Simple precipitation chart simulation
-            document.getElementById('precipitation-chart').innerHTML = `
-                <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; height: 60%; display: flex; align-items: end; gap: 4px;">
-                    ${hours.slice(0, 24).map((hour, i) => {
-                        const height = Math.max(5, parseFloat(hour.precipitation) * 200);
-                        const color = height > 40 ? '#FF4444' : height > 20 ? '#FFAA44' : '#44AAFF';
-                        return `<div style="flex: 1; height: ${height}px; background: ${color}; border-radius: 2px 2px 0 0; opacity: 0.8;"></div>`;
-                    }).join('')}
-                </div>
-                <div style="position: absolute; top: 16px; left: 16px; color: #CCCCCC; font-size: 12px;">
-                    <div><strong>48-Hour Precipitation Forecast</strong></div>
-                    <div style="color: #999999;">Peak: ${Math.max(...hours.map(h => parseFloat(h.precipitation))).toFixed(2)}" expected</div>
-                </div>
-            `;
         }
         
         // Update historical flood context
         function updateHistoricalContext() {
-            // Simulate recent flood events
-            const recentFloods = [
-                { date: '6 days ago', location: 'Boulder Creek', magnitude: 'Minor', description: 'Heavy rainfall caused minor flooding in downtown Boulder' },
-                { date: '12 days ago', location: 'Big Thompson River', magnitude: 'Moderate', description: 'Flash flood warning issued after rapid snowmelt' },
-                { date: '18 days ago', location: 'Cherry Creek', magnitude: 'Minor', description: 'Urban flooding in Denver metro area' },
-                { date: '25 days ago', location: 'South Platte River', magnitude: 'Moderate', description: 'River levels rose above action stage' }
-            ];
-            
-            let floodsHTML = '';
-            recentFloods.forEach(flood => {
-                const magnitudeColor = flood.magnitude === 'Moderate' ? '#FFAA44' : '#44AAFF';
+            console.log('Updating historical context...');
+            try {
+                // Simulate recent flood events
+                const recentFloods = [
+                    { date: '6 days ago', location: 'Boulder Creek', magnitude: 'Minor', description: 'Heavy rainfall caused minor flooding in downtown Boulder' },
+                    { date: '12 days ago', location: 'Big Thompson River', magnitude: 'Moderate', description: 'Flash flood warning issued after rapid snowmelt' },
+                    { date: '18 days ago', location: 'Cherry Creek', magnitude: 'Minor', description: 'Urban flooding in Denver metro area' },
+                    { date: '25 days ago', location: 'South Platte River', magnitude: 'Moderate', description: 'River levels rose above action stage' }
+                ];
                 
-                floodsHTML += `
-                    <div style="border-left: 3px solid ${magnitudeColor}; padding: 12px; margin-bottom: 12px; background: #0f0f0f; border-radius: 0 4px 4px 0;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
-                            <strong style="color: #FFFFFF;">${flood.location}</strong>
-                            <span style="color: ${magnitudeColor}; font-size: 12px; font-weight: 500;">${flood.magnitude}</span>
+                let floodsHTML = '';
+                recentFloods.forEach(flood => {
+                    const magnitudeColor = flood.magnitude === 'Moderate' ? '#FFAA44' : '#44AAFF';
+                    
+                    floodsHTML += `
+                        <div style="border-left: 3px solid ${magnitudeColor}; padding: 12px; margin-bottom: 12px; background: #0f0f0f; border-radius: 0 4px 4px 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                                <strong style="color: #FFFFFF;">${flood.location}</strong>
+                                <span style="color: ${magnitudeColor}; font-size: 12px; font-weight: 500;">${flood.magnitude}</span>
+                            </div>
+                            <div style="color: #CCCCCC; font-size: 14px; margin-bottom: 4px;">${flood.description}</div>
+                            <div style="color: #999999; font-size: 12px;">${flood.date}</div>
                         </div>
-                        <div style="color: #CCCCCC; font-size: 14px; margin-bottom: 4px;">${flood.description}</div>
-                        <div style="color: #999999; font-size: 12px;">${flood.date}</div>
-                    </div>
-                `;
-            });
-            
-            document.getElementById('recent-floods').innerHTML = floodsHTML;
-            
-            // Seasonal risk chart simulation
-            document.getElementById('seasonal-risk-chart').innerHTML = `
-                <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; height: 70%; display: flex; align-items: end; gap: 8px;">
-                    <div style="flex: 1; height: 30%; background: #44AAFF; border-radius: 2px; opacity: 0.7;"></div>
-                    <div style="flex: 1; height: 20%; background: #44AAFF; border-radius: 2px; opacity: 0.7;"></div>
-                    <div style="flex: 1; height: 40%; background: #44AAFF; border-radius: 2px; opacity: 0.7;"></div>
-                    <div style="flex: 1; height: 70%; background: #FFAA44; border-radius: 2px; opacity: 0.7;"></div>
-                    <div style="flex: 1; height: 85%; background: #FF4444; border-radius: 2px; opacity: 0.7;"></div>
-                    <div style="flex: 1; height: 90%; background: #FF4444; border-radius: 2px; opacity: 0.7;"></div>
-                    <div style="flex: 1; height: 60%; background: #FFAA44; border-radius: 2px; opacity: 0.7;"></div>
-                    <div style="flex: 1; height: 45%; background: #FFAA44; border-radius: 2px; opacity: 0.7;"></div>
-                    <div style="flex: 1; height: 35%; background: #44AAFF; border-radius: 2px; opacity: 0.7;"></div>
-                    <div style="flex: 1; height: 25%; background: #44AAFF; border-radius: 2px; opacity: 0.7;"></div>
-                    <div style="flex: 1; height: 30%; background: #44AAFF; border-radius: 2px; opacity: 0.7;"></div>
-                    <div style="flex: 1; height: 35%; background: #44AAFF; border-radius: 2px; opacity: 0.7;"></div>
-                </div>
-                <div style="position: absolute; bottom: 0; left: 20px; right: 20px; display: flex; justify-content: space-between; font-size: 10px; color: #999999;">
-                    <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
-                    <span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
-                </div>
-                <div style="position: absolute; top: 16px; left: 16px; color: #CCCCCC; font-size: 12px;">
-                    <strong>Monthly Flood Risk</strong>
-                </div>
-            `;
-            
-            // Current seasonal risk (June = high risk)
-            const currentMonth = new Date().getMonth();
-            const riskLevels = ['Low', 'Low', 'Moderate', 'High', 'Very High', 'Very High', 'High', 'Moderate', 'Low', 'Low', 'Low', 'Low'];
-            const riskColors = ['#44AA44', '#44AA44', '#FFAA44', '#FF4444', '#FF4444', '#FF4444', '#FFAA44', '#FFAA44', '#44AA44', '#44AA44', '#44AA44', '#44AA44'];
-            
-            document.getElementById('current-seasonal-risk').textContent = riskLevels[currentMonth];
-            document.getElementById('current-seasonal-risk').style.color = riskColors[currentMonth];
+                    `;
+                });
+                
+                const floodsEl = document.getElementById('recent-floods');
+                if (floodsEl) {
+                    floodsEl.innerHTML = floodsHTML;
+                }
+                
+                // Seasonal risk chart simulation
+                const chartEl = document.getElementById('seasonal-risk-chart');
+                if (chartEl) {
+                    chartEl.innerHTML = `
+                        <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; height: 70%; display: flex; align-items: end; gap: 8px;">
+                            <div style="flex: 1; height: 30%; background: #44AAFF; border-radius: 2px; opacity: 0.7;"></div>
+                            <div style="flex: 1; height: 20%; background: #44AAFF; border-radius: 2px; opacity: 0.7;"></div>
+                            <div style="flex: 1; height: 40%; background: #44AAFF; border-radius: 2px; opacity: 0.7;"></div>
+                            <div style="flex: 1; height: 70%; background: #FFAA44; border-radius: 2px; opacity: 0.7;"></div>
+                            <div style="flex: 1; height: 85%; background: #FF4444; border-radius: 2px; opacity: 0.7;"></div>
+                            <div style="flex: 1; height: 90%; background: #FF4444; border-radius: 2px; opacity: 0.7;"></div>
+                            <div style="flex: 1; height: 60%; background: #FFAA44; border-radius: 2px; opacity: 0.7;"></div>
+                            <div style="flex: 1; height: 45%; background: #FFAA44; border-radius: 2px; opacity: 0.7;"></div>
+                            <div style="flex: 1; height: 35%; background: #44AAFF; border-radius: 2px; opacity: 0.7;"></div>
+                            <div style="flex: 1; height: 25%; background: #44AAFF; border-radius: 2px; opacity: 0.7;"></div>
+                            <div style="flex: 1; height: 30%; background: #44AAFF; border-radius: 2px; opacity: 0.7;"></div>
+                            <div style="flex: 1; height: 35%; background: #44AAFF; border-radius: 2px; opacity: 0.7;"></div>
+                        </div>
+                        <div style="position: absolute; bottom: 0; left: 20px; right: 20px; display: flex; justify-content: space-between; font-size: 10px; color: #999999;">
+                            <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+                            <span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+                        </div>
+                        <div style="position: absolute; top: 16px; left: 16px; color: #CCCCCC; font-size: 12px;">
+                            <strong>Monthly Flood Risk</strong>
+                        </div>
+                    `;
+                }
+                
+                // Current seasonal risk (June = high risk)
+                const currentMonth = new Date().getMonth();
+                const riskLevels = ['Low', 'Low', 'Moderate', 'High', 'Very High', 'Very High', 'High', 'Moderate', 'Low', 'Low', 'Low', 'Low'];
+                const riskColors = ['#44AA44', '#44AA44', '#FFAA44', '#FF4444', '#FF4444', '#FF4444', '#FFAA44', '#FFAA44', '#44AA44', '#44AA44', '#44AA44', '#44AA44'];
+                
+                const riskEl = document.getElementById('current-seasonal-risk');
+                if (riskEl) {
+                    riskEl.textContent = riskLevels[currentMonth];
+                    riskEl.style.color = riskColors[currentMonth];
+                }
+                
+                console.log('Historical context updated successfully');
+                
+            } catch (error) {
+                console.error('Error updating historical context:', error);
+            }
         }
         
         // Refresh incident data
@@ -1915,16 +1971,83 @@
             alert('Generating your personalized flood action plan...\n\nThis will include:\n• Property-specific flood risk assessment\n• Evacuation route planning\n• Equipment recommendations\n• Emergency contact lists\n• Seasonal preparation timeline');
         }
 
-        // Initialize all dynamic features when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Page loaded, initializing flood monitoring...');
-            detectUserLocation();
-            initializeFloodMap();
-            updateThreatDashboard();
-            updateIncidentFeed();
-            updatePrecipitationForecast();
-            updateHistoricalContext();
-        });
+        // Force immediate initialization - don't wait for DOMContentLoaded
+        function forceInitialization() {
+            console.log('Force initializing flood monitoring...');
+            
+            // Initialize map first
+            setTimeout(() => {
+                try {
+                    initializeFloodMap();
+                    console.log('Map initialized');
+                } catch(e) {
+                    console.error('Map init error:', e);
+                }
+            }, 100);
+            
+            // Initialize threat dashboard
+            setTimeout(() => {
+                try {
+                    updateThreatDashboard();
+                    console.log('Threat dashboard updated');
+                } catch(e) {
+                    console.error('Threat dashboard error:', e);
+                }
+            }, 200);
+            
+            // Initialize incident feed
+            setTimeout(() => {
+                try {
+                    updateIncidentFeed();
+                    console.log('Incident feed updated');
+                } catch(e) {
+                    console.error('Incident feed error:', e);
+                }
+            }, 300);
+            
+            // Initialize precipitation forecast
+            setTimeout(() => {
+                try {
+                    updatePrecipitationForecast();
+                    console.log('Precipitation forecast updated');
+                } catch(e) {
+                    console.error('Precipitation error:', e);
+                }
+            }, 400);
+            
+            // Initialize historical context
+            setTimeout(() => {
+                try {
+                    updateHistoricalContext();
+                    console.log('Historical context updated');
+                } catch(e) {
+                    console.error('Historical context error:', e);
+                }
+            }, 500);
+            
+            // Initialize location detection
+            setTimeout(() => {
+                try {
+                    detectUserLocation();
+                    console.log('Location detection started');
+                } catch(e) {
+                    console.error('Location detection error:', e);
+                }
+            }, 600);
+        }
+
+        // Try multiple initialization methods
+        document.addEventListener('DOMContentLoaded', forceInitialization);
+        
+        // Backup initialization in case DOMContentLoaded already fired
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', forceInitialization);
+        } else {
+            forceInitialization();
+        }
+        
+        // Final backup - force after 2 seconds
+        setTimeout(forceInitialization, 2000);
 
         // Update threat dashboard every 5 minutes
         setInterval(updateThreatDashboard, 300000);
