@@ -3,9 +3,12 @@
 <head>
    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://api.allorigins.win https://corsproxy.io https://api.codetabs.com https://geocoding-api.open-meteo.com https://air-quality-api.open-meteo.com https://api.open-meteo.com https://api.weather.gov https://eonet.gsfc.nasa.gov; connect-src 'self' https://fonts.googleapis.com https://api.allorigins.win https://corsproxy.io https://api.codetabs.com https://geocoding-api.open-meteo.com https://air-quality-api.open-meteo.com https://api.open-meteo.com https://api.weather.gov https://eonet.gsfc.nasa.gov; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://api.allorigins.win https://corsproxy.io https://api.codetabs.com https://geocoding-api.open-meteo.com https://air-quality-api.open-meteo.com https://api.open-meteo.com https://api.weather.gov https://eonet.gsfc.nasa.gov https://unpkg.com; connect-src 'self' https://fonts.googleapis.com https://api.allorigins.win https://corsproxy.io https://api.codetabs.com https://geocoding-api.open-meteo.com https://air-quality-api.open-meteo.com https://api.open-meteo.com https://api.weather.gov https://eonet.gsfc.nasa.gov https://tile.openstreetmap.org; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; img-src 'self' data: https://tile.openstreetmap.org;">
     <title>Wildfire Emergency Preparedness - EmergencyEssentials</title>
     <meta name="description" content="Comprehensive wildfire preparedness guide with defense strategies, evacuation planning, and professional equipment recommendations.">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -119,6 +122,176 @@
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
+        }
+
+        /* Fire Map Section */
+        .fire-map-section {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 40px;
+            margin: 40px 0;
+        }
+
+        .fire-map-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .fire-map-title {
+            font-size: 36px;
+            font-weight: 300;
+            margin-bottom: 16px;
+            color: #FFFFFF;
+        }
+
+        .fire-map-subtitle {
+            color: #CCCCCC;
+            font-size: 18px;
+            font-weight: 300;
+        }
+
+        .map-container {
+            height: 400px;
+            width: 100%;
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        #fire-map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .leaflet-container {
+            outline: none;
+            background: #1a1a1a;
+        }
+
+        .map-instructions {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #CCCCCC;
+        }
+
+        .fires-list {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 8px;
+            padding: 30px;
+        }
+
+        .fires-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #333333;
+        }
+
+        .fires-list-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        .fires-count {
+            background: #FF4444;
+            color: #FFFFFF;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .fire-item {
+            background: #0f0f0f;
+            border: 1px solid #333333;
+            border-left: 4px solid #FF4444;
+            border-radius: 0 6px 6px 0;
+            padding: 20px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .fire-item:hover {
+            background: #1f1f1f;
+            border-color: #555555;
+        }
+
+        .fire-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .fire-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #FFFFFF;
+            flex-grow: 1;
+        }
+
+        .fire-distance {
+            background: rgba(255, 68, 68, 0.1);
+            color: #FF4444;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            margin-left: 12px;
+        }
+
+        .fire-details {
+            font-size: 14px;
+            color: #CCCCCC;
+            line-height: 1.5;
+        }
+
+        .fire-date {
+            color: #999999;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .no-fires {
+            text-align: center;
+            padding: 40px;
+            color: #CCCCCC;
+        }
+
+        .no-fires-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: #44AA44;
+        }
+
+        .refresh-map-btn {
+            background: transparent;
+            border: 1px solid #FFFFFF;
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .refresh-map-btn:hover {
+            background: #FFFFFF;
+            color: #000000;
         }
 
         /* Real-Time Data Dashboard */
@@ -907,6 +1080,14 @@
             .data-card:last-child {
                 border-bottom: none;
             }
+
+            .map-container {
+                height: 300px;
+            }
+
+            .fire-map-title {
+                font-size: 28px;
+            }
         }
         
         /* Animations */
@@ -990,6 +1171,40 @@
                         <div class="data-detail" id="wind-detail">Current speed and direction</div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Fire Map Section -->
+    <section class="section">
+        <div class="container">
+            <div class="fire-map-section">
+                <div class="fire-map-header">
+                    <h2 class="fire-map-title">🗺️ Active Wildfire Map</h2>
+                    <p class="fire-map-subtitle">Real-time locations of active wildfires within 300 miles</p>
+                </div>
+                
+                <div class="map-instructions">
+                    📍 <strong>Click on the map to enable zoom.</strong> Red markers show active fires, blue marker shows your location.
+                </div>
+                
+                <div class="map-container">
+                    <div id="fire-map"></div>
+                </div>
+                
+                <div class="fires-list">
+                    <div class="fires-list-header">
+                        <h3 class="fires-list-title">Closest Active Fires</h3>
+                        <div class="fires-count" id="fires-list-count">Loading...</div>
+                    </div>
+                    <div id="fires-list-content">
+                        <div style="text-align: center; padding: 20px; color: #CCCCCC;">
+                            Loading wildfire data from NASA EONET...
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="refresh-map-btn" onclick="refreshFireMap()">Refresh Map Data</button>
             </div>
         </div>
     </section>
@@ -1336,11 +1551,18 @@
         </div>
     </section>
 
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
     <script>
         // Global variables
         let currentLatitude = 39.7392; // Default to Denver
         let currentLongitude = -104.9903;
         let currentLocationName = 'Denver, CO';
+        let fireMap = null;
+        let userLocationMarker = null;
+        let fireMarkers = [];
+        let currentFiresData = [];
 
         // Initialize everything when page loads
         document.addEventListener('DOMContentLoaded', function() {
@@ -1356,6 +1578,7 @@
             if (!navigator.geolocation) {
                 console.log('Geolocation not supported');
                 updateLocationDisplay('Denver, CO (Default)');
+                initializeMap();
                 updateAllData();
                 return;
             }
@@ -1378,13 +1601,77 @@
                 updateLocationDisplay(locationName);
                 
                 console.log(`Location detected: ${locationName} (${currentLatitude}, ${currentLongitude})`);
+                initializeMap();
                 updateAllData();
                 
             } catch (error) {
                 console.log('Location detection failed:', error.message);
                 updateLocationDisplay('Denver, CO (Default - Location Access Denied)');
+                initializeMap();
                 updateAllData();
             }
+        }
+
+        // Initialize Leaflet Map
+        function initializeMap() {
+            if (fireMap) {
+                fireMap.remove();
+            }
+
+            // Create map with scroll zoom disabled by default (option #1)
+            fireMap = L.map('fire-map', {
+                center: [currentLatitude, currentLongitude],
+                zoom: 8,
+                scrollWheelZoom: false,  // Disabled by default
+                dragging: true,
+                touchZoom: true,
+                doubleClickZoom: true,
+                zoomControl: true
+            });
+
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(fireMap);
+
+            // Enable scroll zoom when user clicks on map
+            fireMap.on('focus', function() { 
+                fireMap.scrollWheelZoom.enable();
+                console.log('Map scroll zoom enabled');
+            });
+            
+            fireMap.on('blur', function() { 
+                fireMap.scrollWheelZoom.disable();
+                console.log('Map scroll zoom disabled');
+            });
+
+            // Add click event to enable scroll zoom
+            fireMap.on('click', function() {
+                fireMap.scrollWheelZoom.enable();
+                setTimeout(() => {
+                    fireMap.scrollWheelZoom.disable();
+                }, 5000); // Auto-disable after 5 seconds of inactivity
+            });
+
+            // Add user location marker (blue)
+            userLocationMarker = L.marker([currentLatitude, currentLongitude], {
+                icon: L.divIcon({
+                    className: 'user-location-marker',
+                    html: '<div style="background: #44AAFF; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
+                    iconSize: [22, 22],
+                    iconAnchor: [11, 11]
+                })
+            }).addTo(fireMap);
+
+            userLocationMarker.bindPopup(`
+                <div style="text-align: center; padding: 8px;">
+                    <strong>📍 Your Location</strong><br>
+                    ${currentLocationName}
+                </div>
+            `);
+
+            console.log('Fire map initialized');
         }
 
         // Get city name from coordinates with CORS proxy
@@ -1441,42 +1728,33 @@
         // Update threat level display with consistent messaging
         function updateThreatLevelDisplay(fireDangerData, wildfireCount, weatherAlertsCount) {
             const threatText = document.getElementById('threat-level-text');
-            const heroWarning = document.getElementById('hero-fire-warning');
             
             // Check if elements exist
-            if (!threatText || !heroWarning) {
+            if (!threatText) {
                 console.log('Threat display elements not found, skipping update');
                 return;
             }
             
             let overallStatus = 'NORMAL';
-            let warningText = '🟢 Low Fire Danger';
             let statusColor = '#44AA44';
             
             // Determine overall threat level based on multiple factors
             if (fireDangerData && fireDangerData.level === 'EXTREME') {
                 overallStatus = 'EXTREME FIRE DANGER';
-                warningText = '🔴 Extreme Fire Danger';
                 statusColor = '#FF4444';
             } else if (fireDangerData && fireDangerData.level === 'HIGH') {
                 overallStatus = 'HIGH FIRE DANGER';
-                warningText = '🟠 High Fire Danger';
                 statusColor = '#FFAA44';
             } else if (wildfireCount > 0 || weatherAlertsCount > 0 || (fireDangerData && fireDangerData.level === 'MODERATE')) {
                 overallStatus = 'ELEVATED FIRE RISK';
-                warningText = '🟡 Elevated Fire Risk';
                 statusColor = '#FFDD44';
             } else if (fireDangerData && fireDangerData.level === 'LOW') {
                 overallStatus = 'LOW FIRE RISK';
-                warningText = '🟢 Low Fire Danger';
                 statusColor = '#44AA44';
             }
             
             // Update displays
             threatText.innerHTML = `Current Status: <strong>${overallStatus}</strong> - ${currentLocationName}`;
-            heroWarning.textContent = warningText;
-            heroWarning.style.borderColor = statusColor;
-            heroWarning.style.color = statusColor;
             
             // Update threat indicator color
             const indicator = document.querySelector('.threat-indicator');
@@ -1511,7 +1789,7 @@
             updateThreatLevelDisplay(currentFireDanger, currentWildfireCount, currentWeatherAlertsCount);
         }
 
-        // NASA EONET Wildfire Data
+        // NASA EONET Wildfire Data with Map Integration
         async function updateWildfiresData() {
             const indicator = document.getElementById('wildfires-indicator');
             indicator.className = 'update-indicator updating';
@@ -1525,7 +1803,7 @@
                     event.categories.some(cat => cat.title.toLowerCase().includes('wildfire'))
                 );
                 
-                // Filter by proximity (within 500 miles)
+                // Filter by proximity (within 300 miles) and add distance
                 const nearbyWildfires = wildfires.filter(fire => {
                     if (!fire.geometry || fire.geometry.length === 0) return false;
                     
@@ -1533,10 +1811,20 @@
                     if (fireCoords.type === 'Point') {
                         const [fireLon, fireLat] = fireCoords.coordinates;
                         const distance = calculateDistance(currentLatitude, currentLongitude, fireLat, fireLon);
-                        return distance <= 500; // Within 500 miles
+                        fire.distance = distance;
+                        fire.latitude = fireLat;
+                        fire.longitude = fireLon;
+                        return distance <= 300; // Within 300 miles
                     }
                     return false;
                 });
+
+                // Sort by distance and take top 10
+                const closestFires = nearbyWildfires
+                    .sort((a, b) => a.distance - b.distance)
+                    .slice(0, 10);
+
+                currentFiresData = closestFires;
                 
                 document.getElementById('wildfires-count').textContent = nearbyWildfires.length;
                 currentWildfireCount = nearbyWildfires.length; // Store for threat assessment
@@ -1544,16 +1832,20 @@
                 if (nearbyWildfires.length === 0) {
                     document.getElementById('wildfires-status').textContent = 'No Active Fires';
                     document.getElementById('wildfires-status').className = 'data-status status-normal';
-                    document.getElementById('wildfires-detail').textContent = 'No active wildfires within 500 miles';
+                    document.getElementById('wildfires-detail').textContent = 'No active wildfires within 300 miles';
                 } else if (nearbyWildfires.length < 3) {
                     document.getElementById('wildfires-status').textContent = 'Monitor Conditions';
                     document.getElementById('wildfires-status').className = 'data-status status-watch';
-                    document.getElementById('wildfires-detail').textContent = `${nearbyWildfires.length} active fire${nearbyWildfires.length > 1 ? 's' : ''} within 500 miles`;
+                    document.getElementById('wildfires-detail').textContent = `${nearbyWildfires.length} active fire${nearbyWildfires.length > 1 ? 's' : ''} within 300 miles`;
                 } else {
                     document.getElementById('wildfires-status').textContent = 'High Activity';
                     document.getElementById('wildfires-status').className = 'data-status status-warning';
                     document.getElementById('wildfires-detail').textContent = `${nearbyWildfires.length} active fires detected in region`;
                 }
+                
+                // Update map and list
+                updateFireMapMarkers(nearbyWildfires);
+                updateFiresList(closestFires);
                 
                 indicator.className = 'update-indicator';
                 console.log(`Found ${nearbyWildfires.length} nearby wildfires`);
@@ -1568,7 +1860,128 @@
                 document.getElementById('wildfires-status').className = 'data-status';
                 document.getElementById('wildfires-detail').textContent = 'Unable to connect to NASA EONET';
                 indicator.className = 'update-indicator error';
+                
+                // Update fire list with error message
+                updateFiresList([]);
             }
+        }
+
+        // Update fire markers on map
+        function updateFireMapMarkers(fires) {
+            if (!fireMap) return;
+
+            // Clear existing fire markers
+            fireMarkers.forEach(marker => fireMap.removeLayer(marker));
+            fireMarkers = [];
+
+            // Add new fire markers (red)
+            fires.forEach(fire => {
+                const marker = L.marker([fire.latitude, fire.longitude], {
+                    icon: L.divIcon({
+                        className: 'fire-marker',
+                        html: '<div style="background: #FF4444; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
+                        iconSize: [18, 18],
+                        iconAnchor: [9, 9]
+                    })
+                }).addTo(fireMap);
+
+                const startDate = fire.geometry[0]?.date ? new Date(fire.geometry[0].date).toLocaleDateString() : 'Unknown';
+                
+                marker.bindPopup(`
+                    <div style="padding: 12px; max-width: 250px;">
+                        <div style="font-weight: bold; color: #FF4444; margin-bottom: 8px;">🔥 ${fire.title}</div>
+                        <div style="font-size: 12px; color: #666; margin-bottom: 4px;">
+                            <strong>Distance:</strong> ${Math.round(fire.distance)} miles away
+                        </div>
+                        <div style="font-size: 12px; color: #666; margin-bottom: 4px;">
+                            <strong>Started:</strong> ${startDate}
+                        </div>
+                        <div style="font-size: 12px; color: #666;">
+                            <strong>Status:</strong> Active
+                        </div>
+                    </div>
+                `);
+
+                fireMarkers.push(marker);
+            });
+
+            console.log(`Added ${fires.length} fire markers to map`);
+        }
+
+        // Update fires list
+        function updateFiresList(fires) {
+            const countElement = document.getElementById('fires-list-count');
+            const contentElement = document.getElementById('fires-list-content');
+
+            countElement.textContent = fires.length;
+
+            if (fires.length === 0) {
+                contentElement.innerHTML = `
+                    <div class="no-fires">
+                        <div class="no-fires-icon">✅</div>
+                        <div style="font-size: 18px; margin-bottom: 8px; color: #44AA44;">No Active Fires Nearby</div>
+                        <div>No active wildfires detected within 300 miles of your location.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            let firesHTML = '';
+            fires.forEach(fire => {
+                const startDate = fire.geometry[0]?.date ? new Date(fire.geometry[0].date).toLocaleDateString() : 'Unknown date';
+                const daysSince = fire.geometry[0]?.date ? Math.floor((Date.now() - new Date(fire.geometry[0].date)) / (1000 * 60 * 60 * 24)) : 0;
+                
+                firesHTML += `
+                    <div class="fire-item">
+                        <div class="fire-header">
+                            <div class="fire-title">${fire.title}</div>
+                            <div class="fire-distance">${Math.round(fire.distance)} mi</div>
+                        </div>
+                        <div class="fire-details">
+                            <strong>Status:</strong> Active wildfire<br>
+                            <strong>Location:</strong> ${fire.latitude.toFixed(3)}°, ${fire.longitude.toFixed(3)}°<br>
+                            <strong>Direction:</strong> ${getDirectionFromUser(fire.latitude, fire.longitude)}
+                        </div>
+                        <div class="fire-date">
+                            Started: ${startDate}${daysSince > 0 ? ` (${daysSince} days ago)` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            contentElement.innerHTML = firesHTML;
+        }
+
+        // Get direction from user location
+        function getDirectionFromUser(fireLat, fireLon) {
+            const bearing = calculateBearing(currentLatitude, currentLongitude, fireLat, fireLon);
+            const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+            const index = Math.round(bearing / 22.5) % 16;
+            return directions[index];
+        }
+
+        // Calculate bearing between two points
+        function calculateBearing(lat1, lon1, lat2, lon2) {
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const lat1Rad = lat1 * Math.PI / 180;
+            const lat2Rad = lat2 * Math.PI / 180;
+            
+            const y = Math.sin(dLon) * Math.cos(lat2Rad);
+            const x = Math.cos(lat1Rad) * Math.sin(lat2Rad) - Math.sin(lat1Rad) * Math.cos(lat2Rad) * Math.cos(dLon);
+            
+            let bearing = Math.atan2(y, x) * 180 / Math.PI;
+            return (bearing + 360) % 360;
+        }
+
+        // Refresh fire map data
+        function refreshFireMap() {
+            document.getElementById('fires-list-count').textContent = 'Loading...';
+            document.getElementById('fires-list-content').innerHTML = `
+                <div style="text-align: center; padding: 20px; color: #CCCCCC;">
+                    Refreshing wildfire data from NASA EONET...
+                </div>
+            `;
+            updateWildfiresData();
         }
 
         // Weather Alerts Data
@@ -1788,6 +2201,7 @@
                 
                 // Calculate fire danger
                 const fireDanger = calculateFireDanger(current.temperature_2m, current.relative_humidity_2m, current.wind_speed_10m);
+                currentFireDanger = fireDanger; // Store for threat assessment
                 
                 // Update detailed fire danger display
                 document.getElementById('fire-danger-index').textContent = fireDanger.level;
@@ -1796,61 +2210,10 @@
                 const fireDangerCard = document.querySelector('.fire-danger .weather-value');
                 fireDangerCard.className = 'weather-value fire-danger-' + fireDanger.class;
                 
-                // DIRECTLY update hero warning to match
-                const heroWarning = document.getElementById('hero-fire-warning');
-                const threatText = document.getElementById('threat-level-text');
+                // Trigger threat assessment update
+                updateOverallThreatAssessment();
                 
-                let warningText = '';
-                let statusText = '';
-                let statusColor = '#44AA44';
-                
-                if (fireDanger.level === 'EXTREME') {
-                    warningText = '🔴 Extreme Fire Danger';
-                    statusText = 'EXTREME FIRE DANGER';
-                    statusColor = '#FF4444';
-                } else if (fireDanger.level === 'HIGH') {
-                    warningText = '🟠 High Fire Danger';
-                    statusText = 'HIGH FIRE DANGER';
-                    statusColor = '#FFAA44';
-                } else if (fireDanger.level === 'MODERATE') {
-                    warningText = '🟡 Moderate Fire Risk';
-                    statusText = 'MODERATE FIRE RISK';
-                    statusColor = '#FFDD44';
-                } else {
-                    warningText = '🟢 Low Fire Danger';
-                    statusText = 'LOW FIRE RISK';
-                    statusColor = '#44AA44';
-                }
-                
-                // Update both displays to match exactly
-                if (heroWarning) {
-                    heroWarning.textContent = warningText;
-                    heroWarning.style.borderColor = statusColor;
-                    heroWarning.style.color = statusColor;
-                }
-                
-                // Update status text with live fire danger
-                if (threatText) {
-                    threatText.innerHTML = `Current Status: <strong>${statusText}</strong> - ${currentLocationName}`;
-                    
-                    // Add emoji and color to the status for better visibility
-                    if (fireDanger.level === 'EXTREME') {
-                        threatText.innerHTML = `🔴 Current Status: <strong>${statusText}</strong> - ${currentLocationName}`;
-                    } else if (fireDanger.level === 'HIGH') {
-                        threatText.innerHTML = `🟠 Current Status: <strong>${statusText}</strong> - ${currentLocationName}`;
-                    } else if (fireDanger.level === 'MODERATE') {
-                        threatText.innerHTML = `🟡 Current Status: <strong>${statusText}</strong> - ${currentLocationName}`;
-                    } else {
-                        threatText.innerHTML = `🟢 Current Status: <strong>${statusText}</strong> - ${currentLocationName}`;
-                    }
-                }
-                
-                const indicator = document.querySelector('.threat-indicator');
-                if (indicator) {
-                    indicator.style.background = statusColor;
-                }
-                
-                console.log(`Fire danger updated: ${fireDanger.level} - Hero: ${warningText}`);
+                console.log(`Fire danger updated: ${fireDanger.level}`);
                 
             } catch (error) {
                 console.error('Error fetching detailed weather data:', error);
@@ -1863,7 +2226,6 @@
                 
                 // Update status to show error state
                 const threatText = document.getElementById('threat-level-text');
-                
                 if (threatText) threatText.innerHTML = `⚠️ Current Status: <strong>DATA UNAVAILABLE</strong> - ${currentLocationName}`;
             }
         }
@@ -2049,6 +2411,8 @@
             currentLocationName = selectedText;
             updateLocationDisplay(selectedText);
             
+            // Re-initialize map with new location
+            initializeMap();
             updateAllData();
         }
 
