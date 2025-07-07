@@ -171,6 +171,17 @@
             background: #242424;
         }
 
+        .clickable-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .clickable-card:hover {
+            background: #242424;
+            transform: translateY(-2px);
+            border-color: #555555;
+        }
+
         .data-label {
             font-size: 12px;
             color: #999999;
@@ -789,7 +800,7 @@
                     <p class="dashboard-subtitle">Real-time cybersecurity threat monitoring and analysis</p>
                 </div>
                 <div class="dashboard-grid">
-                    <div class="data-card card-exploits">
+                    <div class="data-card card-exploits clickable-card" onclick="showExploitsDetail()">
                         <div class="update-indicator" id="exploits-indicator"></div>
                         <div class="data-label">Active Exploits</div>
                         <div class="data-value" id="exploits-count">Loading...</div>
@@ -797,7 +808,7 @@
                         <div class="data-detail" id="exploits-detail">Known exploited vulnerabilities</div>
                     </div>
                     
-                    <div class="data-card card-malware">
+                    <div class="data-card card-malware clickable-card" onclick="showMalwareDetail()">
                         <div class="update-indicator" id="malware-indicator"></div>
                         <div class="data-label">Malware Threats</div>
                         <div class="data-value" id="malware-count">Loading...</div>
@@ -805,7 +816,7 @@
                         <div class="data-detail" id="malware-detail">Recent IOCs and indicators</div>
                     </div>
                     
-                    <div class="data-card card-urls">
+                    <div class="data-card card-urls clickable-card" onclick="showURLsDetail()">
                         <div class="update-indicator" id="urls-indicator"></div>
                         <div class="data-label">Malicious URLs</div>
                         <div class="data-value" id="urls-count">Loading...</div>
@@ -1071,6 +1082,9 @@
         let exploitsCount = 0;
         let malwareCount = 0;
         let urlsCount = 0;
+        let currentExploitsData = [];
+        let currentMalwareData = [];
+        let currentURLsData = [];
 
         // Note: For demo purposes, we'll simulate API calls since getting auth keys requires registration
         // In production, you'd need to register for free auth keys at https://auth.abuse.ch/
@@ -1097,13 +1111,17 @@
             indicator.className = 'update-indicator updating';
             
             try {
-                const response = await fetch('https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json');
+                // Use CORS proxy to fetch CISA data
+                const proxyUrl = 'https://api.allorigins.win/get?url=';
+                const cisaUrl = encodeURIComponent('https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json');
+                const response = await fetch(proxyUrl + cisaUrl);
                 
                 if (!response.ok) {
                     throw new Error('Failed to fetch CISA data');
                 }
                 
-                const data = await response.json();
+                const proxyData = await response.json();
+                const data = JSON.parse(proxyData.contents);
                 const vulnerabilities = data.vulnerabilities || [];
                 
                 // Filter recent vulnerabilities (added in last 30 days)
@@ -1140,6 +1158,9 @@
                 
                 // Update CISA alerts list
                 updateCISAAlertsList(vulnerabilities.slice(0, 10));
+                
+                // Store data for details view
+                currentExploitsData = vulnerabilities.slice(0, 20);
                 
                 indicator.className = 'update-indicator';
                 console.log(`CISA exploits updated: ${exploitsCount} recent exploits`);
@@ -1203,10 +1224,24 @@
                         confidence_level: 95,
                         first_seen: new Date(Date.now() - 1800000).toISOString(),
                         tags: ['apt', 'beacon']
+                    },
+                    {
+                        id: 'T004',
+                        ioc: '203.0.113.42',
+                        ioc_type: 'ip',
+                        threat_type: 'c2_server',
+                        malware: 'win.redline',
+                        malware_printable: 'RedLine Stealer',
+                        confidence_level: 88,
+                        first_seen: new Date(Date.now() - 5400000).toISOString(),
+                        tags: ['stealer', 'infostealer']
                     }
                 ];
                 
                 malwareCount = simulatedIOCs.length;
+                
+                // Store data for details view
+                currentMalwareData = simulatedIOCs;
                 
                 // Update display
                 document.getElementById('malware-count').textContent = malwareCount;
@@ -1238,7 +1273,43 @@
             
             try {
                 // Simulate URLhaus API data
-                urlsCount = Math.floor(Math.random() * 20) + 5; // Random between 5-25
+                const simulatedURLs = [
+                    {
+                        id: 'U001',
+                        url: 'https://malicious-site.example/payload.exe',
+                        url_status: 'online',
+                        threat: 'malware_download',
+                        malware: 'win.asyncrat',
+                        confidence: 92,
+                        first_seen: new Date(Date.now() - 1800000).toISOString(),
+                        tags: ['trojan', 'rat']
+                    },
+                    {
+                        id: 'U002',
+                        url: 'https://phishing.example/login',
+                        url_status: 'online',
+                        threat: 'phishing',
+                        malware: 'credential_theft',
+                        confidence: 95,
+                        first_seen: new Date(Date.now() - 3600000).toISOString(),
+                        tags: ['phishing', 'banking']
+                    },
+                    {
+                        id: 'U003',
+                        url: 'https://compromised-site.example/gate.php',
+                        url_status: 'online',
+                        threat: 'exploit_kit',
+                        malware: 'win.rig_ek',
+                        confidence: 88,
+                        first_seen: new Date(Date.now() - 7200000).toISOString(),
+                        tags: ['exploit', 'kit']
+                    }
+                ];
+                
+                urlsCount = simulatedURLs.length + Math.floor(Math.random() * 15) + 5; // 8-23 total
+                
+                // Store data for details view
+                currentURLsData = simulatedURLs;
                 
                 document.getElementById('urls-count').textContent = urlsCount;
                 
@@ -1474,6 +1545,181 @@
             });
             
             listContainer.innerHTML = threatsHTML;
+        }
+
+        // Click handlers for data cards
+        function showExploitsDetail() {
+            if (currentExploitsData.length === 0) {
+                alert('No exploit data available. Please wait for data to load or try refreshing.');
+                return;
+            }
+            
+            let detailsHTML = `
+                <div style="background: #111111; color: #FFFFFF; padding: 20px; border-radius: 8px; max-width: 800px; max-height: 600px; overflow-y: auto;">
+                    <h2 style="margin-bottom: 20px; color: #FF4444;">🚨 Active Exploits Detail</h2>
+                    <p style="margin-bottom: 20px; color: #CCCCCC;">Latest ${currentExploitsData.length} known exploited vulnerabilities from CISA:</p>
+            `;
+            
+            currentExploitsData.forEach((vuln, index) => {
+                const dateAdded = new Date(vuln.dateAdded).toLocaleDateString();
+                detailsHTML += `
+                    <div style="background: #1a1a1a; border: 1px solid #444444; border-radius: 6px; padding: 16px; margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <strong style="color: #FFFFFF; font-size: 16px;">${vuln.vulnerabilityName || 'Vulnerability #' + (index + 1)}</strong>
+                            <span style="color: #FF4444; font-size: 12px;">${vuln.cveID}</span>
+                        </div>
+                        <div style="color: #CCCCCC; font-size: 14px; margin-bottom: 8px;">
+                            <strong>Vendor:</strong> ${vuln.vendorProject}<br>
+                            <strong>Product:</strong> ${vuln.product}<br>
+                            <strong>Added:</strong> ${dateAdded}
+                        </div>
+                        <div style="color: #CCCCCC; font-size: 13px; line-height: 1.4;">
+                            ${vuln.shortDescription || 'No description available'}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            detailsHTML += `
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: #FF4444; color: #FFFFFF; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-top: 16px;">Close</button>
+                </div>
+            `;
+            
+            showModal(detailsHTML);
+        }
+
+        function showMalwareDetail() {
+            if (currentMalwareData.length === 0) {
+                alert('No malware data available. Please wait for data to load or try refreshing.');
+                return;
+            }
+            
+            let detailsHTML = `
+                <div style="background: #111111; color: #FFFFFF; padding: 20px; border-radius: 8px; max-width: 800px; max-height: 600px; overflow-y: auto;">
+                    <h2 style="margin-bottom: 20px; color: #FFAA44;">🦠 Malware Threats Detail</h2>
+                    <p style="margin-bottom: 20px; color: #CCCCCC;">Latest ${currentMalwareData.length} indicators of compromise (IOCs):</p>
+            `;
+            
+            currentMalwareData.forEach((ioc, index) => {
+                const timeAgo = getTimeAgo(new Date(ioc.first_seen));
+                const confidence = ioc.confidence_level;
+                let confidenceColor = '#44AA44';
+                if (confidence >= 90) confidenceColor = '#FF4444';
+                else if (confidence >= 75) confidenceColor = '#FFAA44';
+                else if (confidence >= 50) confidenceColor = '#FFDD44';
+                
+                detailsHTML += `
+                    <div style="background: #1a1a1a; border: 1px solid #444444; border-radius: 6px; padding: 16px; margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <strong style="color: #FFFFFF; font-size: 16px;">${ioc.malware_printable}</strong>
+                            <span style="color: ${confidenceColor}; font-size: 12px;">${confidence}% Confidence</span>
+                        </div>
+                        <div style="color: #CCCCCC; font-size: 14px; margin-bottom: 8px;">
+                            <strong>IOC:</strong> ${truncateIOC(ioc.ioc)}<br>
+                            <strong>Type:</strong> ${ioc.ioc_type.replace('_', ' ')}<br>
+                            <strong>Threat Type:</strong> ${ioc.threat_type.replace('_', ' ').toUpperCase()}<br>
+                            <strong>First Seen:</strong> ${timeAgo}
+                        </div>
+                        <div style="color: #CCCCCC; font-size: 13px;">
+                            <strong>Tags:</strong> ${ioc.tags.join(', ')}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            detailsHTML += `
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: #FFAA44; color: #000000; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-top: 16px;">Close</button>
+                </div>
+            `;
+            
+            showModal(detailsHTML);
+        }
+
+        function showURLsDetail() {
+            if (currentURLsData.length === 0) {
+                alert('No URL data available. Please wait for data to load or try refreshing.');
+                return;
+            }
+            
+            let detailsHTML = `
+                <div style="background: #111111; color: #FFFFFF; padding: 20px; border-radius: 8px; max-width: 800px; max-height: 600px; overflow-y: auto;">
+                    <h2 style="margin-bottom: 20px; color: #44AAFF;">🌐 Malicious URLs Detail</h2>
+                    <p style="margin-bottom: 20px; color: #CCCCCC;">Latest ${currentURLsData.length} malicious URLs (total active: ${urlsCount}):</p>
+            `;
+            
+            currentURLsData.forEach((url, index) => {
+                const timeAgo = getTimeAgo(new Date(url.first_seen));
+                const confidence = url.confidence;
+                let confidenceColor = '#44AA44';
+                if (confidence >= 90) confidenceColor = '#FF4444';
+                else if (confidence >= 75) confidenceColor = '#FFAA44';
+                else if (confidence >= 50) confidenceColor = '#FFDD44';
+                
+                let statusColor = url.url_status === 'online' ? '#FF4444' : '#44AA44';
+                
+                detailsHTML += `
+                    <div style="background: #1a1a1a; border: 1px solid #444444; border-radius: 6px; padding: 16px; margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <strong style="color: #FFFFFF; font-size: 16px;">${url.threat.replace('_', ' ').toUpperCase()}</strong>
+                            <span style="color: ${statusColor}; font-size: 12px;">${url.url_status.toUpperCase()}</span>
+                        </div>
+                        <div style="color: #CCCCCC; font-size: 14px; margin-bottom: 8px;">
+                            <strong>URL:</strong> ${url.url}<br>
+                            <strong>Threat:</strong> ${url.malware}<br>
+                            <strong>Confidence:</strong> <span style="color: ${confidenceColor};">${confidence}%</span><br>
+                            <strong>First Seen:</strong> ${timeAgo}
+                        </div>
+                        <div style="color: #CCCCCC; font-size: 13px;">
+                            <strong>Tags:</strong> ${url.tags.join(', ')}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            detailsHTML += `
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: #44AAFF; color: #000000; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-top: 16px;">Close</button>
+                </div>
+            `;
+            
+            showModal(detailsHTML);
+        }
+
+        function showModal(htmlContent) {
+            // Create modal overlay
+            const modalOverlay = document.createElement('div');
+            modalOverlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+                backdrop-filter: blur(5px);
+            `;
+            
+            modalOverlay.innerHTML = htmlContent;
+            
+            // Close modal when clicking overlay
+            modalOverlay.addEventListener('click', function(e) {
+                if (e.target === modalOverlay) {
+                    modalOverlay.remove();
+                }
+            });
+            
+            // Close modal with Escape key
+            const escapeHandler = function(e) {
+                if (e.key === 'Escape') {
+                    modalOverlay.remove();
+                    document.removeEventListener('keydown', escapeHandler);
+                }
+            };
+            document.addEventListener('keydown', escapeHandler);
+            
+            document.body.appendChild(modalOverlay);
         }
 
         // Helper functions
