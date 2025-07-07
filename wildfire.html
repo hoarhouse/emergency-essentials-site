@@ -1500,19 +1500,16 @@
             }
         }
 
-        // Update all data sources
+        // Update all data sources - SIMPLIFIED
         function updateAllData() {
             console.log('Starting data updates...');
             updateWildfiresData();
             updateWeatherAlertsData();
             updateAirQualityData();
             updateWindData();
-            updateDetailedWeatherData();
+            updateDetailedWeatherData(); // This will update hero warning directly
             updateDetailedAirQuality();
             updateDetailedWeatherAlerts();
-            
-            // Remove the timeout - individual functions now trigger threat assessment
-            console.log('All data update functions called');
         }
 
         // Global variables to track current conditions
@@ -1789,13 +1786,14 @@
             alert('Generating your personalized wildfire action plan...\n\nThis will include:\n• Property-specific defense strategies\n• Evacuation route planning\n• Equipment recommendations\n• Emergency contact lists\n• Seasonal preparation timeline');
         }
 
-        // Detailed Weather Data Functions
+        // Simplified: Update hero warning directly when weather data loads
         async function updateDetailedWeatherData() {
             try {
                 const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${currentLatitude}&longitude=${currentLongitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto`);
                 const data = await response.json();
                 const current = data.current;
                 
+                // Update detailed weather display
                 document.getElementById('current-temp').textContent = Math.round(current.temperature_2m);
                 document.getElementById('current-humidity').textContent = Math.round(current.relative_humidity_2m);
                 document.getElementById('detailed-wind-speed').textContent = Math.round(current.wind_speed_10m);
@@ -1803,17 +1801,59 @@
                 const windDirection = getWindDirection(current.wind_direction_10m);
                 document.getElementById('detailed-wind-direction').textContent = windDirection;
                 
+                // Calculate fire danger
                 const fireDanger = calculateFireDanger(current.temperature_2m, current.relative_humidity_2m, current.wind_speed_10m);
-                currentFireDanger = fireDanger; // Store for threat assessment
+                
+                // Update detailed fire danger display
                 document.getElementById('fire-danger-index').textContent = fireDanger.level;
                 document.getElementById('fire-danger-level').textContent = fireDanger.description;
                 
                 const fireDangerCard = document.querySelector('.fire-danger .weather-value');
                 fireDangerCard.className = 'weather-value fire-danger-' + fireDanger.class;
                 
-                // Trigger immediate threat level update when fire danger is calculated
-                console.log('Fire danger calculated:', fireDanger);
-                updateOverallThreatAssessment();
+                // DIRECTLY update hero warning to match
+                const heroWarning = document.getElementById('hero-fire-warning');
+                const threatText = document.getElementById('threat-level-text');
+                
+                let warningText = '';
+                let statusText = '';
+                let statusColor = '#44AA44';
+                
+                if (fireDanger.level === 'EXTREME') {
+                    warningText = '🔴 Extreme Fire Danger';
+                    statusText = 'EXTREME FIRE DANGER';
+                    statusColor = '#FF4444';
+                } else if (fireDanger.level === 'HIGH') {
+                    warningText = '🟠 High Fire Danger';
+                    statusText = 'HIGH FIRE DANGER';
+                    statusColor = '#FFAA44';
+                } else if (fireDanger.level === 'MODERATE') {
+                    warningText = '🟡 Moderate Fire Risk';
+                    statusText = 'MODERATE FIRE RISK';
+                    statusColor = '#FFDD44';
+                } else {
+                    warningText = '🟢 Low Fire Danger';
+                    statusText = 'LOW FIRE RISK';
+                    statusColor = '#44AA44';
+                }
+                
+                // Update both displays to match exactly
+                if (heroWarning) {
+                    heroWarning.textContent = warningText;
+                    heroWarning.style.borderColor = statusColor;
+                    heroWarning.style.color = statusColor;
+                }
+                
+                if (threatText) {
+                    threatText.innerHTML = `Current Status: <strong>${statusText}</strong> - ${currentLocationName}`;
+                }
+                
+                const indicator = document.querySelector('.threat-indicator');
+                if (indicator) {
+                    indicator.style.background = statusColor;
+                }
+                
+                console.log(`Fire danger updated: ${fireDanger.level} - Hero: ${warningText}`);
                 
             } catch (error) {
                 console.error('Error fetching detailed weather data:', error);
@@ -1823,6 +1863,13 @@
                 document.getElementById('detailed-wind-direction').textContent = '--';
                 document.getElementById('fire-danger-index').textContent = 'Error';
                 document.getElementById('fire-danger-level').textContent = 'Data Unavailable';
+                
+                // Update hero to show error state
+                const heroWarning = document.getElementById('hero-fire-warning');
+                const threatText = document.getElementById('threat-level-text');
+                
+                if (heroWarning) heroWarning.textContent = '⚠️ Data Unavailable';
+                if (threatText) threatText.innerHTML = `Current Status: <strong>DATA UNAVAILABLE</strong> - ${currentLocationName}`;
             }
         }
 
