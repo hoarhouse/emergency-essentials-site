@@ -7,7 +7,7 @@
     <meta name="description" content="Comprehensive flood preparedness guide with protection strategies, evacuation planning, and professional equipment recommendations.">
     
     <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -1947,6 +1947,23 @@
                     floodStage = 'Major Flooding';
                     alertLevel = 'MAJOR FLOOD WARNING';
                     actions.innerHTML = `
+                        <strong>EMERGENCY ACTIONS REQUIRED:</strong><br>
+                        • Evacuate immediately if ordered<br>
+                        • Avoid all flooded areas and roads<br>
+                        • Seek high ground immediately<br>
+                        • Emergency services may be overwhelmed
+                    `;
+                    
+                    document.getElementById('river-status').textContent = 'Emergency';
+                    document.getElementById('river-status').className = 'data-status status-critical';
+                    document.getElementById('river-detail').textContent = 'Major flood stage';
+                } else if (gageHeight > 10) {
+                    display.classList.add('level-warning');
+                    status.textContent = 'Minor Flood Stage';
+                    description.textContent = `${currentGaugeName} - Water levels above normal, flooding possible`;
+                    floodStage = 'Minor Flooding';
+                    alertLevel = 'FLOOD WARNING';
+                    actions.innerHTML = `
                         <strong>Current Recommendations:</strong><br>
                         • Prepare to evacuate if necessary<br>
                         • Avoid low-lying areas and flooded roads<br>
@@ -2346,20 +2363,3 @@
     </script>
 </body>
 </html>
-                        <strong>EMERGENCY ACTIONS REQUIRED:</strong><br>
-                        • Evacuate immediately if ordered<br>
-                        • Avoid all flooded areas and roads<br>
-                        • Seek high ground immediately<br>
-                        • Emergency services may be overwhelmed
-                    `;
-                    
-                    document.getElementById('river-status').textContent = 'Emergency';
-                    document.getElementById('river-status').className = 'data-status status-critical';
-                    document.getElementById('river-detail').textContent = 'Major flood stage';
-                } else if (gageHeight > 10) {
-                    display.classList.add('level-warning');
-                    status.textContent = 'Minor Flood Stage';
-                    description.textContent = `${currentGaugeName} - Water levels above normal, flooding possible`;
-                    floodStage = 'Minor Flooding';
-                    alertLevel = 'FLOOD WARNING';
-                    actions.innerHTML = `
