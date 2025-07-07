@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com; connect-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:;">
+    <title>All Fire Protection Products - EmergencyEssentials</title>
+    <meta name="description" content="Complete collection of professional fire protection equipment including fire blankets, extinguishers, protective clothing, and emergency shelter systems.">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000000;
+            color: #FFFFFF;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 100;
+            border-bottom: 1px solid #333333;
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #FFFFFF;
+            letter-spacing: -0.5px;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: #CCCCCC;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover,
+        .nav-link.active {
+            color: #FFFFFF;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: #111111;
+            border-bottom: 1px solid #333333;
+            padding: 16px 0;
+        }
+
+        .breadcrumb-nav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #CCCCCC;
+        }
+
+        .breadcrumb-link {
+            color: #FFFFFF;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb-link:hover {
+            color: #FF8C44;
+        }
+
+        .breadcrumb-separator {
+            color: #666666;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(180deg, #000000 0%, #111111 100%);
+            padding: 80px 0;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 300;
+            margin-bottom: 24px;
+            letter-spacing: -2px;
+            line-height: 1.1;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            color: #CCCCCC;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            font-weight: 300;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 40px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 300;
+            color: #FF8C44;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #CCCCCC;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Compact Filter Bar like Amazon */
+        .filter-section {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 6px;
+            padding: 16px 20px;
+            margin: 20px 0;
+        }
+
+        .filter-container {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #CCCCCC;
+            white-space: nowrap;
+        }
+
+        .filter-select {
+            background: #161616;
+            border: 1px solid #666666;
+            color: #FFFFFF;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .filter-select:hover {
+            border-color: #FFFFFF;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #FF8C44;
+        }
+
+        /* Compact Category Navigation */
+        .category-nav {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .category-nav h3 {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            color: #CCCCCC;
+        }
+
+        .category-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            background: transparent;
+            border: 1px solid #666666;
+            color: #CCCCCC;
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            font-size: 12px;
+        }
+
+        .category-btn:hover,
+        .category-btn.active {
+            background: #FF8C44;
+            border-color: #FF8C44;
+            color: #FFFFFF;
+        }
+
+        /* Product Categories */
+        .products-section {
+            margin: 60px 0;
+        }
+
+        .category-section {
+            margin-bottom: 80px;
+        }
+
+        .category-header {
+            text-align: center;
+            margin-bottom: 48px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #333333;
+        }
+
+        .category-title {
+            font-size: 42px;
+            font-weight: 300;
+            margin-bottom: 16px;
+            color: #FFFFFF;
+            letter-spacing: -1px;
+        }
+
+        .category-subtitle {
+            font-size: 18px;
+            color: #CCCCCC;
+            font-weight: 300;
+        }
+
+        .category-count {
+            background: #FF8C44;
+            color: #FFFFFF;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 16px;
+        }
+
+        /* Product Grid - 3 per row */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .product-card {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            background: #2a2a2a;
+            border-color: #555555;
+            transform: translateY(-4px);
+        }
+
+        .product-priority {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .product-priority.critical {
+            background: rgba(255, 68, 68, 0.1);
+            color: #FF4444;
+            border: 1px solid #FF4444;
+        }
+
+        .product-priority.important {
+            background: rgba(255, 170, 68, 0.1);
+            color: #FFAA44;
+            border: 1px solid #FFAA44;
+        }
+
+        .product-priority.recommended {
+            background: rgba(68, 170, 255, 0.1);
+            color: #44AAFF;
+            border: 1px solid #44AAFF;
+        }
+
+        .product-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #FFFFFF;
+            line-height: 1.3;
+        }
+
+        .product-description {
+            color: #CCCCCC;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            flex-grow: 1;
+        }
+
+        .product-details {
+            margin-bottom: 16px;
+        }
+
+        .product-price {
+            font-size: 24px;
+            font-weight: 600;
+            color: #FF8C44;
+            margin-bottom: 8px;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #CCCCCC;
+            margin-bottom: 12px;
+        }
+
+        .stars {
+            color: #FFD700;
+            font-size: 14px;
+        }
+
+        .product-features {
+            font-size: 12px;
+            color: #CCCCCC;
+            background: #161616;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            border-left: 3px solid #FF8C44;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .affiliate-link {
+            background: #FF9900;
+            color: #FFFFFF;
+            padding: 10px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            flex-grow: 1;
+            text-align: center;
+        }
+        
+        .affiliate-link:hover {
+            background: #E68900;
+            transform: translateY(-1px);
+        }
+
+        .compare-btn {
+            background: transparent;
+            border: 1px solid #666666;
+            color: #FFFFFF;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .compare-btn:hover {
+            background: #666666;
+        }
+
+        /* Call to Action */
+        .cta-section {
+            background: #FFFFFF;
+            color: #000000;
+            text-align: center;
+            padding: 80px 40px;
+            border-radius: 8px;
+            margin: 60px 0;
+        }
+        
+        .cta-title {
+            font-size: 42px;
+            font-weight: 300;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+        
+        .cta-subtitle {
+            font-size: 18px;
+            margin-bottom: 32px;
+            color: #666666;
+            font-weight: 300;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .cta-button {
+            background: #000000;
+            color: #FFFFFF;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .cta-button:hover {
+            background: #333333;
+        }
+        
+        .cta-button.secondary {
+            background: transparent;
+            color: #000000;
+            border: 1px solid #000000;
+        }
+        
+        .cta-button.secondary:hover {
+            background: #000000;
+            color: #FFFFFF;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .hero p {
+                font-size: 16px;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .filter-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .filter-label {
+                min-width: auto;
+            }
+
+            .category-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .cta-title {
+                font-size: 28px;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .breadcrumb-nav {
+                flex-wrap: wrap;
+            }
+
+            .category-title {
+                font-size: 32px;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="index.html" class="logo">EmergencyEssentials</a>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">All Emergencies</a>
+                    <a href="wildfire.html" class="nav-link active">Wildfire</a>
+                    <a href="flood.html" class="nav-link">Flood</a>
+                    <a href="earthquake.html" class="nav-link">Earthquake</a>
+                    <a href="cyberattacks.html" class="nav-link">Cyberattacks</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <section class="breadcrumb">
+        <div class="container">
+            <nav class="breadcrumb-nav">
+                <a href="index.html" class="breadcrumb-link">Home</a>
+                <span class="breadcrumb-separator">›</span>
+                <a href="wildfire.html" class="breadcrumb-link">Wildfire Preparedness</a>
+                <span class="breadcrumb-separator">›</span>
+                <span>Fire Protection Products</span>
+            </nav>
+        </div>
+    </section>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Fire Protection Products</h1>
+            <p>Professional-grade fire safety equipment for wildfire defense, emergency response, and personal protection</p>
+            
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number">36+</span>
+                    <span class="stat-label">Products</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">6</span>
+                    <span class="stat-label">Categories</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">4.8★</span>
+                    <span class="stat-label">Avg Rating</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Compact Filter Section like Amazon -->
+    <section class="container">
+        <div class="filter-section">
+            <div class="filter-container">
+                <div class="filter-group">
+                    <label class="filter-label">Filter by:</label>
+                    <select class="filter-select" id="category-filter" onchange="applyFilters()">
+                        <option value="all">All Categories</option>
+                        <option value="blankets">Fire Blankets</option>
+                        <option value="extinguishers">Extinguishers</option>
+                        <option value="clothing">Protective Clothing</option>
+                        <option value="shelter">Emergency Shelter</option>
+                        <option value="detection">Detection</option>
+                        <option value="suppression">Suppression</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Price:</label>
+                    <select class="filter-select" id="price-filter" onchange="applyFilters()">
+                        <option value="all">All Prices</option>
+                        <option value="budget">Under $50</option>
+                        <option value="mid">$50-200</option>
+                        <option value="premium">$200+</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Rating:</label>
+                    <select class="filter-select" id="rating-filter" onchange="applyFilters()">
+                        <option value="all">All Ratings</option>
+                        <option value="4plus">4+ Stars</option>
+                        <option value="45plus">4.5+ Stars</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Compact Category Navigation -->
+    <section class="container">
+        <div class="category-nav">
+            <h3>Quick Jump:</h3>
+            <div class="category-buttons">
+                <a href="#fire-blankets" class="category-btn">Fire Blankets</a>
+                <a href="#fire-extinguishers" class="category-btn">Extinguishers</a>
+                <a href="#protective-clothing" class="category-btn">Protective Clothing</a>
+                <a href="#emergency-shelter" class="category-btn">Emergency Shelter</a>
+                <a href="#fire-detection" class="category-btn">Detection</a>
+                <a href="#fire-suppression" class="category-btn">Suppression</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section">
+        <div class="container">
+            
+            <!-- Fire Blankets Category -->
+            <div class="category-section" id="fire-blankets" data-category="blankets">
+                <div class="category-header">
+                    <h2 class="category-title">Fire-Resistant Blankets</h2>
+                    <p class="category-subtitle">Essential fire suppression blankets for personal protection and emergency shelter</p>
+                    <div class="category-count">6 Products</div>
+                </div>
+                
+                <div class="products-grid">
+                    <div class="product-card">
+                        <div class="product-priority critical">Critical</div>
+                        <div class="product-content">
+                            <h3 class="product-title">Preparedness Products Fire Blanket</h3>
+                            <p class="product-description">100% wool fire retardant blanket for basic personal protection. Single person size with fire-resistant treatment.</p>
+                            <div class="product-details">
+                                <div class="product-price">$45.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐☆</span>
+                                    <span>(4.1/5 - 623 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">39" x 79" size • 100% wool • Fire retardant • Basic protection</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('preparedness-fire-blanket', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-priority important">Important</div>
+                        <div class="product-content">
+                            <h3 class="product-title">Grabber Emergency Fire Blanket</h3>
+                            <p class="product-description">Aluminized fabric blanket that reflects radiant heat. Two-person size and lightweight for emergency evacuation.</p>
+                            <div class="product-details">
+                                <div class="product-price">$89.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐⭐</span>
+                                    <span>(4.6/5 - 1,089 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">Aluminized fabric • Reflects radiant heat • Two person size • Lightweight</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('grabber-emergency-blanket', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-priority recommended">Recommended</div>
+                        <div class="product-content">
+                            <h3 class="product-title">Fire Wrap Personal Fire Shelter</h3>
+                            <p class="product-description">Professional-grade multi-layer protection designed for family-size emergency shelter during extreme fire conditions.</p>
+                            <div class="product-details">
+                                <div class="product-price">$299.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐⭐</span>
+                                    <span>(4.9/5 - 234 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">Professional grade • Multi-layer protection • Family size • Emergency shelter</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('fire-wrap-shelter', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-priority important">Important</div>
+                        <div class="product-content">
+                            <h3 class="product-title">STEINER Tough Guard Fire Blanket</h3>
+                            <p class="product-description">Industrial-grade 6x8 foot fire blanket with 1800°F rating. Silica fabric construction for heavy-duty applications.</p>
+                            <div class="product-details">
+                                <div class="product-price">$189.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐⭐</span>
+                                    <span>(4.7/5 - 456 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">6' x 8' coverage • 1800°F rating • Silica fabric • Industrial grade</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('steiner-316-6x8', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-priority recommended">Recommended</div>
+                        <div class="product-content">
+                            <h3 class="product-title">VEVOR Heavy Duty Fire Blanket</h3>
+                            <p class="product-description">Large 8x12 foot emergency-grade fire blanket with 2000°F rating and fiberglass construction for maximum protection.</p>
+                            <div class="product-details">
+                                <div class="product-price">$279.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐⭐</span>
+                                    <span>(4.8/5 - 189 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">8' x 12' large size • 2000°F rating • Fiberglass construction • Emergency grade</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('vevor-8x12-blanket', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-priority critical">Critical</div>
+                        <div class="product-content">
+                            <h3 class="product-title">JJ CARE Fire Blanket</h3>
+                            <p class="product-description">Kitchen and home fire suppression blanket. Quick deployment design for grease fires and emergency situations.</p>
+                            <div class="product-details">
+                                <div class="product-price">$24.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐☆</span>
+                                    <span>(4.3/5 - 2,847 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">40" x 40" kitchen size • Quick deployment • Grease fire protection • Wall mount</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('jjcare-fire-blanket', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fire Extinguishers Category -->
+            <div class="category-section" id="fire-extinguishers" data-category="extinguishers">
+                <div class="category-header">
+                    <h2 class="category-title">Fire Extinguishers</h2>
+                    <p class="category-subtitle">Multi-purpose dry chemical and foam extinguishers for comprehensive fire suppression</p>
+                    <div class="category-count">6 Products</div>
+                </div>
+                
+                <div class="products-grid">
+                    <div class="product-card">
+                        <div class="product-priority critical">Critical</div>
+                        <div class="product-content">
+                            <h3 class="product-title">Kidde FA110 Multi Purpose Extinguisher</h3>
+                            <p class="product-description">Budget-friendly 2.5 lb ABC dry chemical extinguisher. Perfect for home and vehicle fire protection with 6-year warranty.</p>
+                            <div class="product-details">
+                                <div class="product-price">$39.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐☆</span>
+                                    <span>(4.3/5 - 2,847 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">1-A:10-B:C rating • 2.5 lbs • Wall bracket included • 6-year warranty</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('kidde-fa110', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-priority important">Important</div>
+                        <div class="product-content">
+                            <h3 class="product-title">Amerex B500 ABC Fire Extinguisher</h3>
+                            <p class="product-description">Professional-grade 5 lb extinguisher with superior 3-A:40-B:C rating and 12-year warranty. Commercial quality construction.</p>
+                            <div class="product-details">
+                                <div class="product-price">$79.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐⭐</span>
+                                    <span>(4.8/5 - 1,523 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">3-A:40-B:C rating • 5 lbs • Professional grade • 12-year warranty</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('amerex-b500', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-priority recommended">Recommended</div>
+                        <div class="product-content">
+                            <h3 class="product-title">Ansul SENTRY 10 lb ABC Extinguisher</h3>
+                            <p class="product-description">Heavy-duty 10 lb commercial-grade extinguisher with 4-A:60-B:C rating. Rechargeable design for long-term use.</p>
+                            <div class="product-details">
+                                <div class="product-price">$149.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐⭐</span>
+                                    <span>(4.9/5 - 678 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">4-A:60-B:C rating • 10 lbs • Commercial grade • Rechargeable</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('ansul-sentry-10', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-priority important">Important</div>
+                        <div class="product-content">
+                            <h3 class="product-title">Amerex B260 AFFF Foam Extinguisher</h3>
+                            <p class="product-description">2.5 gallon AFFF foam extinguisher specifically designed for Class A and B fires. Effective on fuel and oil fires.</p>
+                            <div class="product-details">
+                                <div class="product-price">$124.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐⭐</span>
+                                    <span>(4.7/5 - 345 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">2.5 gallons • 3-A:20-B rating • AFFF formula • Stainless steel</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('amerex-b260-foam', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-priority critical">Critical</div>
+                        <div class="product-content">
+                            <h3 class="product-title">First Alert AUTO5 Car Fire Extinguisher</h3>
+                            <p class="product-description">Compact vehicle fire extinguisher designed for automotive emergencies. Fits under seats with quick-release bracket.</p>
+                            <div class="product-details">
+                                <div class="product-price">$29.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐☆</span>
+                                    <span>(4.2/5 - 1,234 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">Automotive design • Compact size • Quick-release bracket • 1-A:10-B:C rating</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('first-alert-auto5', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-priority recommended">Recommended</div>
+                        <div class="product-content">
+                            <h3 class="product-title">Buckeye 13315 ABC Fire Extinguisher</h3>
+                            <p class="product-description">Premium 5 lb ABC extinguisher with aluminum valve and pressure gauge. Professional quality with excellent discharge range.</p>
+                            <div class="product-details">
+                                <div class="product-price">$89.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐⭐</span>
+                                    <span>(4.6/5 - 789 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">2-A:10-B:C rating • Aluminum valve • Pressure gauge • 15-20 ft range</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('buckeye-13315', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Protective Clothing Category -->
+            <div class="category-section" id="protective-clothing" data-category="clothing">
+                <div class="category-header">
+                    <h2 class="category-title">Fire-Resistant Clothing</h2>
+                    <p class="category-subtitle">Professional-grade fire-resistant clothing for wildfire evacuation and emergency response</p>
+                    <div class="category-count">6 Products</div>
+                </div>
+                
+                <div class="products-grid">
+                    <div class="product-card">
+                        <div class="product-priority critical">Critical</div>
+                        <div class="product-content">
+                            <h3 class="product-title">Bulwark FR Classic Coverall</h3>
+                            <p class="product-description">NFPA 2112 certified coverall with 7 oz. fabric construction. Multiple pockets and comfort fit for extended wear.</p>
+                            <div class="product-details">
+                                <div class="product-price">$89.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐☆</span>
+                                    <span>(4.2/5 - 789 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">7 oz. fabric • NFPA 2112 • Multiple pockets • Comfort fit</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('bulwark-classic', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-priority important">Important</div>
+                        <div class="product-content">
+                            <h3 class="product-title">Carhartt FR Traditional Coverall</h3>
+                            <p class="product-description">Premium 9.5 oz. Nomex® blend coverall with CAT 2 rating. Reinforced stress points for maximum durability and protection.</p>
+                            <div class="product-details">
+                                <div class="product-price">$179.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐⭐</span>
+                                    <span>(4.8/5 - 456 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">9.5 oz. fabric • CAT 2 rating • Reinforced stress points • Nomex® blend</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('carhartt-fr-traditional', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-priority recommended">Recommended</div>
+                        <div class="product-content">
+                            <h3 class="product-title">Mechanix Heat Resistant Gloves</h3>
+                            <p class="product-description">High-performance gloves with 500°F heat resistance. Palm padding and secure fit for handling hot objects safely.</p>
+                            <div class="product-details">
+                                <div class="product-price">$34.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐⭐</span>
+                                    <span>(4.6/5 - 2,134 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">500°F heat resistance • Palm padding • Secure fit • Machine washable</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('mechanix-heat-gloves', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-priority important">Important</div>
+                        <div class="product-content">
+                            <h3 class="product-title">3M WorkTunes Hearing Protector</h3>
+                            <p class="product-description">Bluetooth-enabled hearing protection with AM/FM radio. Essential protection from loud emergency equipment and sirens.</p>
+                            <div class="product-details">
+                                <div class="product-price">$49.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐⭐</span>
+                                    <span>(4.5/5 - 1,567 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">Bluetooth connectivity • AM/FM radio • 24 dB noise reduction • Voice assist</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('3m-worktunes', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-priority critical">Critical</div>
+                        <div class="product-content">
+                            <h3 class="product-title">Tingley Rubber Storm Track Boots</h3>
+                            <p class="product-description">Waterproof steel toe boots designed for emergency response. Chemical resistant with slip-resistant sole for hazardous conditions.</p>
+                            <div class="product-details">
+                                <div class="product-price">$67.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐☆</span>
+                                    <span>(4.3/5 - 892 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">Steel toe protection • Waterproof • Chemical resistant • Slip-resistant sole</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('tingley-storm-boots', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-priority recommended">Recommended</div>
+                        <div class="product-content">
+                            <h3 class="product-title">MSA V-Gard Hard Hat</h3>
+                            <p class="product-description">ANSI-approved hard hat with 4-point suspension system. Essential head protection during emergency response activities.</p>
+                            <div class="product-details">
+                                <div class="product-price">$24.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐⭐</span>
+                                    <span>(4.7/5 - 1,234 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">ANSI approved • 4-point suspension • High-visibility colors • Accessory slots</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('msa-vgard-hardhat', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Shelter Category -->
+            <div class="category-section" id="emergency-shelter" data-category="shelter">
+                <div class="category-header">
+                    <h2 class="category-title">Emergency Fire Shelters</h2>
+                    <p class="category-subtitle">Last-resort emergency shelters designed for wildfire entrapment situations</p>
+                    <div class="category-count">6 Products</div>
+                </div>
+                
+                <div class="products-grid">
+                    <div class="product-card">
+                        <div class="product-priority critical">Critical</div>
+                        <div class="product-content">
+                            <h3 class="product-title">Fire Shelter Manufacturing M-2002</h3>
+                            <p class="product-description">USFS certified fire shelter with 2000°F protection. Professional-grade aluminized construction for emergency deployment.</p>
+                            <div class="product-details">
+                                <div class="product-price">$349.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐⭐</span>
+                                    <span>(4.9/5 - 167 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">USFS certified • 2000°F protection • Aluminized construction • Emergency grade</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('fsm-m2002-shelter', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-priority important">Important</div>
+                        <div class="product-content">
+                            <h3 class="product-title">Emergency Mylar Thermal Blankets</h3>
+                            <p class="product-description">Pack of 10 space blankets for emergency warmth and heat reflection. Compact and lightweight for evacuation kits.</p>
+                            <div class="product-details">
+                                <div class="product-price">$19.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐☆</span>
+                                    <span>(4.2/5 - 3,456 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">Pack of 10 • Heat reflection • Compact size • Waterproof</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('mylar-thermal-blankets', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-priority recommended">Recommended</div>
+                        <div class="product-content">
+                            <h3 class="product-title">Coleman Emergency Shelter Tent</h3>
+                            <p class="product-description">Quick-setup emergency tent with reflective interior. Provides immediate shelter and protection from radiant heat.</p>
+                            <div class="product-details">
+                                <div class="product-price">$89.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐☆</span>
+                                    <span>(4.1/5 - 567 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">Quick setup • Reflective interior • 2-person capacity • Compact storage</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('coleman-emergency-tent', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-priority important">Important</div>
+                        <div class="product-content">
+                            <h3 class="product-title">Survive Outdoors Longer Emergency Bivvy</h3>
+                            <p class="product-description">Ultra-compact emergency sleeping bag that reflects 90% of body heat. Essential for overnight emergency shelter.</p>
+                            <div class="product-details">
+                                <div class="product-price">$14.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐⭐</span>
+                                    <span>(4.5/5 - 2,345 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">90% heat reflection • Ultra-compact • Waterproof • Wind resistant</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('sol-emergency-bivvy', 'amazon')">View on Amazon</a>
+                                <button class="compare-btn">Compare</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-priority recommended">Recommended</div>
+                        <div class="product-content">
+                            <h3 class="product-title">Ready America Emergency Shelter Kit</h3>
+                            <p class="product-description">Complete family shelter kit with tent, sleeping bags, and emergency supplies. Designed for 72-hour emergency situations.</p>
+                            <div class="product-details">
+                                <div class="product-price">$179.99</div>
+                                <div class="product-rating">
+                                    <span class="stars">⭐⭐⭐⭐☆</span>
+                                    <span>(4.3/5 - 456 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="product-features">Family kit • 72-hour supplies • Tent included • Emergency food</div>
+                            <div class="product-actions">
+                                <a href="#" class="affiliate-link" onclick="trackAffiliate('ready-america-shelter
