@@ -3,7 +3,8 @@
 <head>
    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://api.allorigins.win https://corsproxy.io https://api.codetabs.com https://geocoding-api.open-meteo.com https://air-quality-api.open-meteo.com https://api.open-meteo.com https://api.weather.gov; connect-src 'self' https://fonts.googleapis.com https://api.allorigins.win https://corsproxy.io https://api.codetabs.com https://geocoding-api.open-meteo.com https://air-quality-api.open-meteo.com https://api.open-meteo.com https://api.weather.gov *; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;">    <title>Wildfire Emergency Preparedness - EmergencyEssentials</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://api.allorigins.win https://corsproxy.io https://api.codetabs.com https://geocoding-api.open-meteo.com https://air-quality-api.open-meteo.com https://api.open-meteo.com https://api.weather.gov https://eonet.gsfc.nasa.gov; connect-src 'self' https://fonts.googleapis.com https://api.allorigins.win https://corsproxy.io https://api.codetabs.com https://geocoding-api.open-meteo.com https://air-quality-api.open-meteo.com https://api.open-meteo.com https://api.weather.gov https://eonet.gsfc.nasa.gov; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;">
+    <title>Wildfire Emergency Preparedness - EmergencyEssentials</title>
     <meta name="description" content="Comprehensive wildfire preparedness guide with defense strategies, evacuation planning, and professional equipment recommendations.">
     
     <style>
@@ -132,6 +133,428 @@
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
+        }
+
+        /* Real-Time Data Dashboard */
+        .data-dashboard {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            margin: 60px 0 40px 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .dashboard-header {
+            background: #111111;
+            padding: 20px 40px;
+            border-bottom: 1px solid #333333;
+        }
+
+        .dashboard-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #FFFFFF;
+        }
+
+        .dashboard-subtitle {
+            color: #CCCCCC;
+            font-size: 14px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 0;
+        }
+
+        .data-card {
+            background: #1a1a1a;
+            border-right: 1px solid #333333;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .data-card:last-child {
+            border-right: none;
+        }
+
+        .data-card:hover {
+            background: #242424;
+        }
+
+        .data-label {
+            font-size: 12px;
+            color: #999999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .data-value {
+            font-size: 32px;
+            font-weight: 300;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .data-status {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .data-detail {
+            font-size: 12px;
+            color: #CCCCCC;
+            line-height: 1.4;
+        }
+
+        /* Status Colors */
+        .status-normal { color: #44AA44; }
+        .status-watch { color: #FFDD44; }
+        .status-warning { color: #FFAA44; }
+        .status-critical { color: #FF4444; }
+
+        .card-wildfires .data-value { color: #FF4444; }
+        .card-weather .data-value { color: #FFAA44; }
+        .card-air .data-value { color: #44AAFF; }
+        .card-wind .data-value { color: #FFDD44; }
+
+        /* Update indicator */
+        .update-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #44AA44;
+            animation: pulse 2s infinite;
+        }
+
+        .updating {
+            background: #FFAA44;
+        }
+
+        .error {
+            background: #FF4444;
+            animation: none;
+        }
+
+        /* Weather Conditions Styling */
+        .weather-conditions {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 40px;
+            margin: 40px 0;
+        }
+
+        .weather-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .weather-card {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .weather-card:hover {
+            background: #242424;
+            border-color: #666666;
+            transform: translateY(-2px);
+        }
+
+        .weather-card.fire-danger {
+            border-left: 4px solid #FF4444;
+        }
+
+        .weather-label {
+            font-size: 14px;
+            color: #CCCCCC;
+            margin-bottom: 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .weather-value {
+            font-size: 36px;
+            font-weight: 300;
+            color: #FFFFFF;
+            margin-bottom: 4px;
+            line-height: 1;
+        }
+
+        .weather-unit {
+            font-size: 14px;
+            color: #999999;
+            font-weight: 500;
+        }
+
+        .fire-danger .weather-value {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .fire-danger-low { color: #44AA44; }
+        .fire-danger-moderate { color: #FFDD44; }
+        .fire-danger-high { color: #FFAA44; }
+        .fire-danger-extreme { color: #FF4444; }
+
+        /* Air Quality Monitor */
+        .air-quality {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 40px;
+            margin: 40px 0;
+            text-align: center;
+        }
+        
+        .location-controls {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .location-display {
+            font-size: 16px;
+            color: #CCCCCC;
+            margin-bottom: 12px;
+        }
+        
+        .location-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .location-btn {
+            background: transparent;
+            border: 1px solid #666666;
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .location-btn:hover {
+            background: #666666;
+            color: #FFFFFF;
+        }
+        
+        .location-btn.active {
+            background: #44AAFF;
+            border-color: #44AAFF;
+            color: #FFFFFF;
+        }
+        
+        .city-selector {
+            margin-top: 12px;
+            display: none;
+        }
+        
+        .city-selector select {
+            background: #1a1a1a;
+            border: 1px solid #666666;
+            color: #FFFFFF;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-right: 8px;
+        }
+        
+        .city-selector select:focus {
+            outline: none;
+            border-color: #44AAFF;
+        }
+        
+        .aqi-display {
+            font-size: 64px;
+            font-weight: 300;
+            margin: 20px 0;
+            letter-spacing: -2px;
+        }
+        
+        .aqi-good { color: #44AA44; }
+        .aqi-moderate { color: #FFDD44; }
+        .aqi-unhealthy { color: #FFAA44; }
+        .aqi-hazardous { color: #FF4444; }
+        
+        .aqi-status {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .aqi-description {
+            color: #CCCCCC;
+            margin-bottom: 24px;
+        }
+        
+        .aqi-actions {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: left;
+        }
+        
+        .refresh-btn {
+            background: transparent;
+            border: 1px solid #FFFFFF;
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 16px;
+        }
+        
+        .refresh-btn:hover {
+            background: #FFFFFF;
+            color: #000000;
+        }
+
+        /* Weather Alerts Styling */
+        .weather-alerts {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 40px;
+            margin: 40px 0;
+        }
+
+        .alerts-container {
+            margin: 20px 0;
+            min-height: 100px;
+        }
+
+        .loading-alerts {
+            text-align: center;
+            padding: 40px;
+            color: #CCCCCC;
+        }
+
+        .alert-card {
+            background: #161616;
+            border: 1px solid #444444;
+            border-left: 4px solid;
+            border-radius: 0 8px 8px 0;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .alert-card:hover {
+            background: #242424;
+            border-color: #666666;
+        }
+
+        .alert-card.severe { border-left-color: #FF4444; }
+        .alert-card.moderate { border-left-color: #FFAA44; }
+        .alert-card.minor { border-left-color: #FFDD44; }
+
+        .alert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .alert-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #FFFFFF;
+            flex-grow: 1;
+        }
+
+        .alert-severity {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 12px;
+        }
+
+        .alert-severity.severe {
+            background: rgba(255, 68, 68, 0.1);
+            color: #FF4444;
+            border: 1px solid #FF4444;
+        }
+
+        .alert-severity.moderate {
+            background: rgba(255, 170, 68, 0.1);
+            color: #FFAA44;
+            border: 1px solid #FFAA44;
+        }
+
+        .alert-severity.minor {
+            background: rgba(255, 221, 68, 0.1);
+            color: #FFDD44;
+            border: 1px solid #FFDD44;
+        }
+
+        .alert-meta {
+            font-size: 12px;
+            color: #999999;
+            margin-bottom: 12px;
+        }
+
+        .alert-description {
+            color: #CCCCCC;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .alert-instruction {
+            background: #0f0f0f;
+            border: 1px solid #333333;
+            border-radius: 4px;
+            padding: 12px;
+            font-size: 14px;
+            color: #FFFFFF;
+            font-weight: 500;
+        }
+
+        .no-alerts {
+            text-align: center;
+            padding: 40px;
+            color: #CCCCCC;
+        }
+
+        .no-alerts-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: #44AA44;
+        }
+
+        .alert-count {
+            font-size: 14px;
+            color: #999999;
+            margin-bottom: 12px;
         }
         
         /* Section Styling */
@@ -331,129 +754,6 @@
             background: #E68900;
         }
         
-        /* Air Quality Monitor */
-        .air-quality {
-            background: #1a1a1a;
-            border: 1px solid #333333;
-            border-radius: 8px;
-            padding: 40px;
-            margin: 40px 0;
-            text-align: center;
-        }
-        
-        .location-controls {
-            background: #161616;
-            border: 1px solid #444444;
-            border-radius: 6px;
-            padding: 20px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .location-display {
-            font-size: 16px;
-            color: #CCCCCC;
-            margin-bottom: 12px;
-        }
-        
-        .location-buttons {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .location-btn {
-            background: transparent;
-            border: 1px solid #666666;
-            color: #FFFFFF;
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
-        }
-        
-        .location-btn:hover {
-            background: #666666;
-            color: #FFFFFF;
-        }
-        
-        .location-btn.active {
-            background: #44AAFF;
-            border-color: #44AAFF;
-            color: #FFFFFF;
-        }
-        
-        .city-selector {
-            margin-top: 12px;
-            display: none;
-        }
-        
-        .city-selector select {
-            background: #1a1a1a;
-            border: 1px solid #666666;
-            color: #FFFFFF;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 14px;
-            margin-right: 8px;
-        }
-        
-        .city-selector select:focus {
-            outline: none;
-            border-color: #44AAFF;
-        }
-        
-        .aqi-display {
-            font-size: 64px;
-            font-weight: 300;
-            margin: 20px 0;
-            letter-spacing: -2px;
-        }
-        
-        .aqi-good { color: #44AA44; }
-        .aqi-moderate { color: #FFDD44; }
-        .aqi-unhealthy { color: #FFAA44; }
-        .aqi-hazardous { color: #FF4444; }
-        
-        .aqi-status {
-            font-size: 18px;
-            font-weight: 500;
-            margin-bottom: 8px;
-        }
-        
-        .aqi-description {
-            color: #CCCCCC;
-            margin-bottom: 24px;
-        }
-        
-        .aqi-actions {
-            background: #161616;
-            border: 1px solid #444444;
-            border-radius: 6px;
-            padding: 20px;
-            text-align: left;
-        }
-        
-        .refresh-btn {
-            background: transparent;
-            border: 1px solid #FFFFFF;
-            color: #FFFFFF;
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 16px;
-        }
-        
-        .refresh-btn:hover {
-            background: #FFFFFF;
-            color: #000000;
-        }
-        
         /* Emergency Contacts */
         .emergency-contacts {
             background: #1a1a1a;
@@ -608,6 +908,19 @@
                 flex-direction: column;
                 align-items: center;
             }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .data-card {
+                border-right: none;
+                border-bottom: 1px solid #333333;
+            }
+
+            .data-card:last-child {
+                border-bottom: none;
+            }
         }
         
         /* Animations */
@@ -619,192 +932,6 @@
         .animate-in {
             animation: fadeIn 0.6s ease forwards;
         }
-        .weather-alerts {
-    background: #1a1a1a;
-    border: 1px solid #333333;
-    border-radius: 8px;
-    padding: 40px;
-    margin: 40px 0;
-}
-
-.alerts-container {
-    margin: 20px 0;
-    min-height: 100px;
-}
-
-.loading-alerts {
-    text-align: center;
-    padding: 40px;
-    color: #CCCCCC;
-}
-
-.alert-card {
-    background: #161616;
-    border: 1px solid #444444;
-    border-left: 4px solid;
-    border-radius: 0 8px 8px 0;
-    padding: 20px;
-    margin-bottom: 16px;
-    transition: all 0.3s ease;
-}
-
-.alert-card:hover {
-    background: #242424;
-    border-color: #666666;
-}
-
-.alert-card.severe { border-left-color: #FF4444; }
-.alert-card.moderate { border-left-color: #FFAA44; }
-.alert-card.minor { border-left-color: #FFDD44; }
-
-.alert-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 12px;
-}
-
-.alert-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #FFFFFF;
-    flex-grow: 1;
-}
-
-.alert-severity {
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-left: 12px;
-}
-
-.alert-severity.severe {
-    background: rgba(255, 68, 68, 0.1);
-    color: #FF4444;
-    border: 1px solid #FF4444;
-}
-
-.alert-severity.moderate {
-    background: rgba(255, 170, 68, 0.1);
-    color: #FFAA44;
-    border: 1px solid #FFAA44;
-}
-
-.alert-severity.minor {
-    background: rgba(255, 221, 68, 0.1);
-    color: #FFDD44;
-    border: 1px solid #FFDD44;
-}
-
-.alert-meta {
-    font-size: 12px;
-    color: #999999;
-    margin-bottom: 12px;
-}
-
-.alert-description {
-    color: #CCCCCC;
-    line-height: 1.6;
-    margin-bottom: 12px;
-}
-
-.alert-instruction {
-    background: #0f0f0f;
-    border: 1px solid #333333;
-    border-radius: 4px;
-    padding: 12px;
-    font-size: 14px;
-    color: #FFFFFF;
-    font-weight: 500;
-}
-
-.no-alerts {
-    text-align: center;
-    padding: 40px;
-    color: #CCCCCC;
-}
-
-.no-alerts-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
-    color: #44AA44;
-}
-
-.alert-count {
-    font-size: 14px;
-    color: #999999;
-    margin-bottom: 12px;
-}
-        /* Weather Conditions Styling */
-.weather-conditions {
-    background: #1a1a1a;
-    border: 1px solid #333333;
-    border-radius: 8px;
-    padding: 40px;
-    margin: 40px 0;
-}
-
-.weather-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin: 30px 0;
-}
-
-.weather-card {
-    background: #161616;
-    border: 1px solid #444444;
-    border-radius: 8px;
-    padding: 24px;
-    text-align: center;
-    transition: all 0.3s ease;
-}
-
-.weather-card:hover {
-    background: #242424;
-    border-color: #666666;
-    transform: translateY(-2px);
-}
-
-.weather-card.fire-danger {
-    border-left: 4px solid #FF4444;
-}
-
-.weather-label {
-    font-size: 14px;
-    color: #CCCCCC;
-    margin-bottom: 8px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.weather-value {
-    font-size: 36px;
-    font-weight: 300;
-    color: #FFFFFF;
-    margin-bottom: 4px;
-    line-height: 1;
-}
-
-.weather-unit {
-    font-size: 14px;
-    color: #999999;
-    font-weight: 500;
-}
-
-.fire-danger .weather-value {
-    font-size: 24px;
-    font-weight: 600;
-}
-
-.fire-danger-low { color: #44AA44; }
-.fire-danger-moderate { color: #FFDD44; }
-.fire-danger-high { color: #FFAA44; }
-.fire-danger-extreme { color: #FF4444; }
     </style>
 </head>
 <body>
@@ -832,7 +959,172 @@
             <p>Comprehensive defense strategies for wildfire threats in high-risk areas</p>
             <div class="threat-level">
                 <div class="threat-indicator"></div>
-                <span>Current Fire Danger: <strong>EXTREME</strong> - Denver Metro Area</span>
+                <span id="threat-level-text">Current Status: <strong>LOADING</strong> - Detecting location...</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Real-Time Data Dashboard -->
+    <section class="section" style="padding: 40px 0;">
+        <div class="container">
+            <div class="data-dashboard">
+                <div class="dashboard-header">
+                    <h2 class="dashboard-title">🔥 Live Wildfire Threat Assessment</h2>
+                    <p class="dashboard-subtitle">Real-time conditions for <span id="dashboard-location">detecting location...</span></p>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="data-card card-wildfires">
+                        <div class="update-indicator" id="wildfires-indicator"></div>
+                        <div class="data-label">Active Wildfires</div>
+                        <div class="data-value" id="wildfires-count">Loading...</div>
+                        <div class="data-status" id="wildfires-status">Scanning area...</div>
+                        <div class="data-detail" id="wildfires-detail">Checking NASA satellite data</div>
+                    </div>
+                    
+                    <div class="data-card card-weather">
+                        <div class="update-indicator" id="weather-indicator"></div>
+                        <div class="data-label">Fire Weather Alerts</div>
+                        <div class="data-value" id="weather-alerts-count">Loading...</div>
+                        <div class="data-status" id="weather-alerts-status">Checking conditions...</div>
+                        <div class="data-detail" id="weather-alerts-detail">National Weather Service data</div>
+                    </div>
+                    
+                    <div class="data-card card-air">
+                        <div class="update-indicator" id="air-indicator"></div>
+                        <div class="data-label">Air Quality Index</div>
+                        <div class="data-value" id="air-quality-value">Loading...</div>
+                        <div class="data-status" id="air-quality-status">Checking quality...</div>
+                        <div class="data-detail" id="air-quality-detail">Real-time air monitoring</div>
+                    </div>
+                    
+                    <div class="data-card card-wind">
+                        <div class="update-indicator" id="wind-indicator"></div>
+                        <div class="data-label">Wind Conditions</div>
+                        <div class="data-value" id="wind-speed-value">Loading...</div>
+                        <div class="data-status" id="wind-status">Checking conditions...</div>
+                        <div class="data-detail" id="wind-detail">Current speed and direction</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detailed Fire Weather Conditions -->
+    <section class="section">
+        <div class="container">
+            <div class="weather-conditions">
+                <h2 style="color: #FFFFFF; margin-bottom: 16px; font-weight: 300;">Current Fire Weather Conditions</h2>
+                
+                <div class="location-controls">
+                    <div class="location-display">Location: <span id="weather-current-location">Detecting your location...</span></div>
+                </div>
+                
+                <div class="weather-grid">
+                    <div class="weather-card">
+                        <div class="weather-label">Temperature</div>
+                        <div class="weather-value" id="current-temp">Loading...</div>
+                        <div class="weather-unit">°F</div>
+                    </div>
+                    
+                    <div class="weather-card">
+                        <div class="weather-label">Humidity</div>
+                        <div class="weather-value" id="current-humidity">Loading...</div>
+                        <div class="weather-unit">%</div>
+                    </div>
+                    
+                    <div class="weather-card">
+                        <div class="weather-label">Wind Speed</div>
+                        <div class="weather-value" id="detailed-wind-speed">Loading...</div>
+                        <div class="weather-unit">mph</div>
+                    </div>
+                    
+                    <div class="weather-card">
+                        <div class="weather-label">Wind Direction</div>
+                        <div class="weather-value" id="detailed-wind-direction">Loading...</div>
+                        <div class="weather-unit">°</div>
+                    </div>
+                    
+                    <div class="weather-card fire-danger">
+                        <div class="weather-label">Fire Danger Index</div>
+                        <div class="weather-value" id="fire-danger-index">Calculating...</div>
+                        <div class="weather-unit" id="fire-danger-level">Risk Level</div>
+                    </div>
+                </div>
+                
+                <button class="refresh-btn" onclick="refreshDetailedWeatherData()">Refresh Weather</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Air Quality Monitor -->
+    <section class="section">
+        <div class="container">
+            <div class="air-quality">
+                <h2 style="color: #FFFFFF; margin-bottom: 16px; font-weight: 300;">Current Air Quality</h2>
+                
+                <div class="location-controls">
+                    <div class="location-display">Location: <span id="air-current-location">Detecting your location...</span></div>
+                    <div class="location-buttons">
+                        <button class="location-btn active" id="auto-location-btn" onclick="useAutoLocation()">Use My Location</button>
+                        <button class="location-btn" id="manual-location-btn" onclick="toggleCitySelector()">Choose City</button>
+                    </div>
+                    <div class="city-selector" id="city-selector">
+                        <select id="city-select" onchange="useSelectedCity()">
+                            <option value="">Select a city...</option>
+                            <option value="33.4484,-112.0740">Phoenix, AZ</option>
+                            <option value="34.0522,-118.2437">Los Angeles, CA</option>
+                            <option value="37.7749,-122.4194">San Francisco, CA</option>
+                            <option value="38.5816,-121.4944">Sacramento, CA</option>
+                            <option value="39.7392,-104.9903">Denver, CO</option>
+                            <option value="41.2033,-77.1945">Pennsylvania</option>
+                            <option value="43.6532,-116.3113">Boise, ID</option>
+                            <option value="41.8781,-87.6298">Chicago, IL</option>
+                            <option value="39.7817,-86.1478">Indianapolis, IN</option>
+                            <option value="38.2904,-92.6390">Missouri</option>
+                            <option value="46.8772,-96.7898">Fargo, ND</option>
+                            <option value="36.1627,-86.7816">Nashville, TN</option>
+                            <option value="30.2672,-97.7431">Austin, TX</option>
+                            <option value="32.7767,-96.7970">Dallas, TX</option>
+                            <option value="29.7604,-95.3698">Houston, TX</option>
+                            <option value="40.7608,-111.8910">Salt Lake City, UT</option>
+                            <option value="47.0379,-122.9015">Olympia, WA</option>
+                            <option value="47.6062,-122.3321">Seattle, WA</option>
+                        </select>
+                        <button class="location-btn" onclick="useSelectedCity()">Update</button>
+                    </div>
+                </div>
+                
+                <div class="aqi-display aqi-moderate">Loading...</div>
+                <div class="aqi-status">Checking conditions...</div>
+                <p class="aqi-description">Fetching real-time air quality data for your area</p>
+                <div class="aqi-actions">
+                    <strong>Loading current recommendations...</strong><br>
+                    Please wait while we fetch the latest air quality data from Open-Meteo.
+                </div>
+                <button class="refresh-btn" onclick="refreshDetailedAirQuality()">Refresh Data</button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Fire Weather Alerts -->
+    <section class="section">
+        <div class="container">
+            <div class="weather-alerts">
+                <h2 style="color: #FFFFFF; margin-bottom: 16px; font-weight: 300;">Fire Weather Alerts</h2>
+                
+                <div class="location-controls">
+                    <div class="location-display">Location: <span id="alerts-location">Detecting your location...</span></div>
+                    <div class="alert-count">Active Alerts: <span id="detailed-alert-count">Loading...</span></div>
+                </div>
+                
+                <div id="alerts-container" class="alerts-container">
+                    <div class="loading-alerts">
+                        <div style="font-size: 18px; margin-bottom: 8px;">Checking for active weather alerts...</div>
+                        <div style="color: #CCCCCC;">Fetching official fire weather warnings from National Weather Service</div>
+                    </div>
+                </div>
+                
+                <button class="refresh-btn" onclick="refreshDetailedWeatherAlerts()">Refresh Alerts</button>
             </div>
         </div>
     </section>
@@ -992,126 +1284,6 @@
         </div>
     </section>
 
-    <!-- Detailed Weather Conditions -->
-<section class="section">
-    <div class="container">
-        <div class="weather-conditions">
-            <h2 style="color: #FFFFFF; margin-bottom: 16px; font-weight: 300;">Current Fire Weather Conditions</h2>
-            
-            <div class="location-controls">
-                <div class="location-display">Location: <span id="weather-current-location">Detecting your location...</span></div>
-            </div>
-            
-            <div class="weather-grid">
-                <div class="weather-card">
-                    <div class="weather-label">Temperature</div>
-                    <div class="weather-value" id="current-temp">Loading...</div>
-                    <div class="weather-unit">°F</div>
-                </div>
-                
-                <div class="weather-card">
-                    <div class="weather-label">Humidity</div>
-                    <div class="weather-value" id="current-humidity">Loading...</div>
-                    <div class="weather-unit">%</div>
-                </div>
-                
-                <div class="weather-card">
-                    <div class="weather-label">Wind Speed</div>
-                    <div class="weather-value" id="current-wind-speed">Loading...</div>
-                    <div class="weather-unit">mph</div>
-                </div>
-                
-                <div class="weather-card">
-                    <div class="weather-label">Wind Direction</div>
-                    <div class="weather-value" id="current-wind-direction">Loading...</div>
-                    <div class="weather-unit">°</div>
-                </div>
-                
-                <div class="weather-card fire-danger">
-                    <div class="weather-label">Fire Danger Index</div>
-                    <div class="weather-value" id="fire-danger-index">Calculating...</div>
-                    <div class="weather-unit" id="fire-danger-level">Risk Level</div>
-                </div>
-            </div>
-            
-            <button class="refresh-btn" onclick="refreshWeatherData()">Refresh Weather</button>
-        </div>
-    </div>
-</section>
-
-    <!-- Air Quality Monitor -->
-    <section class="section">
-        <div class="container">
-            <div class="air-quality">
-                <h2 style="color: #FFFFFF; margin-bottom: 16px; font-weight: 300;">Current Air Quality</h2>
-                
-                <div class="location-controls">
-                    <div class="location-display">Location: <span id="current-location">Detecting your location...</span></div>
-                    <div class="location-buttons">
-                        <button class="location-btn active" id="auto-location-btn" onclick="useAutoLocation()">Use My Location</button>
-                        <button class="location-btn" id="manual-location-btn" onclick="toggleCitySelector()">Choose City</button>
-                    </div>
-                    <div class="city-selector" id="city-selector">
-                        <select id="city-select" onchange="useSelectedCity()">
-                            <option value="">Select a city...</option>
-                            <option value="33.4484,-112.0740">Phoenix, AZ</option>
-                            <option value="34.0522,-118.2437">Los Angeles, CA</option>
-                            <option value="37.7749,-122.4194">San Francisco, CA</option>
-                            <option value="38.5816,-121.4944">Sacramento, CA</option>
-                            <option value="39.7392,-104.9903">Denver, CO</option>
-                            <option value="41.2033,-77.1945">Pennsylvania</option>
-                            <option value="43.6532,-116.3113">Boise, ID</option>
-                            <option value="41.8781,-87.6298">Chicago, IL</option>
-                            <option value="39.7817,-86.1478">Indianapolis, IN</option>
-                            <option value="38.2904,-92.6390">Missouri</option>
-                            <option value="46.8772,-96.7898">Fargo, ND</option>
-                            <option value="36.1627,-86.7816">Nashville, TN</option>
-                            <option value="30.2672,-97.7431">Austin, TX</option>
-                            <option value="32.7767,-96.7970">Dallas, TX</option>
-                            <option value="29.7604,-95.3698">Houston, TX</option>
-                            <option value="40.7608,-111.8910">Salt Lake City, UT</option>
-                            <option value="47.0379,-122.9015">Olympia, WA</option>
-                            <option value="47.6062,-122.3321">Seattle, WA</option>
-                        </select>
-                        <button class="location-btn" onclick="useSelectedCity()">Update</button>
-                    </div>
-                </div>
-                
-                <div class="aqi-display aqi-moderate">Loading...</div>
-                <div class="aqi-status">Checking conditions...</div>
-                <p class="aqi-description">Fetching real-time air quality data for your area</p>
-                <div class="aqi-actions">
-                    <strong>Loading current recommendations...</strong><br>
-                    Please wait while we fetch the latest air quality data from Open-Meteo.
-                </div>
-                <button class="refresh-btn" onclick="refreshAirQuality()">Refresh Data</button>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Fire Weather Alerts -->
-<section class="section">
-    <div class="container">
-        <div class="weather-alerts">
-            <h2 style="color: #FFFFFF; margin-bottom: 16px; font-weight: 300;">Fire Weather Alerts</h2>
-            
-            <div class="location-controls">
-                <div class="location-display">Location: <span id="weather-location">Detecting your location...</span></div>
-                <div class="alert-count">Active Alerts: <span id="alert-count">Loading...</span></div>
-            </div>
-            
-            <div id="alerts-container" class="alerts-container">
-                <div class="loading-alerts">
-                    <div style="font-size: 18px; margin-bottom: 8px;">Checking for active weather alerts...</div>
-                    <div style="color: #CCCCCC;">Fetching official fire weather warnings from National Weather Service</div>
-                </div>
-            </div>
-            
-            <button class="refresh-btn" onclick="refreshWeatherAlerts()">Refresh Alerts</button>
-        </div>
-    </div>
-</section>
-
     <!-- Emergency Contacts -->
     <section class="section">
         <div class="container">
@@ -1179,35 +1351,25 @@
         </div>
     </section>
 
-    </script>
     <script>
-
-        // Generate wildfire plan functionality
-        function generateWildfirePlan() {
-            alert('Generating your personalized wildfire action plan...\n\nThis will include:\n• Property-specific defense strategies\n• Evacuation route planning\n• Equipment recommendations\n• Emergency contact lists\n• Seasonal preparation timeline');
-        }
-
-        // Affiliate tracking function
-        function trackAffiliate(productId, retailer) {
-            console.log(`Affiliate click tracked: ${productId} -> ${retailer}`);
-            alert(`Redirecting to ${retailer} for ${productId}...\n\nIn production, this would:\n• Track the affiliate click\n• Redirect to the actual product page\n• Earn commission if purchase is made`);
-            return false;
-        }
-
-        // REAL Air Quality API Integration with Open-Meteo - Location Aware
+        // Global variables
         let currentLatitude = 39.7392; // Default to Denver
         let currentLongitude = -104.9903;
         let currentLocationName = 'Denver, CO';
-        let usingAutoLocation = true;
 
-        // Auto-detect user location on page load
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Wildfire page loaded, starting data collection');
+            detectUserLocation();
+        });
+
+        // Auto-detect user location
         async function detectUserLocation() {
-           if (!navigator.geolocation) {
-    console.log('Geolocation not supported');
-    updateLocationDisplay('Denver, CO (Default)');
-    updateAirQuality();
-              updateWeatherDataLocation(); // FIXED: Added this line
-    return;
+            if (!navigator.geolocation) {
+                console.log('Geolocation not supported');
+                updateLocationDisplay('Denver, CO (Default)');
+                updateAllData();
+                return;
             }
 
             try {
@@ -1221,27 +1383,18 @@
                 currentLatitude = position.coords.latitude;
                 currentLongitude = position.coords.longitude;
                 
-                // Get city name from coordinates using reverse geocoding
                 const locationName = await getCityName(currentLatitude, currentLongitude);
                 currentLocationName = locationName;
                 updateLocationDisplay(locationName);
                 
                 console.log(`Location detected: ${locationName} (${currentLatitude}, ${currentLongitude})`);
-                
-                // Update air quality for detected location
-                updateAirQuality();
-                updateWeatherAlertsLocation(); // FIXED: Added this line
-                updateWeatherDataLocation(); // FIXED: Added this line for weather data
+                updateAllData();
                 
             } catch (error) {
-    console.log('Location detection failed:', error.message);
-    updateLocationDisplay('Denver, CO (Default - Location Access Denied)');
-    updateAirQuality();
-                updateWeatherAlertsLocation();
-                updateWeatherDataLocation();
-
-    showCitySelector();
-}
+                console.log('Location detection failed:', error.message);
+                updateLocationDisplay('Denver, CO (Default - Location Access Denied)');
+                updateAllData();
+            }
         }
 
         // Get city name from coordinates
@@ -1263,106 +1416,349 @@
             }
         }
 
-        // Update location display
-       // Update location display
+        // Update all location displays
         function updateLocationDisplay(locationName) {
-    // Update all location displays
-    const currentLocation = document.getElementById('current-location');
-    if (currentLocation) {
-        currentLocation.textContent = locationName;
-    }
-    
-    const weatherLocation = document.getElementById('weather-current-location');
-    if (weatherLocation) {
-        weatherLocation.textContent = locationName;
-    }
-    
-    const alertsLocation = document.getElementById('weather-location');
-    if (alertsLocation) {
-        alertsLocation.textContent = locationName;
-    }
-}
-
-        // Show city selector
-        function showCitySelector() {
-            document.getElementById('city-selector').style.display = 'block';
-            document.getElementById('manual-location-btn').classList.add('active');
-            document.getElementById('auto-location-btn').classList.remove('active');
-            usingAutoLocation = false;
+            document.getElementById('dashboard-location').textContent = locationName;
+            document.getElementById('threat-level-text').innerHTML = `Current Status: <strong>ANALYZING</strong> - ${locationName}`;
+            
+            // Update detailed section locations
+            const weatherLocation = document.getElementById('weather-current-location');
+            if (weatherLocation) weatherLocation.textContent = locationName;
+            
+            const airLocation = document.getElementById('air-current-location');
+            if (airLocation) airLocation.textContent = locationName;
+            
+            const alertsLocation = document.getElementById('alerts-location');
+            if (alertsLocation) alertsLocation.textContent = locationName;
         }
 
-        // Hide city selector
-        function hideCitySelector() {
-            document.getElementById('city-selector').style.display = 'none';
-            document.getElementById('auto-location-btn').classList.add('active');
-            document.getElementById('manual-location-btn').classList.remove('active');
-            usingAutoLocation = true;
+        // Update all data sources
+        function updateAllData() {
+            updateWildfiresData();
+            updateWeatherAlertsData();
+            updateAirQualityData();
+            updateWindData();
+            updateDetailedWeatherData();
+            updateDetailedAirQuality();
+            updateDetailedWeatherAlerts();
         }
 
-        // Toggle city selector
-        function toggleCitySelector() {
-            if (document.getElementById('city-selector').style.display === 'none') {
-                showCitySelector();
-            } else {
-                hideCitySelector();
+        // NASA EONET Wildfire Data
+        async function updateWildfiresData() {
+            const indicator = document.getElementById('wildfires-indicator');
+            indicator.className = 'update-indicator updating';
+            
+            try {
+                const response = await fetch('https://eonet.gsfc.nasa.gov/api/v3/events?status=open');
+                const data = await response.json();
+                
+                // Filter for wildfire events only
+                const wildfires = data.events.filter(event => 
+                    event.categories.some(cat => cat.title.toLowerCase().includes('wildfire'))
+                );
+                
+                // Filter by proximity (within 500 miles)
+                const nearbyWildfires = wildfires.filter(fire => {
+                    if (!fire.geometry || fire.geometry.length === 0) return false;
+                    
+                    const fireCoords = fire.geometry[fire.geometry.length - 1];
+                    if (fireCoords.type === 'Point') {
+                        const [fireLon, fireLat] = fireCoords.coordinates;
+                        const distance = calculateDistance(currentLatitude, currentLongitude, fireLat, fireLon);
+                        return distance <= 500; // Within 500 miles
+                    }
+                    return false;
+                });
+                
+                document.getElementById('wildfires-count').textContent = nearbyWildfires.length;
+                
+                if (nearbyWildfires.length === 0) {
+                    document.getElementById('wildfires-status').textContent = 'No Active Fires';
+                    document.getElementById('wildfires-status').className = 'data-status status-normal';
+                    document.getElementById('wildfires-detail').textContent = 'No active wildfires within 500 miles';
+                } else if (nearbyWildfires.length < 3) {
+                    document.getElementById('wildfires-status').textContent = 'Monitor Conditions';
+                    document.getElementById('wildfires-status').className = 'data-status status-watch';
+                    document.getElementById('wildfires-detail').textContent = `${nearbyWildfires.length} active fire${nearbyWildfires.length > 1 ? 's' : ''} within 500 miles`;
+                } else {
+                    document.getElementById('wildfires-status').textContent = 'High Activity';
+                    document.getElementById('wildfires-status').className = 'data-status status-warning';
+                    document.getElementById('wildfires-detail').textContent = `${nearbyWildfires.length} active fires detected in region`;
+                }
+                
+                indicator.className = 'update-indicator';
+                console.log(`Found ${nearbyWildfires.length} nearby wildfires`);
+                
+            } catch (error) {
+                console.error('Error fetching wildfire data:', error);
+                document.getElementById('wildfires-count').textContent = 'Error';
+                document.getElementById('wildfires-status').textContent = 'Data Unavailable';
+                document.getElementById('wildfires-status').className = 'data-status';
+                document.getElementById('wildfires-detail').textContent = 'Unable to connect to NASA EONET';
+                indicator.className = 'update-indicator error';
             }
         }
 
-        // Use auto location
-        function useAutoLocation() {
-            hideCitySelector();
-            updateLocationDisplay('Detecting your location...');
-            detectUserLocation();
-        }
-
-        // Use selected city
-        function useSelectedCity() {
-            const select = document.getElementById('city-select');
-            const selectedValue = select.value;
+        // Weather Alerts Data
+        async function updateWeatherAlertsData() {
+            const indicator = document.getElementById('weather-indicator');
+            indicator.className = 'update-indicator updating';
             
-            if (!selectedValue) return;
-            
-            const [lat, lon] = selectedValue.split(',');
-            currentLatitude = parseFloat(lat);
-            currentLongitude = parseFloat(lon);
-            
-            const selectedText = select.options[select.selectedIndex].text;
-            currentLocationName = selectedText;
-            updateLocationDisplay(selectedText);
-            
-            usingAutoLocation = false;
-            updateAirQuality();
-            updateWeatherAlertsLocation(); // FIXED: Added this line
-            updateWeatherDataLocation(); // FIXED: Added this line
-        }
-
-        async function updateAirQuality() {
             try {
-                // Open-Meteo Air Quality API call (completely free, no API key needed)
-                const response = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${currentLatitude}&longitude=${currentLongitude}&current=us_aqi&timezone=auto`);
-                
-                if (!response.ok) {
-                    throw new Error('Failed to fetch air quality data');
-                }
-                
+                const state = await getStateFromCoords(currentLatitude, currentLongitude);
+                const response = await fetch(`https://api.weather.gov/alerts/active?area=${state}`);
                 const data = await response.json();
                 
-                // Get current AQI value
+                const fireWeatherAlerts = data.features.filter(alert => {
+                    const event = alert.properties.event.toLowerCase();
+                    return event.includes('fire') || event.includes('red flag') || event.includes('wind');
+                });
+                
+                document.getElementById('weather-alerts-count').textContent = fireWeatherAlerts.length;
+                
+                if (fireWeatherAlerts.length === 0) {
+                    document.getElementById('weather-alerts-status').textContent = 'No Fire Alerts';
+                    document.getElementById('weather-alerts-status').className = 'data-status status-normal';
+                    document.getElementById('weather-alerts-detail').textContent = 'No active fire weather warnings';
+                } else {
+                    document.getElementById('weather-alerts-status').textContent = 'Active Warnings';
+                    document.getElementById('weather-alerts-status').className = 'data-status status-warning';
+                    document.getElementById('weather-alerts-detail').textContent = `${fireWeatherAlerts.length} fire weather alert${fireWeatherAlerts.length > 1 ? 's' : ''}`;
+                }
+                
+                indicator.className = 'update-indicator';
+                
+            } catch (error) {
+                console.error('Error fetching weather alerts:', error);
+                document.getElementById('weather-alerts-count').textContent = 'Error';
+                document.getElementById('weather-alerts-status').textContent = 'Data Unavailable';
+                document.getElementById('weather-alerts-status').className = 'data-status';
+                document.getElementById('weather-alerts-detail').textContent = 'Unable to connect to NWS';
+                indicator.className = 'update-indicator error';
+            }
+        }
+
+        // Air Quality Data
+        async function updateAirQualityData() {
+            const indicator = document.getElementById('air-indicator');
+            indicator.className = 'update-indicator updating';
+            
+            try {
+                const response = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${currentLatitude}&longitude=${currentLongitude}&current=us_aqi`);
+                const data = await response.json();
+                
+                const aqi = data.current.us_aqi;
+                document.getElementById('air-quality-value').textContent = aqi;
+                
+                if (aqi <= 50) {
+                    document.getElementById('air-quality-status').textContent = 'Good';
+                    document.getElementById('air-quality-status').className = 'data-status status-normal';
+                    document.getElementById('air-quality-detail').textContent = 'Air quality is satisfactory';
+                } else if (aqi <= 100) {
+                    document.getElementById('air-quality-status').textContent = 'Moderate';
+                    document.getElementById('air-quality-status').className = 'data-status status-watch';
+                    document.getElementById('air-quality-detail').textContent = 'Acceptable for most people';
+                } else if (aqi <= 150) {
+                    document.getElementById('air-quality-status').textContent = 'Unhealthy';
+                    document.getElementById('air-quality-status').className = 'data-status status-warning';
+                    document.getElementById('air-quality-detail').textContent = 'Sensitive groups affected';
+                } else {
+                    document.getElementById('air-quality-status').textContent = 'Hazardous';
+                    document.getElementById('air-quality-status').className = 'data-status status-critical';
+                    document.getElementById('air-quality-detail').textContent = 'Health alert conditions';
+                }
+                
+                indicator.className = 'update-indicator';
+                
+            } catch (error) {
+                console.error('Error fetching air quality:', error);
+                document.getElementById('air-quality-value').textContent = 'Error';
+                document.getElementById('air-quality-status').textContent = 'Data Unavailable';
+                document.getElementById('air-quality-status').className = 'data-status';
+                document.getElementById('air-quality-detail').textContent = 'Unable to get air quality data';
+                indicator.className = 'update-indicator error';
+            }
+        }
+
+        // Wind Data
+        async function updateWindData() {
+            const indicator = document.getElementById('wind-indicator');
+            indicator.className = 'update-indicator updating';
+            
+            try {
+                const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${currentLatitude}&longitude=${currentLongitude}&current=wind_speed_10m,wind_direction_10m&wind_speed_unit=mph`);
+                const data = await response.json();
+                
+                const windSpeed = Math.round(data.current.wind_speed_10m);
+                const windDirection = getWindDirection(data.current.wind_direction_10m);
+                
+                document.getElementById('wind-speed-value').textContent = windSpeed + ' mph';
+                
+                if (windSpeed < 10) {
+                    document.getElementById('wind-status').textContent = 'Light Winds';
+                    document.getElementById('wind-status').className = 'data-status status-normal';
+                    document.getElementById('wind-detail').textContent = `${windDirection} - Low fire risk`;
+                } else if (windSpeed < 20) {
+                    document.getElementById('wind-status').textContent = 'Moderate Winds';
+                    document.getElementById('wind-status').className = 'data-status status-watch';
+                    document.getElementById('wind-detail').textContent = `${windDirection} - Elevated fire risk`;
+                } else if (windSpeed < 35) {
+                    document.getElementById('wind-status').textContent = 'Strong Winds';
+                    document.getElementById('wind-status').className = 'data-status status-warning';
+                    document.getElementById('wind-detail').textContent = `${windDirection} - High fire risk`;
+                } else {
+                    document.getElementById('wind-status').textContent = 'Extreme Winds';
+                    document.getElementById('wind-status').className = 'data-status status-critical';
+                    document.getElementById('wind-detail').textContent = `${windDirection} - Critical fire danger`;
+                }
+                
+                indicator.className = 'update-indicator';
+                
+            } catch (error) {
+                console.error('Error fetching wind data:', error);
+                document.getElementById('wind-speed-value').textContent = 'Error';
+                document.getElementById('wind-status').textContent = 'Data Unavailable';
+                document.getElementById('wind-status').className = 'data-status';
+                document.getElementById('wind-detail').textContent = 'Unable to get wind data';
+                indicator.className = 'update-indicator error';
+            }
+        }
+
+        // Helper functions
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 3959; // Earth's radius in miles
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        function getWindDirection(degrees) {
+            const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+            const index = Math.round(degrees / 22.5) % 16;
+            return directions[index];
+        }
+
+        async function getStateFromCoords(lat, lon) {
+            try {
+                const response = await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&count=1`);
+                const data = await response.json();
+                
+                if (data.results && data.results.length > 0) {
+                    const admin1 = data.results[0].admin1;
+                    const stateAbbreviations = {
+                        'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR', 'California': 'CA',
+                        'Colorado': 'CO', 'Connecticut': 'CT', 'Delaware': 'DE', 'Florida': 'FL', 'Georgia': 'GA',
+                        'Hawaii': 'HI', 'Idaho': 'ID', 'Illinois': 'IL', 'Indiana': 'IN', 'Iowa': 'IA',
+                        'Kansas': 'KS', 'Kentucky': 'KY', 'Louisiana': 'LA', 'Maine': 'ME', 'Maryland': 'MD',
+                        'Massachusetts': 'MA', 'Michigan': 'MI', 'Minnesota': 'MN', 'Mississippi': 'MS', 'Missouri': 'MO',
+                        'Montana': 'MT', 'Nebraska': 'NE', 'Nevada': 'NV', 'New Hampshire': 'NH', 'New Jersey': 'NJ',
+                        'New Mexico': 'NM', 'New York': 'NY', 'North Carolina': 'NC', 'North Dakota': 'ND', 'Ohio': 'OH',
+                        'Oklahoma': 'OK', 'Oregon': 'OR', 'Pennsylvania': 'PA', 'Rhode Island': 'RI', 'South Carolina': 'SC',
+                        'South Dakota': 'SD', 'Tennessee': 'TN', 'Texas': 'TX', 'Utah': 'UT', 'Vermont': 'VT',
+                        'Virginia': 'VA', 'Washington': 'WA', 'West Virginia': 'WV', 'Wisconsin': 'WI', 'Wyoming': 'WY'
+                    };
+                    return stateAbbreviations[admin1] || admin1 || 'CO';
+                }
+                return 'CO';
+            } catch (error) {
+                console.error('Error getting state:', error);
+                return 'CO';
+            }
+        }
+
+        // Affiliate tracking function
+        function trackAffiliate(productId, retailer) {
+            console.log(`Affiliate click tracked: ${productId} -> ${retailer}`);
+            alert(`Redirecting to ${retailer} for ${productId}...\n\nIn production, this would:\n• Track the affiliate click\n• Redirect to the actual product page\n• Earn commission if purchase is made`);
+            return false;
+        }
+
+        // Generate wildfire plan functionality
+        function generateWildfirePlan() {
+            alert('Generating your personalized wildfire action plan...\n\nThis will include:\n• Property-specific defense strategies\n• Evacuation route planning\n• Equipment recommendations\n• Emergency contact lists\n• Seasonal preparation timeline');
+        }
+
+        // Detailed Weather Data Functions
+        async function updateDetailedWeatherData() {
+            try {
+                const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${currentLatitude}&longitude=${currentLongitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto`);
+                const data = await response.json();
+                const current = data.current;
+                
+                document.getElementById('current-temp').textContent = Math.round(current.temperature_2m);
+                document.getElementById('current-humidity').textContent = Math.round(current.relative_humidity_2m);
+                document.getElementById('detailed-wind-speed').textContent = Math.round(current.wind_speed_10m);
+                
+                const windDirection = getWindDirection(current.wind_direction_10m);
+                document.getElementById('detailed-wind-direction').textContent = windDirection;
+                
+                const fireDanger = calculateFireDanger(current.temperature_2m, current.relative_humidity_2m, current.wind_speed_10m);
+                document.getElementById('fire-danger-index').textContent = fireDanger.level;
+                document.getElementById('fire-danger-level').textContent = fireDanger.description;
+                
+                const fireDangerCard = document.querySelector('.fire-danger .weather-value');
+                fireDangerCard.className = 'weather-value fire-danger-' + fireDanger.class;
+                
+            } catch (error) {
+                console.error('Error fetching detailed weather data:', error);
+                document.getElementById('current-temp').textContent = '--';
+                document.getElementById('current-humidity').textContent = '--';
+                document.getElementById('detailed-wind-speed').textContent = '--';
+                document.getElementById('detailed-wind-direction').textContent = '--';
+                document.getElementById('fire-danger-index').textContent = 'Error';
+                document.getElementById('fire-danger-level').textContent = 'Data Unavailable';
+            }
+        }
+
+        function calculateFireDanger(temp, humidity, windSpeed) {
+            let score = 0;
+            
+            if (temp >= 90) score += 40;
+            else if (temp >= 80) score += 30;
+            else if (temp >= 70) score += 20;
+            else if (temp >= 60) score += 10;
+            
+            if (humidity <= 15) score += 40;
+            else if (humidity <= 25) score += 30;
+            else if (humidity <= 35) score += 20;
+            else if (humidity <= 50) score += 10;
+            
+            if (windSpeed >= 25) score += 20;
+            else if (windSpeed >= 15) score += 15;
+            else if (windSpeed >= 10) score += 10;
+            else if (windSpeed >= 5) score += 5;
+            
+            if (score >= 80) return { level: 'EXTREME', description: 'Critical Fire Weather', class: 'extreme' };
+            else if (score >= 60) return { level: 'HIGH', description: 'Dangerous Conditions', class: 'high' };
+            else if (score >= 40) return { level: 'MODERATE', description: 'Elevated Risk', class: 'moderate' };
+            else return { level: 'LOW', description: 'Minimal Risk', class: 'low' };
+        }
+
+        function refreshDetailedWeatherData() {
+            document.getElementById('current-temp').textContent = 'Loading...';
+            document.getElementById('fire-danger-index').textContent = 'Calculating...';
+            updateDetailedWeatherData();
+        }
+
+        // Detailed Air Quality Functions
+        async function updateDetailedAirQuality() {
+            try {
+                const response = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${currentLatitude}&longitude=${currentLongitude}&current=us_aqi&timezone=auto`);
+                const data = await response.json();
                 const currentAQI = data.current.us_aqi;
                 
-                // Update the display elements
                 const display = document.querySelector('.aqi-display');
                 const status = document.querySelector('.aqi-status');
                 const description = document.querySelector('.aqi-description');
                 const actions = document.querySelector('.aqi-actions');
                 
-                // Update AQI number
                 display.textContent = currentAQI;
-                
-                // Reset classes
                 display.className = 'aqi-display';
                 
-                // Set status and color based on AQI value
                 if (currentAQI <= 50) {
                     display.classList.add('aqi-good');
                     status.textContent = 'Good';
@@ -1431,12 +1827,8 @@
                     `;
                 }
                 
-                console.log(`Air quality updated for ${currentLocationName}: AQI ${currentAQI}`);
-                
             } catch (error) {
-                console.error('Error fetching air quality data:', error);
-                
-                // Fallback to show an error message
+                console.error('Error fetching detailed air quality data:', error);
                 const display = document.querySelector('.aqi-display');
                 const status = document.querySelector('.aqi-status');
                 const description = document.querySelector('.aqi-description');
@@ -1445,7 +1837,7 @@
                 display.textContent = '---';
                 display.className = 'aqi-display';
                 status.textContent = 'Data Unavailable';
-                description.textContent = 'Unable to fetch current air quality data. Please check your connection.';
+                description.textContent = 'Unable to fetch current air quality data.';
                 actions.innerHTML = `
                     <strong>Service Temporarily Unavailable:</strong><br>
                     • Try refreshing in a few minutes<br>
@@ -1456,20 +1848,181 @@
             }
         }
 
-        // Manual refresh function
-        function refreshAirQuality() {
+        function refreshDetailedAirQuality() {
             const status = document.querySelector('.aqi-status');
             status.textContent = 'Refreshing...';
-            
-            updateAirQuality().then(() => {
-                // Success handled in updateAirQuality function
-            }).catch(() => {
-                // Error handled in updateAirQuality function
-            });
+            updateDetailedAirQuality();
         }
 
-        // Update every 30 minutes (1800000 milliseconds) - reasonable for air quality
-        setInterval(updateAirQuality, 1800000);
+        // City selector functions
+        function showCitySelector() {
+            document.getElementById('city-selector').style.display = 'block';
+            document.getElementById('manual-location-btn').classList.add('active');
+            document.getElementById('auto-location-btn').classList.remove('active');
+        }
+
+        function hideCitySelector() {
+            document.getElementById('city-selector').style.display = 'none';
+            document.getElementById('auto-location-btn').classList.add('active');
+            document.getElementById('manual-location-btn').classList.remove('active');
+        }
+
+        function toggleCitySelector() {
+            if (document.getElementById('city-selector').style.display === 'none') {
+                showCitySelector();
+            } else {
+                hideCitySelector();
+            }
+        }
+
+        function useAutoLocation() {
+            hideCitySelector();
+            updateLocationDisplay('Detecting your location...');
+            detectUserLocation();
+        }
+
+        function useSelectedCity() {
+            const select = document.getElementById('city-select');
+            const selectedValue = select.value;
+            
+            if (!selectedValue) return;
+            
+            const [lat, lon] = selectedValue.split(',');
+            currentLatitude = parseFloat(lat);
+            currentLongitude = parseFloat(lon);
+            
+            const selectedText = select.options[select.selectedIndex].text;
+            currentLocationName = selectedText;
+            updateLocationDisplay(selectedText);
+            
+            updateAllData();
+        }
+
+        // Detailed Weather Alerts Functions
+        async function updateDetailedWeatherAlerts() {
+            const alertsContainer = document.getElementById('alerts-container');
+            const alertCount = document.getElementById('detailed-alert-count');
+            
+            try {
+                const state = await getStateFromCoords(currentLatitude, currentLongitude);
+                const response = await fetch(`https://api.weather.gov/alerts/active?area=${state}`);
+                const data = await response.json();
+                
+                const fireWeatherAlerts = data.features.filter(alert => {
+                    const event = alert.properties.event.toLowerCase();
+                    const description = (alert.properties.description || '').toLowerCase();
+                    
+                    return event.includes('fire') || 
+                           event.includes('wind') || 
+                           event.includes('red flag') ||
+                           event.includes('heat') ||
+                           event.includes('drought') ||
+                           description.includes('fire weather') ||
+                           description.includes('red flag') ||
+                           description.includes('wildfire') ||
+                           description.includes('extreme fire');
+                });
+                
+                alertCount.textContent = fireWeatherAlerts.length;
+                renderDetailedWeatherAlerts(fireWeatherAlerts);
+                
+            } catch (error) {
+                console.error('Error fetching detailed weather alerts:', error);
+                alertCount.textContent = 'Service Unavailable';
+                alertsContainer.innerHTML = `
+                    <div class="loading-alerts">
+                        <div style="font-size: 18px; margin-bottom: 8px; color: #FF4444;">Weather Alert Service Unavailable</div>
+                        <div style="color: #CCCCCC;">Unable to connect to National Weather Service API.</div>
+                    </div>
+                `;
+            }
+        }
+
+        function renderDetailedWeatherAlerts(alerts) {
+            const container = document.getElementById('alerts-container');
+            
+            if (alerts.length === 0) {
+                container.innerHTML = `
+                    <div class="no-alerts">
+                        <div class="no-alerts-icon">✅</div>
+                        <div style="font-size: 18px; margin-bottom: 8px; color: #44AA44;">No Fire Weather Alerts</div>
+                        <div>No active fire weather warnings or watches for your area.</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            let alertsHTML = '';
+            
+            alerts.forEach(alert => {
+                const properties = alert.properties;
+                const severity = getSeverityClass(properties.severity, properties.event);
+                const severityLabel = properties.severity || 'Minor';
+                
+                const startTime = new Date(properties.onset || properties.sent).toLocaleString();
+                const endTime = properties.ends ? new Date(properties.ends).toLocaleString() : 'Until further notice';
+                
+                alertsHTML += `
+                    <div class="alert-card ${severity}">
+                        <div class="alert-header">
+                            <div class="alert-title">${properties.event}</div>
+                            <div class="alert-severity ${severity}">${severityLabel}</div>
+                        </div>
+                        <div class="alert-meta">
+                            <strong>Effective:</strong> ${startTime}<br>
+                            <strong>Expires:</strong> ${endTime}<br>
+                            <strong>Areas:</strong> ${properties.areaDesc}
+                        </div>
+                        <div class="alert-description">
+                            ${properties.description}
+                        </div>
+                        ${properties.instruction ? `
+                            <div class="alert-instruction">
+                                <strong>Recommended Actions:</strong><br>
+                                ${properties.instruction}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = alertsHTML;
+        }
+
+        function getSeverityClass(severity, event) {
+            const eventLower = event.toLowerCase();
+            
+            if (eventLower.includes('red flag warning') || 
+                eventLower.includes('fire warning') ||
+                eventLower.includes('extreme fire') ||
+                severity === 'Extreme' || 
+                severity === 'Severe') {
+                return 'severe';
+            }
+            
+            if (eventLower.includes('red flag watch') || 
+                eventLower.includes('fire weather watch') ||
+                eventLower.includes('wind advisory') ||
+                severity === 'Moderate') {
+                return 'moderate';
+            }
+            
+            return 'minor';
+        }
+
+        function refreshDetailedWeatherAlerts() {
+            document.getElementById('detailed-alert-count').textContent = 'Loading...';
+            document.getElementById('alerts-container').innerHTML = `
+                <div class="loading-alerts">
+                    <div style="font-size: 18px; margin-bottom: 8px;">Refreshing weather alerts...</div>
+                    <div style="color: #CCCCCC;">Fetching latest data from National Weather Service</div>
+                </div>
+            `;
+            updateDetailedWeatherAlerts();
+        }
+
+        // Update data every 15 minutes
+        setInterval(updateAllData, 900000);
 
         // Smooth scrolling for navigation
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -1510,357 +2063,6 @@
                 }
             });
         });
-// Weather alerts variables
-        let weatherLatitude = 39.7392; // Default to Denver
-        let weatherLongitude = -104.9903;
-        let weatherLocationName = 'Denver, CO';
-
-        // Initialize location detection when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Page loaded, starting location detection');
-    detectUserLocation();
-    updateWeatherData(); // Initialize weather data
-});
-
-        // Get state abbreviation from coordinates
-        async function getStateFromCoords(lat, lon) {
-            try {
-                const response = await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&count=1`);
-                const data = await response.json();
-                
-                if (data.results && data.results.length > 0) {
-                    const result = data.results[0];
-                    // Try to get state abbreviation from admin1
-                    const admin1 = result.admin1;
-                    
-                    // Convert full state names to abbreviations
-                    const stateAbbreviations = {
-                        'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR', 'California': 'CA',
-                        'Colorado': 'CO', 'Connecticut': 'CT', 'Delaware': 'DE', 'Florida': 'FL', 'Georgia': 'GA',
-                        'Hawaii': 'HI', 'Idaho': 'ID', 'Illinois': 'IL', 'Indiana': 'IN', 'Iowa': 'IA',
-                        'Kansas': 'KS', 'Kentucky': 'KY', 'Louisiana': 'LA', 'Maine': 'ME', 'Maryland': 'MD',
-                        'Massachusetts': 'MA', 'Michigan': 'MI', 'Minnesota': 'MN', 'Mississippi': 'MS', 'Missouri': 'MO',
-                        'Montana': 'MT', 'Nebraska': 'NE', 'Nevada': 'NV', 'New Hampshire': 'NH', 'New Jersey': 'NJ',
-                        'New Mexico': 'NM', 'New York': 'NY', 'North Carolina': 'NC', 'North Dakota': 'ND', 'Ohio': 'OH',
-                        'Oklahoma': 'OK', 'Oregon': 'OR', 'Pennsylvania': 'PA', 'Rhode Island': 'RI', 'South Carolina': 'SC',
-                        'South Dakota': 'SD', 'Tennessee': 'TN', 'Texas': 'TX', 'Utah': 'UT', 'Vermont': 'VT',
-                        'Virginia': 'VA', 'Washington': 'WA', 'West Virginia': 'WV', 'Wisconsin': 'WI', 'Wyoming': 'WY'
-                    };
-                    
-                    // Return abbreviation if found, otherwise return admin1 as is
-                    return stateAbbreviations[admin1] || admin1 || 'CO';
-                }
-                return 'CO'; // Default to Colorado
-            } catch (error) {
-                console.error('Error getting state from coordinates:', error);
-                return 'CO'; // Default to Colorado
-            }
-        }
-
-        // Update weather alerts location when main location changes
-        function updateWeatherAlertsLocation() {
-            weatherLatitude = currentLatitude;
-            weatherLongitude = currentLongitude;
-            weatherLocationName = currentLocationName;
-            document.getElementById('weather-location').textContent = weatherLocationName;
-            updateWeatherAlerts();
-        }
-
-       // Main weather alerts function - REAL DATA ONLY
-        async function updateWeatherAlerts() {
-            const alertsContainer = document.getElementById('alerts-container');
-            const alertCount = document.getElementById('alert-count');
-            
-            try {
-                // Get state abbreviation for the location
-                const state = await getStateFromCoords(weatherLatitude, weatherLongitude);
-                
-                // Try multiple CORS proxy services in order of reliability
-                const proxies = [
-                    'https://api.allorigins.win/get?url=',
-                    'https://corsproxy.io/?',
-                    'https://api.codetabs.com/v1/proxy?quest='
-                ];
-                
-                let data = null;
-                let lastError = null;
-                
-                for (const proxyUrl of proxies) {
-                    try {
-                        const targetUrl = `https://api.weather.gov/alerts/active?area=${state}`;
-                        const response = await fetch(proxyUrl + encodeURIComponent(targetUrl), {
-                            headers: {
-                                'Accept': 'application/json',
-                                'User-Agent': 'EmergencyEssentials-Web-App'
-                            }
-                        });
-                        
-                        if (!response.ok) {
-                            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                        }
-                        
-                        const result = await response.json();
-                        
-                        // Handle different proxy response formats
-                        if (result.contents) {
-                            // allorigins format
-                            data = JSON.parse(result.contents);
-                        } else if (result.features) {
-                            // Direct format
-                            data = result;
-                        } else {
-                            throw new Error('Unexpected response format');
-                        }
-                        
-                        console.log(`Successfully fetched alerts via ${proxyUrl}`);
-                        break;
-                        
-                    } catch (error) {
-                        lastError = error;
-                        console.warn(`Proxy ${proxyUrl} failed: ${error.message}`);
-                        continue;
-                    }
-                }
-                
-                if (!data) {
-                    throw new Error(`All proxy services failed. Last error: ${lastError?.message}`);
-                }
-                
-                const alerts = data.features || [];
-                
-                // Filter for fire/weather related alerts
-                const fireWeatherAlerts = alerts.filter(alert => {
-                    const event = alert.properties.event.toLowerCase();
-                    const description = (alert.properties.description || '').toLowerCase();
-                    
-                    return event.includes('fire') || 
-                           event.includes('wind') || 
-                           event.includes('red flag') ||
-                           event.includes('heat') ||
-                           event.includes('drought') ||
-                           description.includes('fire weather') ||
-                           description.includes('red flag') ||
-                           description.includes('wildfire') ||
-                           description.includes('extreme fire');
-                });
-                
-                // Update alert count
-                alertCount.textContent = fireWeatherAlerts.length;
-                
-                // Render alerts
-                renderWeatherAlerts(fireWeatherAlerts);
-                
-                console.log(`Weather alerts updated for ${weatherLocationName}: ${fireWeatherAlerts.length} fire weather alerts`);
-                
-            } catch (error) {
-                console.error('All attempts to fetch weather alerts failed:', error);
-                
-                // Show service unavailable message - NO DEMO DATA
-                alertCount.textContent = 'Service Unavailable';
-                alertsContainer.innerHTML = `
-                    <div class="loading-alerts">
-                        <div style="font-size: 18px; margin-bottom: 8px; color: #FF4444;">Weather Alert Service Unavailable</div>
-                        <div style="color: #CCCCCC; margin-bottom: 16px;">
-                            Unable to connect to National Weather Service API. This may be due to:
-                            <br>• API server maintenance
-                            <br>• Network connectivity issues  
-                            <br>• Service rate limiting
-                        </div>
-                        <div style="background: #161616; border: 1px solid #444444; border-radius: 4px; padding: 12px; font-size: 14px;">
-                            <strong>Alternative Sources:</strong><br>
-                            • Visit <a href="https://weather.gov" target="_blank" style="color: #44AAFF;">weather.gov</a> directly<br>
-                            • Check local emergency management websites<br>
-                            • Monitor local news and radio for fire weather warnings
-                        </div>
-                    </div>
-                `;
-            }
-        }
-        // Render weather alerts in the UI
-        function renderWeatherAlerts(alerts) {
-            const container = document.getElementById('alerts-container');
-            
-            if (alerts.length === 0) {
-                container.innerHTML = `
-                    <div class="no-alerts">
-                        <div class="no-alerts-icon">✅</div>
-                        <div style="font-size: 18px; margin-bottom: 8px; color: #44AA44;">No Fire Weather Alerts</div>
-                        <div>No active fire weather warnings or watches for your area.</div>
-                    </div>
-                `;
-                return;
-            }
-            
-            let alertsHTML = '';
-            
-            alerts.forEach(alert => {
-                const properties = alert.properties;
-                const severity = getSeverityClass(properties.severity, properties.event);
-                const severityLabel = properties.severity || 'Minor';
-                
-                // Format dates
-                const startTime = new Date(properties.onset || properties.sent).toLocaleString();
-                const endTime = properties.ends ? new Date(properties.ends).toLocaleString() : 'Until further notice';
-                
-                alertsHTML += `
-                    <div class="alert-card ${severity}">
-                        <div class="alert-header">
-                            <div class="alert-title">${properties.event}</div>
-                            <div class="alert-severity ${severity}">${severityLabel}</div>
-                        </div>
-                        <div class="alert-meta">
-                            <strong>Effective:</strong> ${startTime}<br>
-                            <strong>Expires:</strong> ${endTime}<br>
-                            <strong>Areas:</strong> ${properties.areaDesc}
-                        </div>
-                        <div class="alert-description">
-                            ${properties.description}
-                        </div>
-                        ${properties.instruction ? `
-                            <div class="alert-instruction">
-                                <strong>Recommended Actions:</strong><br>
-                                ${properties.instruction}
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = alertsHTML;
-        }
-
-        // Determine severity class based on alert properties
-        function getSeverityClass(severity, event) {
-            const eventLower = event.toLowerCase();
-            
-            // High priority fire weather events
-            if (eventLower.includes('red flag warning') || 
-                eventLower.includes('fire warning') ||
-                eventLower.includes('extreme fire') ||
-                severity === 'Extreme' || 
-                severity === 'Severe') {
-                return 'severe';
-            }
-            
-            // Moderate priority
-            if (eventLower.includes('red flag watch') || 
-                eventLower.includes('fire weather watch') ||
-                eventLower.includes('wind advisory') ||
-                severity === 'Moderate') {
-                return 'moderate';
-            }
-            
-            // Lower priority
-            return 'minor';
-        }
-
-        // Manual refresh function
-        function refreshWeatherAlerts() {
-            document.getElementById('alert-count').textContent = 'Loading...';
-            document.getElementById('alerts-container').innerHTML = `
-                <div class="loading-alerts">
-                    <div style="font-size: 18px; margin-bottom: 8px;">Refreshing weather alerts...</div>
-                    <div style="color: #CCCCCC;">Fetching latest data from National Weather Service</div>
-                </div>
-            `;
-            updateWeatherAlerts();
-        }
-
-        // Update weather alerts every 15 minutes
-        setInterval(updateWeatherAlerts, 900000);
-        // Weather data variables
-let weatherLatitudeData = 39.7392;
-let weatherLongitudeData = -104.9903;
-let weatherLocationNameData = 'Denver, CO';
-
-// Update weather data location when main location changes
-function updateWeatherDataLocation() {
-    weatherLatitudeData = currentLatitude;
-    weatherLongitudeData = currentLongitude;
-    weatherLocationNameData = currentLocationName;
-    
-    const weatherLocationElement = document.getElementById('weather-current-location');
-    if (weatherLocationElement) {
-        weatherLocationElement.textContent = weatherLocationNameData;
-    }
-    
-    updateWeatherData();
-}
-
-// Main weather data function
-async function updateWeatherData() {
-    try {
-        const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${weatherLatitudeData}&longitude=${weatherLongitudeData}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto`);
-        
-        if (!response.ok) {
-            throw new Error('Failed to fetch weather data');
-        }
-        
-        const data = await response.json();
-        const current = data.current;
-        
-        document.getElementById('current-temp').textContent = Math.round(current.temperature_2m);
-        document.getElementById('current-humidity').textContent = Math.round(current.relative_humidity_2m);
-        document.getElementById('current-wind-speed').textContent = Math.round(current.wind_speed_10m);
-        
-        const windDirection = getWindDirection(current.wind_direction_10m);
-        document.getElementById('current-wind-direction').textContent = windDirection;
-        
-        const fireDanger = calculateFireDanger(current.temperature_2m, current.relative_humidity_2m, current.wind_speed_10m);
-        document.getElementById('fire-danger-index').textContent = fireDanger.level;
-        document.getElementById('fire-danger-level').textContent = fireDanger.description;
-        
-        const fireDangerCard = document.querySelector('.fire-danger .weather-value');
-        fireDangerCard.className = 'weather-value fire-danger-' + fireDanger.class;
-        
-    } catch (error) {
-        console.error('Error fetching weather data:', error);
-        document.getElementById('current-temp').textContent = '--';
-        document.getElementById('current-humidity').textContent = '--';
-        document.getElementById('current-wind-speed').textContent = '--';
-        document.getElementById('current-wind-direction').textContent = '--';
-        document.getElementById('fire-danger-index').textContent = 'Error';
-        document.getElementById('fire-danger-level').textContent = 'Data Unavailable';
-    }
-}
-
-function getWindDirection(degrees) {
-    const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
-    const index = Math.round(degrees / 22.5) % 16;
-    return directions[index] + ' (' + Math.round(degrees) + '°)';
-}
-
-function calculateFireDanger(temp, humidity, windSpeed) {
-    let score = 0;
-    
-    if (temp >= 90) score += 40;
-    else if (temp >= 80) score += 30;
-    else if (temp >= 70) score += 20;
-    else if (temp >= 60) score += 10;
-    
-    if (humidity <= 15) score += 40;
-    else if (humidity <= 25) score += 30;
-    else if (humidity <= 35) score += 20;
-    else if (humidity <= 50) score += 10;
-    
-    if (windSpeed >= 25) score += 20;
-    else if (windSpeed >= 15) score += 15;
-    else if (windSpeed >= 10) score += 10;
-    else if (windSpeed >= 5) score += 5;
-    
-    if (score >= 80) return { level: 'EXTREME', description: 'Critical Fire Weather', class: 'extreme' };
-    else if (score >= 60) return { level: 'HIGH', description: 'Dangerous Conditions', class: 'high' };
-    else if (score >= 40) return { level: 'MODERATE', description: 'Elevated Risk', class: 'moderate' };
-    else return { level: 'LOW', description: 'Minimal Risk', class: 'low' };
-}
-
-function refreshWeatherData() {
-    document.getElementById('current-temp').textContent = 'Loading...';
-    document.getElementById('fire-danger-index').textContent = 'Calculating...';
-    updateWeatherData();
-}
-
-setInterval(updateWeatherData, 600000);
     </script>
 </body>
 </html>
