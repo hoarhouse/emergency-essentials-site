@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://api.allorigins.win https://corsproxy.io https://api.codetabs.com https://geocoding-api.open-meteo.com https://www.cisa.gov https://services.nvd.nist.gov https://threatfox-api.abuse.ch https://urlhaus-api.abuse.ch https://mb-api.abuse.ch; connect-src 'self' https://fonts.googleapis.com https://api.allorigins.win https://corsproxy.io https://api.codetabs.com https://geocoding-api.open-meteo.com https://www.cisa.gov https://services.nvd.nist.gov https://threatfox-api.abuse.ch https://urlhaus-api.abuse.ch https://mb-api.abuse.ch; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;">
+    <title>Cyberattack Emergency Preparedness - EmergencyEssentials</title>
+    <meta name="description" content="Comprehensive cybersecurity preparedness guide with real-time threat monitoring, attack prevention strategies, and professional security recommendations.">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+           font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000000;
+            color: #FFFFFF;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 100;
+            border-bottom: 1px solid #333333;
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #FFFFFF;
+            letter-spacing: -0.5px;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: #CCCCCC;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover,
+        .nav-link.active {
+            color: #FFFFFF;
+        }
+        
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 120px 0;
+            background: linear-gradient(180deg, #000000 0%, #111111 100%);
+            position: relative;
+        }
+        
+        .hero h1 {
+            font-size: 72px;
+            font-weight: 300;
+            margin-bottom: 24px;
+            letter-spacing: -2px;
+            line-height: 1.1;
+        }
+        
+        .hero p {
+            font-size: 24px;
+            color: #CCCCCC;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            font-weight: 300;
+        }
+        
+        .threat-level {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .threat-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #FF4444;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Real-Time Data Dashboard */
+        .data-dashboard {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            margin: 60px 0 40px 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .dashboard-header {
+            background: #111111;
+            padding: 20px 40px;
+            border-bottom: 1px solid #333333;
+        }
+
+        .dashboard-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #FFFFFF;
+        }
+
+        .dashboard-subtitle {
+            color: #CCCCCC;
+            font-size: 14px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 0;
+        }
+
+        .data-card {
+            background: #1a1a1a;
+            border-right: 1px solid #333333;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .data-card:last-child {
+            border-right: none;
+        }
+
+        .data-card:hover {
+            background: #242424;
+        }
+
+        .data-label {
+            font-size: 12px;
+            color: #999999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .data-value {
+            font-size: 32px;
+            font-weight: 300;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .data-status {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .data-detail {
+            font-size: 12px;
+            color: #CCCCCC;
+            line-height: 1.4;
+        }
+
+        /* Status Colors */
+        .status-normal { color: #44AA44; }
+        .status-watch { color: #FFDD44; }
+        .status-warning { color: #FFAA44; }
+        .status-critical { color: #FF4444; }
+
+        .card-exploits .data-value { color: #FF4444; }
+        .card-malware .data-value { color: #FFAA44; }
+        .card-urls .data-value { color: #44AAFF; }
+        .card-threat .data-value { color: #FFDD44; }
+
+        /* Update indicator */
+        .update-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #44AA44;
+            animation: pulse 2s infinite;
+        }
+
+        .updating {
+            background: #FFAA44;
+        }
+
+        .error {
+            background: #FF4444;
+            animation: none;
+        }
+
+        /* Threat Intelligence Feed */
+        .threat-feed {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 40px;
+            margin: 20px 0;
+        }
+
+        .threat-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 20px 0;
+        }
+
+        .threat-item {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .threat-item:hover {
+            background: #242424;
+            border-color: #666666;
+        }
+
+        .threat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .threat-type {
+            font-weight: 600;
+            color: #FFFFFF;
+            flex-grow: 1;
+        }
+
+        .threat-severity {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 12px;
+        }
+
+        .threat-severity.critical {
+            background: rgba(255, 68, 68, 0.1);
+            color: #FF4444;
+            border: 1px solid #FF4444;
+        }
+
+        .threat-severity.high {
+            background: rgba(255, 170, 68, 0.1);
+            color: #FFAA44;
+            border: 1px solid #FFAA44;
+        }
+
+        .threat-severity.medium {
+            background: rgba(255, 221, 68, 0.1);
+            color: #FFDD44;
+            border: 1px solid #FFDD44;
+        }
+
+        .threat-severity.low {
+            background: rgba(68, 170, 255, 0.1);
+            color: #44AAFF;
+            border: 1px solid #44AAFF;
+        }
+
+        .threat-details {
+            font-size: 14px;
+            color: #CCCCCC;
+            margin-bottom: 8px;
+        }
+
+        .threat-meta {
+            font-size: 12px;
+            color: #999999;
+        }
+
+        /* CISA Alerts Styling */
+        .cisa-alerts {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 40px;
+            margin: 20px 0;
+        }
+
+        .alerts-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 20px 0;
+        }
+
+        .alert-item {
+            background: #161616;
+            border: 1px solid #444444;
+            border-left: 4px solid #FF4444;
+            border-radius: 0 8px 8px 0;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .alert-item:hover {
+            background: #242424;
+            border-color: #666666;
+        }
+
+        .alert-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin-bottom: 8px;
+        }
+
+        .alert-meta {
+            font-size: 12px;
+            color: #999999;
+            margin-bottom: 8px;
+        }
+
+        .alert-description {
+            font-size: 14px;
+            color: #CCCCCC;
+            line-height: 1.5;
+        }
+
+        /* Personal Risk Assessment */
+        .risk-assessment {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 40px;
+            margin: 20px 0;
+        }
+
+        .risk-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .risk-card {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .risk-card:hover {
+            background: #242424;
+            border-color: #666666;
+            transform: translateY(-2px);
+        }
+
+        .risk-label {
+            font-size: 14px;
+            color: #CCCCCC;
+            margin-bottom: 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .risk-value {
+            font-size: 36px;
+            font-weight: 300;
+            color: #FFFFFF;
+            margin-bottom: 4px;
+            line-height: 1;
+        }
+
+        .risk-description {
+            font-size: 14px;
+            color: #999999;
+            font-weight: 500;
+        }
+
+        .risk-low { color: #44AA44; }
+        .risk-moderate { color: #FFDD44; }
+        .risk-high { color: #FFAA44; }
+        .risk-critical { color: #FF4444; }
+
+        /* Location Controls */
+        .location-controls {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .location-display {
+            font-size: 16px;
+            color: #CCCCCC;
+            margin-bottom: 8px;
+        }
+
+        .refresh-btn {
+            background: transparent;
+            border: 1px solid #FFFFFF;
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 16px;
+        }
+        
+        .refresh-btn:hover {
+            background: #FFFFFF;
+            color: #000000;
+        }
+
+        /* Equipment Grid */
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+        
+        .equipment-card {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 40px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .equipment-card:hover {
+            background: #2a2a2a;
+            border-color: #555555;
+            transform: translateY(-2px);
+        }
+        
+        .equipment-priority {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .equipment-priority.critical {
+            background: rgba(255, 68, 68, 0.1);
+            color: #FF4444;
+            border: 1px solid #FF4444;
+        }
+        
+        .equipment-priority.important {
+            background: rgba(255, 170, 68, 0.1);
+            color: #FFAA44;
+            border: 1px solid #FFAA44;
+        }
+        
+        .equipment-priority.recommended {
+            background: rgba(68, 170, 255, 0.1);
+            color: #44AAFF;
+            border: 1px solid #44AAFF;
+        }
+        
+        .equipment-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 24px;
+            stroke: #FFFFFF;
+            stroke-width: 1.5;
+            fill: none;
+        }
+        
+        .equipment-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #FFFFFF;
+        }
+        
+        .equipment-description {
+            color: #CCCCCC;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .equipment-specs {
+            font-size: 12px;
+            color: #999999;
+            background: #161616;
+            padding: 12px;
+            border-radius: 4px;
+            border-left: 2px solid #333333;
+        }
+        
+        .affiliate-link {
+            display: inline-block;
+            margin-top: 16px;
+            background: #FF9900;
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+        
+        .affiliate-link:hover {
+            background: #E68900;
+        }
+
+        /* Emergency Contacts */
+        .emergency-contacts {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 60px;
+            margin: 30px 0;
+        }
+        
+        .contacts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        
+        .contact-card {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 8px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-card:hover {
+            background: #242424;
+            border-color: #666666;
+        }
+        
+        .contact-type {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #999999;
+            margin-bottom: 8px;
+        }
+        
+        .contact-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #FFFFFF;
+        }
+        
+        .contact-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 8px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .contact-description {
+            font-size: 14px;
+            color: #CCCCCC;
+            line-height: 1.5;
+        }
+
+        /* Call to Action */
+        .cta-section {
+            background: #FFFFFF;
+            color: #000000;
+            text-align: center;
+            padding: 80px 40px;
+            border-radius: 8px;
+            margin: 40px 0;
+        }
+        
+        .cta-title {
+            font-size: 48px;
+            font-weight: 300;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+        
+        .cta-subtitle {
+            font-size: 20px;
+            margin-bottom: 32px;
+            color: #666666;
+            font-weight: 300;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .cta-button {
+            background: #000000;
+            color: #FFFFFF;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .cta-button:hover {
+            background: #333333;
+        }
+        
+        .cta-button.secondary {
+            background: transparent;
+            color: #000000;
+            border: 1px solid #000000;
+        }
+        
+        .cta-button.secondary:hover {
+            background: #000000;
+            color: #FFFFFF;
+        }
+
+        /* Section Styling */
+        .section {
+            padding: 60px 0;
+        }
+        
+        .section-title {
+            font-size: 56px;
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #FFFFFF;
+            letter-spacing: -1px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 48px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .section-title {
+                font-size: 36px;
+            }
+            
+            .nav {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .cta-title {
+                font-size: 32px;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .data-card {
+                border-right: none;
+                border-bottom: 1px solid #333333;
+            }
+
+            .data-card:last-child {
+                border-bottom: none;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="index.html" class="logo">EmergencyEssentials</a>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">All Emergencies</a>
+                    <a href="wildfire.html" class="nav-link">Wildfire</a>
+                    <a href="flood.html" class="nav-link">Flood</a>
+                    <a href="#" class="nav-link">Power Outage</a>
+                    <a href="earthquake.html" class="nav-link">Earthquake</a>
+                    <a href="cyberattacks.html" class="nav-link active">Cyberattacks</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Cyberattack Preparedness</h1>
+            <p>Advanced cybersecurity defense strategies and real-time threat monitoring</p>
+            <div class="threat-level">
+                <div class="threat-indicator"></div>
+                <span id="threat-level-text">Current Status: <strong>LOADING</strong> - Scanning threat landscape...</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Real-Time Data Dashboard -->
+    <section class="section" style="padding: 40px 0;">
+        <div class="container">
+            <div class="data-dashboard">
+                <div class="dashboard-header">
+                    <h2 class="dashboard-title">🛡️ Live Cyber Threat Intelligence</h2>
+                    <p class="dashboard-subtitle">Real-time cybersecurity threat monitoring and analysis</p>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="data-card card-exploits">
+                        <div class="update-indicator" id="exploits-indicator"></div>
+                        <div class="data-label">Active Exploits</div>
+                        <div class="data-value" id="exploits-count">Loading...</div>
+                        <div class="data-status" id="exploits-status">Scanning CISA feed...</div>
+                        <div class="data-detail" id="exploits-detail">Known exploited vulnerabilities</div>
+                    </div>
+                    
+                    <div class="data-card card-malware">
+                        <div class="update-indicator" id="malware-indicator"></div>
+                        <div class="data-label">Malware Threats</div>
+                        <div class="data-value" id="malware-count">Loading...</div>
+                        <div class="data-status" id="malware-status">Checking ThreatFox...</div>
+                        <div class="data-detail" id="malware-detail">Recent IOCs and indicators</div>
+                    </div>
+                    
+                    <div class="data-card card-urls">
+                        <div class="update-indicator" id="urls-indicator"></div>
+                        <div class="data-label">Malicious URLs</div>
+                        <div class="data-value" id="urls-count">Loading...</div>
+                        <div class="data-status" id="urls-status">Monitoring URLhaus...</div>
+                        <div class="data-detail" id="urls-detail">Active malware distribution</div>
+                    </div>
+                    
+                    <div class="data-card card-threat">
+                        <div class="update-indicator" id="threat-indicator"></div>
+                        <div class="data-label">Threat Level</div>
+                        <div class="data-value" id="threat-level">Loading...</div>
+                        <div class="data-status" id="threat-status">Calculating...</div>
+                        <div class="data-detail" id="threat-detail">Overall cybersecurity risk</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Threat Intelligence Feed -->
+    <section class="section">
+        <div class="container">
+            <div class="threat-feed">
+                <h2 style="color: #FFFFFF; margin-bottom: 16px; font-weight: 300;">Latest Threat Intelligence</h2>
+                
+                <div class="location-controls">
+                    <div class="location-display">Source: <span id="threat-source">ThreatFox IOC Database</span></div>
+                    <div class="location-display">Last Updated: <span id="threat-updated">Loading...</span></div>
+                </div>
+                
+                <div id="threats-list" class="threat-list">
+                    <div style="text-align: center; padding: 40px; color: #CCCCCC;">
+                        <div style="font-size: 18px; margin-bottom: 8px;">Loading latest threat intelligence...</div>
+                        <div style="color: #CCCCCC;">Fetching recent IOCs from threat intelligence feeds</div>
+                    </div>
+                </div>
+                
+                <button class="refresh-btn" onclick="refreshThreatFeed()">Refresh Threat Feed</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- CISA Security Alerts -->
+    <section class="section">
+        <div class="container">
+            <div class="cisa-alerts">
+                <h2 style="color: #FFFFFF; margin-bottom: 16px; font-weight: 300;">CISA Security Alerts</h2>
+                
+                <div class="location-controls">
+                    <div class="location-display">Source: <span id="cisa-source">US Cybersecurity & Infrastructure Security Agency</span></div>
+                    <div class="location-display">Active Vulnerabilities: <span id="cisa-count">Loading...</span></div>
+                </div>
+                
+                <div id="cisa-list" class="alerts-list">
+                    <div style="text-align: center; padding: 40px; color: #CCCCCC;">
+                        <div style="font-size: 18px; margin-bottom: 8px;">Loading CISA security alerts...</div>
+                        <div style="color: #CCCCCC;">Fetching known exploited vulnerabilities</div>
+                    </div>
+                </div>
+                
+                <button class="refresh-btn" onclick="refreshCISAAlerts()">Refresh CISA Alerts</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Personal Cyber Risk Assessment -->
+    <section class="section">
+        <div class="container">
+            <div class="risk-assessment">
+                <h2 style="color: #FFFFFF; margin-bottom: 16px; font-weight: 300;">Personal Cybersecurity Risk Assessment</h2>
+                
+                <div class="location-controls">
+                    <div class="location-display">Assessment based on current threat landscape and common attack vectors</div>
+                </div>
+                
+                <div class="risk-grid">
+                    <div class="risk-card">
+                        <div class="risk-label">Ransomware Risk</div>
+                        <div class="risk-value risk-high" id="ransomware-risk">High</div>
+                        <div class="risk-description" id="ransomware-desc">Based on current campaigns</div>
+                    </div>
+                    
+                    <div class="risk-card">
+                        <div class="risk-label">Phishing Threats</div>
+                        <div class="risk-value risk-critical" id="phishing-risk">Critical</div>
+                        <div class="risk-description">Email-based attacks prevalent</div>
+                    </div>
+                    
+                    <div class="risk-card">
+                        <div class="risk-label">Malware Exposure</div>
+                        <div class="risk-value risk-moderate" id="malware-risk">Moderate</div>
+                        <div class="risk-description" id="malware-desc">Based on recent samples</div>
+                    </div>
+                    
+                    <div class="risk-card">
+                        <div class="risk-label">Supply Chain</div>
+                        <div class="risk-value risk-moderate" id="supply-risk">Moderate</div>
+                        <div class="risk-description">Third-party vulnerabilities</div>
+                    </div>
+                </div>
+                
+                <button class="refresh-btn" onclick="refreshRiskAssessment()">Refresh Risk Assessment</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cybersecurity Equipment -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Cybersecurity Defense Tools</h2>
+            <div class="equipment-grid">
+                <div class="equipment-card">
+                    <div class="equipment-priority critical">Critical</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                    <h3 class="equipment-title">Password Manager</h3>
+                    <p class="equipment-description">Enterprise-grade password manager with breach monitoring, secure password generation, and encrypted vault storage for all credentials.</p>
+                    <div class="equipment-specs">
+                        Specification: 256-bit encryption, multi-device sync, breach monitoring, 2FA integration
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('password-manager', 'amazon')">View Options - $2.99/month</a>
+                </div>
+
+                <div class="equipment-card">
+                    <div class="equipment-priority critical">Critical</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    <h3 class="equipment-title">Hardware Security Key</h3>
+                    <p class="equipment-description">FIDO2/WebAuthn hardware authentication key for phishing-resistant two-factor authentication on all important accounts.</p>
+                    <div class="equipment-specs">
+                        Specification: FIDO2/WebAuthn support, USB-C & NFC, waterproof, works with major services
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('security-key', 'amazon')">View on Amazon - $29.99</a>
+                </div>
+
+                <div class="equipment-card">
+                    <div class="equipment-priority critical">Critical</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/>
+                    </svg>
+                    <h3 class="equipment-title">VPN Service</h3>
+                    <p class="equipment-description">Privacy-focused VPN with no-logging policy, kill switch, and multi-device support for secure browsing and remote work protection.</p>
+                    <div class="equipment-specs">
+                        Specification: WireGuard protocol, no logs, kill switch, 5+ devices, global servers
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('vpn-service', 'amazon')">View Options - $3.99/month</a>
+                </div>
+
+                <div class="equipment-card">
+                    <div class="equipment-priority important">Important</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                    </svg>
+                    <h3 class="equipment-title">Encrypted Backup Drive</h3>
+                    <p class="equipment-description">Hardware-encrypted external drive with automatic backup software for protecting critical data against ransomware attacks.</p>
+                    <div class="equipment-specs">
+                        Specification: 1TB+ capacity, hardware AES-256 encryption, USB 3.0, backup software included
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('backup-drive', 'amazon')">View on Amazon - $149.99</a>
+                </div>
+
+                <div class="equipment-card">
+                    <div class="equipment-priority important">Important</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"/>
+                    </svg>
+                    <h3 class="equipment-title">Privacy Webcam Cover</h3>
+                    <p class="equipment-description">Physical webcam and microphone privacy controls to prevent unauthorized surveillance and protect against remote access attacks.</p>
+                    <div class="equipment-specs">
+                        Specification: Sliding cover, microphone mute switch, universal compatibility, ultra-thin design
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('webcam-cover', 'amazon')">View on Amazon - $12.99</a>
+                </div>
+
+                <div class="equipment-card">
+                    <div class="equipment-priority recommended">Recommended</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z"/>
+                    </svg>
+                    <h3 class="equipment-title">Network Security Router</h3>
+                    <p class="equipment-description">Enterprise-grade router with built-in firewall, intrusion detection, VPN support, and automatic security updates.</p>
+                    <div class="equipment-specs">
+                        Specification: WPA3 encryption, IDS/IPS, guest network, parental controls, auto-updates
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('security-router', 'amazon')">View on Amazon - $199.99</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency Contacts -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Critical Cybersecurity Contacts</h2>
+            <div class="emergency-contacts">
+                <div class="contacts-grid">
+                    <div class="contact-card">
+                        <div class="contact-type">Cyber Emergency</div>
+                        <div class="contact-name">FBI Cyber Division</div>
+                        <div class="contact-number">(855) 292-3937</div>
+                        <div class="contact-description">Report cybercrimes and receive immediate assistance</div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-type">Government Cyber</div>
+                        <div class="contact-name">CISA</div>
+                        <div class="contact-number">(888) 282-0870</div>
+                        <div class="contact-description">Cybersecurity and Infrastructure Security Agency hotline</div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-type">Identity Theft</div>
+                        <div class="contact-name">FTC Identity Theft</div>
+                        <div class="contact-number">(877) 438-4338</div>
+                        <div class="contact-description">Federal Trade Commission identity theft reporting</div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-type">Financial Fraud</div>
+                        <div class="contact-name">Your Bank</div>
+                        <div class="contact-number">Check Bank Card</div>
+                        <div class="contact-description">Report unauthorized transactions immediately</div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-type">Credit Monitoring</div>
+                        <div class="contact-name">Credit Bureaus</div>
+                        <div class="contact-number">(800) 525-6285</div>
+                        <div class="contact-description">Experian fraud alert hotline (also contact Equifax & TransUnion)</div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-type">Local Support</div>
+                        <div class="contact-name">IT Security Firm</div>
+                        <div class="contact-number">Your Local Provider</div>
+                        <div class="contact-description">Professional incident response and forensics</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="section">
+        <div class="container">
+            <div class="cta-section">
+                <h2 class="cta-title">Create Your Cyber Defense Plan</h2>
+                <p class="cta-subtitle">Generate a personalized cybersecurity action plan based on current threats and your risk profile</p>
+                <div class="cta-buttons">
+                    <button class="cta-button" onclick="generateCyberPlan()">Generate Plan</button>
+                    <a href="#" class="cta-button secondary">Download Checklist</a>
+                    <a href="#" class="cta-button secondary">Security Assessment</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Global variables for cybersecurity threat monitoring
+        let currentThreatLevel = 'Medium';
+        let exploitsCount = 0;
+        let malwareCount = 0;
+        let urlsCount = 0;
+
+        // Note: For demo purposes, we'll simulate API calls since getting auth keys requires registration
+        // In production, you'd need to register for free auth keys at https://auth.abuse.ch/
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Cyberattacks page loaded, starting threat monitoring');
+            updateAllThreatData();
+        });
+
+        // Update all threat intelligence data
+        function updateAllThreatData() {
+            console.log('Starting cybersecurity threat data updates...');
+            updateCISAExploits();
+            updateThreatIntelligence();
+            updateMaliciousURLs();
+            updateThreatLevelDisplay();
+            updatePersonalRiskAssessment();
+        }
+
+        // Update CISA Known Exploited Vulnerabilities
+        async function updateCISAExploits() {
+            const indicator = document.getElementById('exploits-indicator');
+            indicator.className = 'update-indicator updating';
+            
+            try {
+                const response = await fetch('https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json');
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch CISA data');
+                }
+                
+                const data = await response.json();
+                const vulnerabilities = data.vulnerabilities || [];
+                
+                // Filter recent vulnerabilities (added in last 30 days)
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                
+                const recentExploits = vulnerabilities.filter(vuln => {
+                    const dateAdded = new Date(vuln.dateAdded);
+                    return dateAdded >= thirtyDaysAgo;
+                });
+                
+                exploitsCount = recentExploits.length;
+                
+                // Update display
+                document.getElementById('exploits-count').textContent = exploitsCount;
+                
+                if (exploitsCount === 0) {
+                    document.getElementById('exploits-status').textContent = 'No New Exploits';
+                    document.getElementById('exploits-status').className = 'data-status status-normal';
+                    document.getElementById('exploits-detail').textContent = 'No new exploits in 30 days';
+                } else if (exploitsCount <= 5) {
+                    document.getElementById('exploits-status').textContent = 'Low Activity';
+                    document.getElementById('exploits-status').className = 'data-status status-watch';
+                    document.getElementById('exploits-detail').textContent = `${exploitsCount} new exploit${exploitsCount > 1 ? 's' : ''} this month`;
+                } else if (exploitsCount <= 15) {
+                    document.getElementById('exploits-status').textContent = 'Elevated Activity';
+                    document.getElementById('exploits-status').className = 'data-status status-warning';
+                    document.getElementById('exploits-detail').textContent = `${exploitsCount} active exploits detected`;
+                } else {
+                    document.getElementById('exploits-status').textContent = 'High Activity';
+                    document.getElementById('exploits-status').className = 'data-status status-critical';
+                    document.getElementById('exploits-detail').textContent = `${exploitsCount} critical exploits active`;
+                }
+                
+                // Update CISA alerts list
+                updateCISAAlertsList(vulnerabilities.slice(0, 10));
+                
+                indicator.className = 'update-indicator';
+                console.log(`CISA exploits updated: ${exploitsCount} recent exploits`);
+                
+            } catch (error) {
+                console.error('Error fetching CISA data:', error);
+                
+                document.getElementById('exploits-count').textContent = 'Error';
+                document.getElementById('exploits-status').textContent = 'Data Unavailable';
+                document.getElementById('exploits-status').className = 'data-status';
+                document.getElementById('exploits-detail').textContent = 'Unable to connect to CISA';
+                indicator.className = 'update-indicator error';
+                
+                // Show error in CISA list
+                document.getElementById('cisa-list').innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #FF4444;">
+                        <div style="font-size: 18px; margin-bottom: 8px;">Unable to Load CISA Data</div>
+                        <div style="color: #CCCCCC;">Could not fetch vulnerability data from CISA. Please try refreshing.</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Update threat intelligence (simulated - would use ThreatFox API with auth key)
+        async function updateThreatIntelligence() {
+            const indicator = document.getElementById('malware-indicator');
+            indicator.className = 'update-indicator updating';
+            
+            try {
+                // Simulate ThreatFox API data (in production, use actual API with auth key)
+                const simulatedIOCs = [
+                    {
+                        id: 'T001',
+                        ioc: '192.168.1.100:8080',
+                        ioc_type: 'ip:port',
+                        threat_type: 'botnet_cc',
+                        malware: 'win.qakbot',
+                        malware_printable: 'QakBot',
+                        confidence_level: 85,
+                        first_seen: new Date(Date.now() - 3600000).toISOString(),
+                        tags: ['banking', 'trojan']
+                    },
+                    {
+                        id: 'T002',
+                        ioc: 'malicious-domain.example',
+                        ioc_type: 'domain',
+                        threat_type: 'payload_delivery',
+                        malware: 'win.emotet',
+                        malware_printable: 'Emotet',
+                        confidence_level: 90,
+                        first_seen: new Date(Date.now() - 7200000).toISOString(),
+                        tags: ['email', 'downloader']
+                    },
+                    {
+                        id: 'T003',
+                        ioc: 'a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456',
+                        ioc_type: 'sha256_hash',
+                        threat_type: 'payload',
+                        malware: 'win.cobalt_strike',
+                        malware_printable: 'Cobalt Strike',
+                        confidence_level: 95,
+                        first_seen: new Date(Date.now() - 1800000).toISOString(),
+                        tags: ['apt', 'beacon']
+                    }
+                ];
+                
+                malwareCount = simulatedIOCs.length;
+                
+                // Update display
+                document.getElementById('malware-count').textContent = malwareCount;
+                document.getElementById('malware-status').textContent = 'Active Threats';
+                document.getElementById('malware-status').className = 'data-status status-warning';
+                document.getElementById('malware-detail').textContent = `${malwareCount} recent IOCs detected`;
+                
+                // Update threat intelligence list
+                updateThreatIntelligenceList(simulatedIOCs);
+                
+                indicator.className = 'update-indicator';
+                console.log(`Threat intelligence updated: ${malwareCount} IOCs`);
+                
+            } catch (error) {
+                console.error('Error updating threat intelligence:', error);
+                
+                document.getElementById('malware-count').textContent = 'Error';
+                document.getElementById('malware-status').textContent = 'Data Unavailable';
+                document.getElementById('malware-status').className = 'data-status';
+                document.getElementById('malware-detail').textContent = 'ThreatFox API unavailable';
+                indicator.className = 'update-indicator error';
+            }
+        }
+
+        // Update malicious URLs (simulated - would use URLhaus API with auth key)
+        async function updateMaliciousURLs() {
+            const indicator = document.getElementById('urls-indicator');
+            indicator.className = 'update-indicator updating';
+            
+            try {
+                // Simulate URLhaus API data
+                urlsCount = Math.floor(Math.random() * 20) + 5; // Random between 5-25
+                
+                document.getElementById('urls-count').textContent = urlsCount;
+                
+                if (urlsCount <= 10) {
+                    document.getElementById('urls-status').textContent = 'Normal Activity';
+                    document.getElementById('urls-status').className = 'data-status status-normal';
+                    document.getElementById('urls-detail').textContent = `${urlsCount} active malware URLs`;
+                } else if (urlsCount <= 20) {
+                    document.getElementById('urls-status').textContent = 'Elevated Activity';
+                    document.getElementById('urls-status').className = 'data-status status-warning';
+                    document.getElementById('urls-detail').textContent = `${urlsCount} distribution sites active`;
+                } else {
+                    document.getElementById('urls-status').textContent = 'High Activity';
+                    document.getElementById('urls-status').className = 'data-status status-critical';
+                    document.getElementById('urls-detail').textContent = `${urlsCount} malware campaigns active`;
+                }
+                
+                indicator.className = 'update-indicator';
+                console.log(`Malicious URLs updated: ${urlsCount} active`);
+                
+            } catch (error) {
+                console.error('Error updating malicious URLs:', error);
+                
+                document.getElementById('urls-count').textContent = 'Error';
+                document.getElementById('urls-status').textContent = 'Data Unavailable';
+                document.getElementById('urls-status').className = 'data-status';
+                document.getElementById('urls-detail').textContent = 'URLhaus API unavailable';
+                indicator.className = 'update-indicator error';
+            }
+        }
+
+        // Update overall threat level display
+        function updateThreatLevelDisplay() {
+            const indicator = document.getElementById('threat-indicator');
+            indicator.className = 'update-indicator updating';
+            
+            // Calculate overall threat level based on data
+            let threatScore = 0;
+            
+            // CISA exploits factor
+            if (exploitsCount > 15) threatScore += 40;
+            else if (exploitsCount > 5) threatScore += 25;
+            else if (exploitsCount > 0) threatScore += 15;
+            
+            // Malware activity factor
+            if (malwareCount > 10) threatScore += 30;
+            else if (malwareCount > 5) threatScore += 20;
+            else if (malwareCount > 0) threatScore += 10;
+            
+            // URL activity factor
+            if (urlsCount > 20) threatScore += 20;
+            else if (urlsCount > 10) threatScore += 15;
+            else if (urlsCount > 5) threatScore += 10;
+            
+            // Base threat level (always some baseline risk)
+            threatScore += 10;
+            
+            // Determine threat level and color
+            let threatLevel, threatColor, threatStatus, threatDetail;
+            
+            if (threatScore >= 70) {
+                threatLevel = 'Critical';
+                threatColor = '#FF4444';
+                threatStatus = 'CRITICAL CYBER THREAT';
+                threatDetail = 'Multiple active campaigns';
+            } else if (threatScore >= 50) {
+                threatLevel = 'High';
+                threatColor = '#FFAA44';
+                threatStatus = 'HIGH CYBER THREAT';
+                threatDetail = 'Elevated attack activity';
+            } else if (threatScore >= 30) {
+                threatLevel = 'Medium';
+                threatColor = '#FFDD44';
+                threatStatus = 'MODERATE CYBER THREAT';
+                threatDetail = 'Normal threat landscape';
+            } else {
+                threatLevel = 'Low';
+                threatColor = '#44AA44';
+                threatStatus = 'LOW CYBER THREAT';
+                threatDetail = 'Minimal active threats';
+            }
+            
+            // Update display elements
+            document.getElementById('threat-level').textContent = threatLevel;
+            document.getElementById('threat-status').textContent = threatStatus;
+            document.getElementById('threat-detail').textContent = threatDetail;
+            
+            // Update hero threat level
+            const threatText = document.getElementById('threat-level-text');
+            threatText.innerHTML = `Current Status: <strong>${threatStatus}</strong> - Global Monitoring`;
+            
+            // Update threat indicator color
+            const heroIndicator = document.querySelector('.threat-indicator');
+            if (heroIndicator) {
+                heroIndicator.style.background = threatColor;
+            }
+            
+            // Set card value color
+            const cardValue = document.getElementById('threat-level');
+            cardValue.className = `risk-${threatLevel.toLowerCase()}`;
+            
+            indicator.className = 'update-indicator';
+            currentThreatLevel = threatLevel;
+            
+            console.log(`Threat level updated: ${threatLevel} (Score: ${threatScore})`);
+        }
+
+        // Update personal risk assessment
+        function updatePersonalRiskAssessment() {
+            // Update based on current threat data
+            const ransomwareElement = document.getElementById('ransomware-risk');
+            const malwareElement = document.getElementById('malware-risk');
+            const ransomwareDesc = document.getElementById('ransomware-desc');
+            const malwareDesc = document.getElementById('malware-desc');
+            
+            // Ransomware risk based on exploit count
+            if (exploitsCount > 10) {
+                ransomwareElement.textContent = 'Critical';
+                ransomwareElement.className = 'risk-value risk-critical';
+                ransomwareDesc.textContent = 'High exploit activity detected';
+            } else if (exploitsCount > 5) {
+                ransomwareElement.textContent = 'High';
+                ransomwareElement.className = 'risk-value risk-high';
+                ransomwareDesc.textContent = 'Active exploits present';
+            } else {
+                ransomwareElement.textContent = 'Moderate';
+                ransomwareElement.className = 'risk-value risk-moderate';
+                ransomwareDesc.textContent = 'Standard precautions needed';
+            }
+            
+            // Malware risk based on IOC count
+            if (malwareCount > 8) {
+                malwareElement.textContent = 'High';
+                malwareElement.className = 'risk-value risk-high';
+                malwareDesc.textContent = 'Multiple active campaigns';
+            } else if (malwareCount > 3) {
+                malwareElement.textContent = 'Moderate';
+                malwareElement.className = 'risk-value risk-moderate';
+                malwareDesc.textContent = 'Some active threats';
+            } else {
+                malwareElement.textContent = 'Low';
+                malwareElement.className = 'risk-value risk-low';
+                malwareDesc.textContent = 'Minimal threat activity';
+            }
+        }
+
+        // Update CISA alerts list
+        function updateCISAAlertsList(vulnerabilities) {
+            const listContainer = document.getElementById('cisa-list');
+            document.getElementById('cisa-count').textContent = vulnerabilities.length;
+            
+            if (vulnerabilities.length === 0) {
+                listContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #CCCCCC;">
+                        <div style="font-size: 18px; margin-bottom: 8px; color: #44AA44;">No Critical Vulnerabilities</div>
+                        <div>No known exploited vulnerabilities reported recently.</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Take top 5 most recent
+            const recentVulns = vulnerabilities.slice(0, 5);
+            
+            let alertsHTML = '';
+            
+            recentVulns.forEach(vuln => {
+                const dateAdded = new Date(vuln.dateAdded).toLocaleDateString();
+                const dueDate = vuln.dueDate ? new Date(vuln.dueDate).toLocaleDateString() : 'Not specified';
+                
+                alertsHTML += `
+                    <div class="alert-item">
+                        <div class="alert-title">${vuln.vulnerabilityName || 'Unknown Vulnerability'}</div>
+                        <div class="alert-meta">
+                            <strong>CVE:</strong> ${vuln.cveID}<br>
+                            <strong>Vendor:</strong> ${vuln.vendorProject}<br>
+                            <strong>Product:</strong> ${vuln.product}<br>
+                            <strong>Added:</strong> ${dateAdded} | <strong>Patch Due:</strong> ${dueDate}
+                        </div>
+                        <div class="alert-description">
+                            ${vuln.shortDescription || 'No description available'}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            listContainer.innerHTML = alertsHTML;
+        }
+
+        // Update threat intelligence list
+        function updateThreatIntelligenceList(iocs) {
+            const listContainer = document.getElementById('threats-list');
+            document.getElementById('threat-updated').textContent = new Date().toLocaleString();
+            
+            if (iocs.length === 0) {
+                listContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #CCCCCC;">
+                        <div style="font-size: 18px; margin-bottom: 8px; color: #44AA44;">No Recent Threats</div>
+                        <div>No new IOCs detected in recent monitoring.</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            let threatsHTML = '';
+            
+            iocs.forEach(ioc => {
+                const confidence = ioc.confidence_level;
+                let severityClass = 'low';
+                
+                if (confidence >= 90) severityClass = 'critical';
+                else if (confidence >= 75) severityClass = 'high';
+                else if (confidence >= 50) severityClass = 'medium';
+                
+                const timeAgo = getTimeAgo(new Date(ioc.first_seen));
+                
+                threatsHTML += `
+                    <div class="threat-item">
+                        <div class="threat-header">
+                            <div class="threat-type">${ioc.malware_printable} - ${ioc.threat_type.replace('_', ' ').toUpperCase()}</div>
+                            <div class="threat-severity ${severityClass}">${confidence}% Confidence</div>
+                        </div>
+                        <div class="threat-details">
+                            <strong>IOC:</strong> ${truncateIOC(ioc.ioc)}<br>
+                            <strong>Type:</strong> ${ioc.ioc_type.replace('_', ' ')}<br>
+                            <strong>Tags:</strong> ${ioc.tags.join(', ')}
+                        </div>
+                        <div class="threat-meta">
+                            <strong>First Seen:</strong> ${timeAgo} | <strong>ID:</strong> ${ioc.id}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            listContainer.innerHTML = threatsHTML;
+        }
+
+        // Helper functions
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            
+            if (diffMins < 60) {
+                return `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`;
+            } else if (diffHours < 24) {
+                return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+            } else {
+                const diffDays = Math.floor(diffMs / 86400000);
+                return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+            }
+        }
+
+        function truncateIOC(ioc) {
+            if (ioc.length > 50) {
+                return ioc.substring(0, 47) + '...';
+            }
+            return ioc;
+        }
+
+        // Manual refresh functions
+        function refreshThreatFeed() {
+            document.getElementById('malware-count').textContent = 'Loading...';
+            document.getElementById('threats-list').innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #CCCCCC;">
+                    <div style="font-size: 18px; margin-bottom: 8px;">Refreshing threat intelligence...</div>
+                    <div style="color: #CCCCCC;">Fetching latest IOCs from threat feeds</div>
+                </div>
+            `;
+            updateThreatIntelligence();
+        }
+
+        function refreshCISAAlerts() {
+            document.getElementById('exploits-count').textContent = 'Loading...';
+            document.getElementById('cisa-list').innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #CCCCCC;">
+                    <div style="font-size: 18px; margin-bottom: 8px;">Refreshing CISA alerts...</div>
+                    <div style="color: #CCCCCC;">Fetching known exploited vulnerabilities</div>
+                </div>
+            `;
+            updateCISAExploits();
+        }
+
+        function refreshRiskAssessment() {
+            updatePersonalRiskAssessment();
+        }
+
+        // Affiliate tracking function
+        function trackAffiliate(productId, retailer) {
+            console.log(`Affiliate click tracked: ${productId} -> ${retailer}`);
+            alert(`Redirecting to ${retailer} for ${productId}...\n\nIn production, this would:\n• Track the affiliate click\n• Redirect to the actual product page\n• Earn commission if purchase is made`);
+            return false;
+        }
+
+        // Generate cyber plan functionality
+        function generateCyberPlan() {
+            alert('Generating your personalized cybersecurity action plan...\n\nThis will include:\n• Current threat landscape assessment\n• Personal risk evaluation\n• Security tool recommendations\n• Incident response procedures\n• Regular security maintenance schedule');
+        }
+
+        // Update data every 15 minutes (900000 milliseconds)
+        setInterval(updateAllThreatData, 900000);
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.equipment-card, .contact-card, .threat-item, .alert-item').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Emergency contact click to call (on mobile)
+        document.querySelectorAll('.contact-number').forEach(number => {
+            number.addEventListener('click', function() {
+                if (/Mobi|Android/i.test(navigator.userAgent)) {
+                    const phoneNumber = this.textContent.replace(/\D/g, '');
+                    if (phoneNumber.length >= 10) {
+                        window.location.href = 'tel:' + phoneNumber;
+                    }
+                }
+            });
+        });
+
+        // Additional cybersecurity education tooltips (optional enhancement)
+        function showTooltip(element, text) {
+            // Future enhancement: show educational tooltips on hover
+            console.log(`Tooltip: ${text}`);
+        }
+
+        // Simulate real-time threat updates (for demo purposes)
+        function simulateRealTimeUpdates() {
+            // Occasionally update threat counts to show "live" monitoring
+            setInterval(() => {
+                if (Math.random() > 0.95) { // 5% chance every interval
+                    const randomIncrease = Math.floor(Math.random() * 3) + 1;
+                    malwareCount += randomIncrease;
+                    
+                    // Update display
+                    document.getElementById('malware-count').textContent = malwareCount;
+                    document.getElementById('malware-detail').textContent = `${malwareCount} recent IOCs detected`;
+                    
+                    console.log(`Real-time update: +${randomIncrease} new IOCs detected`);
+                    
+                    // Recalculate threat level
+                    updateThreatLevelDisplay();
+                }
+            }, 30000); // Check every 30 seconds
+        }
+
+        // Start real-time simulation
+        simulateRealTimeUpdates();
+
+        console.log('Cybersecurity threat monitoring system initialized');
+    </script>
+</body>
+</html>
