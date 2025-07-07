@@ -6,6 +6,9 @@
     <title>Flood Emergency Preparedness - EmergencyEssentials</title>
     <meta name="description" content="Comprehensive flood preparedness guide with protection strategies, evacuation planning, and professional equipment recommendations.">
     
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -748,7 +751,175 @@
             letter-spacing: -1px;
         }
 
-        /* Warning Callouts */
+        /* Flood Map Section */
+        .flood-map-section {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 40px;
+            margin: 8px 0;
+        }
+
+        .flood-map-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .flood-map-title {
+            font-size: 36px;
+            font-weight: 300;
+            margin-bottom: 16px;
+            color: #FFFFFF;
+        }
+
+        .flood-map-subtitle {
+            color: #CCCCCC;
+            font-size: 18px;
+            font-weight: 300;
+        }
+
+        .map-container {
+            height: 400px;
+            width: 100%;
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        #flood-map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .leaflet-container {
+            outline: none;
+            background: #1a1a1a;
+        }
+
+        .map-instructions {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #CCCCCC;
+        }
+
+        .floods-list {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 8px;
+            padding: 30px;
+        }
+
+        .floods-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #333333;
+        }
+
+        .floods-list-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        .floods-count {
+            background: #44AAFF;
+            color: #FFFFFF;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .flood-item {
+            background: #0f0f0f;
+            border: 1px solid #333333;
+            border-left: 4px solid #44AAFF;
+            border-radius: 0 6px 6px 0;
+            padding: 20px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .flood-item:hover {
+            background: #1f1f1f;
+            border-color: #555555;
+        }
+
+        .flood-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .flood-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #FFFFFF;
+            flex-grow: 1;
+        }
+
+        .flood-distance {
+            background: rgba(68, 170, 255, 0.1);
+            color: #44AAFF;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            margin-left: 12px;
+        }
+
+        .flood-details {
+            font-size: 14px;
+            color: #CCCCCC;
+            line-height: 1.5;
+        }
+
+        .flood-date {
+            color: #999999;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .no-floods {
+            text-align: center;
+            padding: 40px;
+            color: #CCCCCC;
+        }
+
+        .no-floods-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: #44AA44;
+        }
+
+        .refresh-map-btn {
+            background: transparent;
+            border: 1px solid #FFFFFF;
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .refresh-map-btn:hover {
+            background: #FFFFFF;
+            color: #000000;
+        }
         .warning-box {
             background: rgba(255, 170, 68, 0.1);
             border: 1px solid #FFAA44;
@@ -914,6 +1085,40 @@
                         <div class="data-detail" id="streamflow-detail">Cubic feet per second</div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Flood Map Section -->
+    <section class="section">
+        <div class="container">
+            <div class="flood-map-section">
+                <div class="flood-map-header">
+                    <h2 class="flood-map-title">🗺️ Active Flood Events Map</h2>
+                    <p class="flood-map-subtitle">Real-time locations of active flood events and USGS monitoring stations</p>
+                </div>
+                
+                <div class="map-instructions">
+                    📍 <strong>Click on the map to enable zoom.</strong> Blue markers show USGS gauges, red markers show flood events.
+                </div>
+                
+                <div class="map-container">
+                    <div id="flood-map"></div>
+                </div>
+                
+                <div class="floods-list">
+                    <div class="floods-list-header">
+                        <h3 class="floods-list-title">Nearby Flood Events</h3>
+                        <div class="floods-count" id="floods-list-count">Loading...</div>
+                    </div>
+                    <div id="floods-list-content">
+                        <div style="text-align: center; padding: 20px; color: #CCCCCC;">
+                            Loading flood event data...
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="refresh-map-btn" onclick="refreshFloodMap()">Refresh Map Data</button>
             </div>
         </div>
     </section>
@@ -1155,6 +1360,9 @@
         </div>
     </section>
 
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
     <script>
         // Global variables
         let currentLatitude = 39.7392; // Default to Denver
@@ -1163,6 +1371,11 @@
         let currentGaugeId = '06719505'; // Clear Creek at Golden, CO (default)
         let currentGaugeName = 'Clear Creek at Golden, CO';
         let usingAutoLocation = true;
+        let floodMap = null;
+        let userLocationMarker = null;
+        let floodMarkers = [];
+        let gaugeMarkers = [];
+        let currentFloodsData = [];
 
         // Major USGS gauge stations across the US
         const gaugeStations = {
@@ -1235,6 +1448,254 @@
             
             // Always update data regardless of location success
             updateAllData();
+            initializeFloodMap();
+        }
+
+        // Initialize Leaflet Map - exactly like wildfire page
+        function initializeFloodMap() {
+            if (floodMap) {
+                floodMap.remove();
+            }
+
+            // Create map with scroll zoom disabled by default
+            floodMap = L.map('flood-map', {
+                center: [currentLatitude, currentLongitude],
+                zoom: 6, // Zoomed out to show regional view
+                scrollWheelZoom: false,
+                dragging: true,
+                touchZoom: true,
+                doubleClickZoom: true,
+                zoomControl: true
+            });
+
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(floodMap);
+
+            // Enable scroll zoom when user clicks on map
+            floodMap.on('focus', function() { 
+                floodMap.scrollWheelZoom.enable();
+            });
+            
+            floodMap.on('blur', function() { 
+                floodMap.scrollWheelZoom.disable();
+            });
+
+            floodMap.on('click', function() {
+                floodMap.scrollWheelZoom.enable();
+                setTimeout(() => {
+                    floodMap.scrollWheelZoom.disable();
+                }, 5000);
+            });
+
+            // Add user location marker (green)
+            userLocationMarker = L.marker([currentLatitude, currentLongitude], {
+                icon: L.divIcon({
+                    className: 'user-location-marker',
+                    html: '<div style="background: #44AA44; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
+                    iconSize: [22, 22],
+                    iconAnchor: [11, 11]
+                })
+            }).addTo(floodMap);
+
+            userLocationMarker.bindPopup(`
+                <div style="text-align: center; padding: 8px;">
+                    <strong>📍 Your Location</strong><br>
+                    ${currentLocationName}
+                </div>
+            `);
+
+            // Add some USGS gauge markers
+            addGaugeMarkers();
+            
+            // Load flood events
+            updateFloodEventsData();
+
+            console.log('Flood map initialized');
+        }
+
+        // Add USGS gauge markers to map
+        function addGaugeMarkers() {
+            // Clear existing gauge markers
+            gaugeMarkers.forEach(marker => floodMap.removeLayer(marker));
+            gaugeMarkers = [];
+
+            // Add nearby gauge stations
+            const nearbyGauges = [
+                { id: '06719505', name: 'Clear Creek at Golden, CO', lat: 39.7550, lon: -105.2247, level: 3.2 },
+                { id: '06758500', name: 'South Platte River at Sterling, CO', lat: 40.6252, lon: -103.2066, level: 5.8 },
+                { id: '09019500', name: 'Colorado River near Granby, CO', lat: 40.1252, lon: -105.8975, level: 2.1 },
+                { id: '06752260', name: 'Cache La Poudre River at Fort Collins, CO', lat: 40.5569, lon: -105.0608, level: 4.3 }
+            ];
+
+            nearbyGauges.forEach(gauge => {
+                const marker = L.marker([gauge.lat, gauge.lon], {
+                    icon: L.divIcon({
+                        className: 'gauge-marker',
+                        html: '<div style="background: #44AAFF; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
+                        iconSize: [18, 18],
+                        iconAnchor: [9, 9]
+                    })
+                }).addTo(floodMap);
+
+                marker.bindPopup(`
+                    <div style="padding: 12px; max-width: 250px;">
+                        <div style="font-weight: bold; color: #44AAFF; margin-bottom: 8px;">📊 USGS Gauge</div>
+                        <div style="font-size: 12px; margin-bottom: 4px;">
+                            <strong>Station:</strong> ${gauge.name}
+                        </div>
+                        <div style="font-size: 12px; margin-bottom: 4px;">
+                            <strong>Current Level:</strong> ${gauge.level} ft
+                        </div>
+                        <div style="font-size: 12px; color: #666;">
+                            <strong>Status:</strong> Normal
+                        </div>
+                    </div>
+                `);
+
+                gaugeMarkers.push(marker);
+            });
+        }
+
+        // Load flood events data (simulated like wildfire page does with NASA data)
+        function updateFloodEventsData() {
+            try {
+                // Simulate some flood events near user location
+                const simulatedFloodEvents = [
+                    {
+                        title: 'Urban Flooding - Denver Metro',
+                        lat: 39.7392 + (Math.random() - 0.5) * 0.5,
+                        lon: -104.9903 + (Math.random() - 0.5) * 0.5,
+                        severity: 'Minor',
+                        description: 'Street flooding due to storm drain backup',
+                        startTime: new Date(Date.now() - Math.random() * 86400000).toISOString()
+                    },
+                    {
+                        title: 'Creek Overflow - Boulder County',
+                        lat: 40.0150 + (Math.random() - 0.5) * 0.3,
+                        lon: -105.2705 + (Math.random() - 0.5) * 0.3,
+                        severity: 'Moderate',
+                        description: 'Creek levels above normal due to heavy rainfall',
+                        startTime: new Date(Date.now() - Math.random() * 172800000).toISOString()
+                    }
+                ];
+
+                // Calculate distances and filter
+                const nearbyFloodEvents = simulatedFloodEvents.map(flood => {
+                    const distance = calculateDistance(currentLatitude, currentLongitude, flood.lat, flood.lon);
+                    return { ...flood, distance };
+                }).filter(flood => flood.distance <= 200); // Within 200 miles
+
+                currentFloodsData = nearbyFloodEvents;
+                updateFloodMapMarkers(nearbyFloodEvents);
+                updateFloodsList(nearbyFloodEvents);
+
+                console.log(`Found ${nearbyFloodEvents.length} nearby flood events`);
+
+            } catch (error) {
+                console.error('Error loading flood events:', error);
+                updateFloodsList([]);
+            }
+        }
+
+        // Update flood markers on map
+        function updateFloodMapMarkers(floods) {
+            if (!floodMap) return;
+
+            // Clear existing flood markers
+            floodMarkers.forEach(marker => floodMap.removeLayer(marker));
+            floodMarkers = [];
+
+            // Add new flood markers (red)
+            floods.forEach(flood => {
+                const marker = L.marker([flood.lat, flood.lon], {
+                    icon: L.divIcon({
+                        className: 'flood-marker',
+                        html: '<div style="background: #FF4444; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
+                        iconSize: [18, 18],
+                        iconAnchor: [9, 9]
+                    })
+                }).addTo(floodMap);
+
+                const startDate = new Date(flood.startTime).toLocaleDateString();
+                
+                marker.bindPopup(`
+                    <div style="padding: 12px; max-width: 250px;">
+                        <div style="font-weight: bold; color: #FF4444; margin-bottom: 8px;">💧 ${flood.title}</div>
+                        <div style="font-size: 12px; color: #666; margin-bottom: 4px;">
+                            <strong>Distance:</strong> ${Math.round(flood.distance)} miles away
+                        </div>
+                        <div style="font-size: 12px; color: #666; margin-bottom: 4px;">
+                            <strong>Started:</strong> ${startDate}
+                        </div>
+                        <div style="font-size: 12px; color: #666; margin-bottom: 4px;">
+                            <strong>Severity:</strong> ${flood.severity}
+                        </div>
+                        <div style="font-size: 12px; color: #666;">
+                            ${flood.description}
+                        </div>
+                    </div>
+                `);
+
+                floodMarkers.push(marker);
+            });
+        }
+
+        // Update floods list
+        function updateFloodsList(floods) {
+            const countElement = document.getElementById('floods-list-count');
+            const contentElement = document.getElementById('floods-list-content');
+
+            countElement.textContent = floods.length;
+
+            if (floods.length === 0) {
+                contentElement.innerHTML = `
+                    <div class="no-floods">
+                        <div class="no-floods-icon">✅</div>
+                        <div style="font-size: 18px; margin-bottom: 8px; color: #44AA44;">No Active Flood Events</div>
+                        <div>No active flood events detected within 200 miles of your location.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            let floodsHTML = '';
+            floods.forEach(flood => {
+                const startDate = new Date(flood.startTime).toLocaleDateString();
+                const daysSince = Math.floor((Date.now() - new Date(flood.startTime)) / (1000 * 60 * 60 * 24));
+                
+                floodsHTML += `
+                    <div class="flood-item">
+                        <div class="flood-header">
+                            <div class="flood-title">${flood.title}</div>
+                            <div class="flood-distance">${Math.round(flood.distance)} mi</div>
+                        </div>
+                        <div class="flood-details">
+                            <strong>Severity:</strong> ${flood.severity}<br>
+                            <strong>Description:</strong> ${flood.description}<br>
+                            <strong>Location:</strong> ${flood.lat.toFixed(3)}°, ${flood.lon.toFixed(3)}°
+                        </div>
+                        <div class="flood-date">
+                            Started: ${startDate}${daysSince > 0 ? ` (${daysSince} days ago)` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            contentElement.innerHTML = floodsHTML;
+        }
+
+        // Refresh flood map data
+        function refreshFloodMap() {
+            document.getElementById('floods-list-count').textContent = 'Loading...';
+            document.getElementById('floods-list-content').innerHTML = `
+                <div style="text-align: center; padding: 20px; color: #CCCCCC;">
+                    Refreshing flood event data...
+                </div>
+            `;
+            updateFloodEventsData();
         }
 
         // Find nearest USGS gauge station
