@@ -1365,6 +1365,9 @@
 
         // Auto-detect user location
         async function detectUserLocation() {
+            // Update initial status
+            document.getElementById('threat-level-text').innerHTML = `Current Status: <strong>DETECTING LOCATION</strong>...`;
+            
             if (!navigator.geolocation) {
                 console.log('Geolocation not supported');
                 updateLocationDisplay('Denver, CO (Default)');
@@ -1382,6 +1385,8 @@
 
                 currentLatitude = position.coords.latitude;
                 currentLongitude = position.coords.longitude;
+                
+                document.getElementById('threat-level-text').innerHTML = `Current Status: <strong>LOADING DATA</strong>...`;
                 
                 const locationName = await getCityName(currentLatitude, currentLongitude);
                 currentLocationName = locationName;
@@ -1497,6 +1502,7 @@
 
         // Update all data sources
         function updateAllData() {
+            console.log('Starting data updates...');
             updateWildfiresData();
             updateWeatherAlertsData();
             updateAirQualityData();
@@ -1505,10 +1511,8 @@
             updateDetailedAirQuality();
             updateDetailedWeatherAlerts();
             
-            // Update overall threat assessment after all data loads (increased delay)
-            setTimeout(() => {
-                updateOverallThreatAssessment();
-            }, 5000); // Increased to 5 seconds to allow APIs to complete
+            // Remove the timeout - individual functions now trigger threat assessment
+            console.log('All data update functions called');
         }
 
         // Global variables to track current conditions
@@ -1517,6 +1521,11 @@
         let currentWeatherAlertsCount = 0;
 
         function updateOverallThreatAssessment() {
+            console.log('Updating threat assessment with:', {
+                fireDanger: currentFireDanger,
+                wildfires: currentWildfireCount,
+                alerts: currentWeatherAlertsCount
+            });
             updateThreatLevelDisplay(currentFireDanger, currentWildfireCount, currentWeatherAlertsCount);
         }
 
@@ -1566,6 +1575,9 @@
                 
                 indicator.className = 'update-indicator';
                 console.log(`Found ${nearbyWildfires.length} nearby wildfires`);
+                
+                // Trigger threat assessment update
+                updateOverallThreatAssessment();
                 
             } catch (error) {
                 console.error('Error fetching wildfire data:', error);
@@ -1798,6 +1810,10 @@
                 
                 const fireDangerCard = document.querySelector('.fire-danger .weather-value');
                 fireDangerCard.className = 'weather-value fire-danger-' + fireDanger.class;
+                
+                // Trigger immediate threat level update when fire danger is calculated
+                console.log('Fire danger calculated:', fireDanger);
+                updateOverallThreatAssessment();
                 
             } catch (error) {
                 console.error('Error fetching detailed weather data:', error);
