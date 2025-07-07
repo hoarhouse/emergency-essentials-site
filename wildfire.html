@@ -251,7 +251,7 @@
             border: 1px solid #333333;
             border-radius: 8px;
             padding: 40px;
-            margin: 40px 0;
+            margin: 20px 0;
         }
 
         .weather-grid {
@@ -319,7 +319,7 @@
             border: 1px solid #333333;
             border-radius: 8px;
             padding: 40px;
-            margin: 40px 0;
+            margin: 20px 0;
             text-align: center;
         }
         
@@ -442,7 +442,7 @@
             border: 1px solid #333333;
             border-radius: 8px;
             padding: 40px;
-            margin: 40px 0;
+            margin: 20px 0;
         }
 
         .alerts-container {
@@ -559,14 +559,14 @@
         
         /* Section Styling */
         .section {
-            padding: 100px 0;
+            padding: 60px 0;
         }
         
         .section-title {
             font-size: 56px;
             font-weight: 300;
             text-align: center;
-            margin-bottom: 80px;
+            margin-bottom: 40px;
             color: #FFFFFF;
             letter-spacing: -1px;
         }
@@ -577,7 +577,7 @@
             border: 1px solid #333333;
             border-radius: 8px;
             padding: 60px;
-            margin: 60px 0;
+            margin: 30px 0;
         }
         
         .timeline-header {
@@ -760,7 +760,7 @@
             border: 1px solid #333333;
             border-radius: 8px;
             padding: 60px;
-            margin: 60px 0;
+            margin: 30px 0;
         }
         
         .contacts-grid {
@@ -819,7 +819,7 @@
             text-align: center;
             padding: 80px 40px;
             border-radius: 8px;
-            margin: 80px 0;
+            margin: 40px 0;
         }
         
         .cta-title {
@@ -1416,10 +1416,9 @@
             }
         }
 
-        // Update all location displays
+        // Update all location displays and sync fire danger messaging
         function updateLocationDisplay(locationName) {
             document.getElementById('dashboard-location').textContent = locationName;
-            document.getElementById('threat-level-text').innerHTML = `Current Status: <strong>ANALYZING</strong> - ${locationName}`;
             
             // Update detailed section locations
             const weatherLocation = document.getElementById('weather-current-location');
@@ -1432,6 +1431,45 @@
             if (alertsLocation) alertsLocation.textContent = locationName;
         }
 
+        // Update threat level display with consistent messaging
+        function updateThreatLevelDisplay(fireDangerData, wildfireCount, weatherAlertsCount) {
+            const threatText = document.getElementById('threat-level-text');
+            const heroWarning = document.getElementById('hero-fire-warning');
+            
+            let overallStatus = 'NORMAL';
+            let warningText = '🟢 Low Fire Danger';
+            let statusColor = '#44AA44';
+            
+            // Determine overall threat level based on multiple factors
+            if (fireDangerData && fireDangerData.level === 'EXTREME') {
+                overallStatus = 'EXTREME FIRE DANGER';
+                warningText = '🔴 Extreme Fire Danger';
+                statusColor = '#FF4444';
+            } else if (fireDangerData && fireDangerData.level === 'HIGH') {
+                overallStatus = 'HIGH FIRE DANGER';
+                warningText = '🟠 High Fire Danger';
+                statusColor = '#FFAA44';
+            } else if (wildfireCount > 0 || weatherAlertsCount > 0 || (fireDangerData && fireDangerData.level === 'MODERATE')) {
+                overallStatus = 'ELEVATED FIRE RISK';
+                warningText = '🟡 Elevated Fire Risk';
+                statusColor = '#FFDD44';
+            } else if (fireDangerData && fireDangerData.level === 'LOW') {
+                overallStatus = 'LOW FIRE RISK';
+                warningText = '🟢 Low Fire Danger';
+                statusColor = '#44AA44';
+            }
+            
+            // Update displays
+            threatText.innerHTML = `Current Status: <strong>${overallStatus}</strong> - ${currentLocationName}`;
+            heroWarning.textContent = warningText;
+            heroWarning.style.borderColor = statusColor;
+            heroWarning.style.color = statusColor;
+            
+            // Update threat indicator color
+            const indicator = document.querySelector('.threat-indicator');
+            indicator.style.background = statusColor;
+        }
+
         // Update all data sources
         function updateAllData() {
             updateWildfiresData();
@@ -1441,6 +1479,20 @@
             updateDetailedWeatherData();
             updateDetailedAirQuality();
             updateDetailedWeatherAlerts();
+            
+            // Update overall threat assessment after all data loads
+            setTimeout(() => {
+                updateOverallThreatAssessment();
+            }, 2000);
+        }
+
+        // Global variables to track current conditions
+        let currentFireDanger = null;
+        let currentWildfireCount = 0;
+        let currentWeatherAlertsCount = 0;
+
+        function updateOverallThreatAssessment() {
+            updateThreatLevelDisplay(currentFireDanger, currentWildfireCount, currentWeatherAlertsCount);
         }
 
         // NASA EONET Wildfire Data
@@ -1471,6 +1523,7 @@
                 });
                 
                 document.getElementById('wildfires-count').textContent = nearbyWildfires.length;
+                currentWildfireCount = nearbyWildfires.length; // Store for threat assessment
                 
                 if (nearbyWildfires.length === 0) {
                     document.getElementById('wildfires-status').textContent = 'No Active Fires';
@@ -1515,6 +1568,7 @@
                 });
                 
                 document.getElementById('weather-alerts-count').textContent = fireWeatherAlerts.length;
+                currentWeatherAlertsCount = fireWeatherAlerts.length; // Store for threat assessment
                 
                 if (fireWeatherAlerts.length === 0) {
                     document.getElementById('weather-alerts-status').textContent = 'No Fire Alerts';
@@ -1697,6 +1751,7 @@
                 document.getElementById('detailed-wind-direction').textContent = windDirection;
                 
                 const fireDanger = calculateFireDanger(current.temperature_2m, current.relative_humidity_2m, current.wind_speed_10m);
+                currentFireDanger = fireDanger; // Store for threat assessment
                 document.getElementById('fire-danger-index').textContent = fireDanger.level;
                 document.getElementById('fire-danger-level').textContent = fireDanger.description;
                 
