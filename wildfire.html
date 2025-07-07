@@ -1844,8 +1844,20 @@
                     heroWarning.style.color = statusColor;
                 }
                 
+                // Update status text with live fire danger
                 if (threatText) {
                     threatText.innerHTML = `Current Status: <strong>${statusText}</strong> - ${currentLocationName}`;
+                    
+                    // Add emoji and color to the status for better visibility
+                    if (fireDanger.level === 'EXTREME') {
+                        threatText.innerHTML = `🔴 Current Status: <strong>${statusText}</strong> - ${currentLocationName}`;
+                    } else if (fireDanger.level === 'HIGH') {
+                        threatText.innerHTML = `🟠 Current Status: <strong>${statusText}</strong> - ${currentLocationName}`;
+                    } else if (fireDanger.level === 'MODERATE') {
+                        threatText.innerHTML = `🟡 Current Status: <strong>${statusText}</strong> - ${currentLocationName}`;
+                    } else {
+                        threatText.innerHTML = `🟢 Current Status: <strong>${statusText}</strong> - ${currentLocationName}`;
+                    }
                 }
                 
                 const indicator = document.querySelector('.threat-indicator');
@@ -1864,12 +1876,10 @@
                 document.getElementById('fire-danger-index').textContent = 'Error';
                 document.getElementById('fire-danger-level').textContent = 'Data Unavailable';
                 
-                // Update hero to show error state
-                const heroWarning = document.getElementById('hero-fire-warning');
+                // Update status to show error state
                 const threatText = document.getElementById('threat-level-text');
                 
-                if (heroWarning) heroWarning.textContent = '⚠️ Data Unavailable';
-                if (threatText) threatText.innerHTML = `Current Status: <strong>DATA UNAVAILABLE</strong> - ${currentLocationName}`;
+                if (threatText) threatText.innerHTML = `⚠️ Current Status: <strong>DATA UNAVAILABLE</strong> - ${currentLocationName}`;
             }
         }
 
