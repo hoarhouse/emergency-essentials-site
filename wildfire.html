@@ -2082,16 +2082,24 @@
         // Initialize map
         function initializeMap() {
             if (!fireMap) {
-                fireMap = L.map('fire-map').setView([currentLatitude, currentLongitude], 8);
+                fireMap = L.map('fire-map').setView([currentLatitude, currentLongitude], 6);
                 
                 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '© OpenStreetMap contributors'
                 }).addTo(fireMap);
                 
+                // Create custom blue marker icon for user location
+                const userIcon = L.divIcon({
+                    className: 'user-location-marker',
+                    html: '<div style="background: #44AAFF; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.3);"></div>',
+                    iconSize: [16, 16],
+                    iconAnchor: [8, 8]
+                });
+                
                 // Add user location marker
-                userLocationMarker = L.marker([currentLatitude, currentLongitude])
+                userLocationMarker = L.marker([currentLatitude, currentLongitude], { icon: userIcon })
                     .addTo(fireMap)
-                    .bindPopup('Your Location')
+                    .bindPopup(`<strong>Your Location</strong><br>${currentLocationName}`)
                     .openPopup();
             }
         }
@@ -2113,19 +2121,19 @@
             setIndicatorStatus('wildfires-indicator', 'updating');
             
             try {
-                const response = await fetch('https://eonet.gsfc.nasa.gov/api/v2.1/events?category=8&status=open&limit=50');
+                const response = await fetch('https://eonet.gsfc.nasa.gov/api/v2.1/events?category=8&status=open&limit=100');
                 const data = await response.json();
                 
                 const fires = data.events || [];
                 currentFiresData = fires;
                 
-                // Calculate nearby fires
+                // Calculate nearby fires within 1000 miles (increased range)
                 const nearbyFires = fires.filter(fire => {
                     if (fire.geometries && fire.geometries.length > 0) {
                         const coords = fire.geometries[0].coordinates;
                         if (coords && coords.length >= 2) {
                             const distance = calculateDistance(currentLatitude, currentLongitude, coords[1], coords[0]);
-                            return distance <= 500; // Within 500 miles
+                            return distance <= 1000; // Within 1000 miles
                         }
                     }
                     return false;
@@ -2137,17 +2145,17 @@
                 if (fireCount === 0) {
                     document.getElementById('wildfires-status').textContent = 'No Active Fires Nearby';
                     document.getElementById('wildfires-status').className = 'data-status status-normal';
-                    document.getElementById('wildfires-detail').textContent = 'Clear conditions within 500 miles';
+                    document.getElementById('wildfires-detail').textContent = 'Clear conditions within 1000 miles';
                     document.getElementById('threat-level-text').innerHTML = `Current Status: <strong class="status-normal">LOW RISK</strong> - No active fires detected nearby`;
                 } else if (fireCount <= 2) {
                     document.getElementById('wildfires-status').textContent = 'Monitor Conditions';
                     document.getElementById('wildfires-status').className = 'data-status status-watch';
-                    document.getElementById('wildfires-detail').textContent = `${fireCount} active fire${fireCount > 1 ? 's' : ''} within 500 miles`;
+                    document.getElementById('wildfires-detail').textContent = `${fireCount} active fire${fireCount > 1 ? 's' : ''} within 1000 miles`;
                     document.getElementById('threat-level-text').innerHTML = `Current Status: <strong class="status-watch">WATCH</strong> - ${fireCount} fire${fireCount > 1 ? 's' : ''} detected nearby`;
                 } else if (fireCount <= 5) {
                     document.getElementById('wildfires-status').textContent = 'Elevated Risk';
                     document.getElementById('wildfires-status').className = 'data-status status-warning';
-                    document.getElementById('wildfires-detail').textContent = `${fireCount} active fires within 500 miles`;
+                    document.getElementById('wildfires-detail').textContent = `${fireCount} active fires within 1000 miles`;
                     document.getElementById('threat-level-text').innerHTML = `Current Status: <strong class="status-warning">WARNING</strong> - Multiple fires in region`;
                 } else {
                     document.getElementById('wildfires-status').textContent = 'High Risk Area';
@@ -2177,29 +2185,32 @@
             fireMarkers.forEach(marker => fireMap.removeLayer(marker));
             fireMarkers = [];
             
+            // Create custom fire marker icon
+            const fireIcon = L.divIcon({
+                className: 'fire-marker',
+                html: '<div style="background: #FF4444; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #FFFFFF; box-shadow: 0 0 8px rgba(255,68,68,0.6); animation: pulse 2s infinite;"></div>',
+                iconSize: [18, 18],
+                iconAnchor: [9, 9]
+            });
+            
             // Add fire markers
             fires.forEach(fire => {
                 if (fire.geometries && fire.geometries.length > 0) {
                     const coords = fire.geometries[0].coordinates;
                     if (coords && coords.length >= 2) {
-                        const marker = L.marker([coords[1], coords[0]], {
-                            icon: L.icon({
-                                iconUrl: 'data:image/svg+xml;base64,' + btoa(`
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FF4444" width="24" height="24">
-                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-                                        <circle cx="12" cy="12" r="4" fill="#FF4444"/>
-                                    </svg>
-                                `),
-                                iconSize: [16, 16],
-                                iconAnchor: [8, 8]
-                            })
-                        })
-                        .addTo(fireMap)
-                        .bindPopup(`
-                            <strong>${fire.title}</strong><br>
-                            Started: ${new Date(fire.geometries[0].date).toLocaleDateString()}<br>
-                            <em>Click for more details</em>
-                        `);
+                        const distance = calculateDistance(currentLatitude, currentLongitude, coords[1], coords[0]);
+                        const marker = L.marker([coords[1], coords[0]], { icon: fireIcon })
+                            .addTo(fireMap)
+                            .bindPopup(`
+                                <div style="min-width: 200px;">
+                                    <strong style="color: #FF4444; font-size: 16px;">${fire.title}</strong><br>
+                                    <strong>Distance:</strong> ${Math.round(distance)} miles<br>
+                                    <strong>Started:</strong> ${new Date(fire.geometries[0].date).toLocaleDateString()}<br>
+                                    <div style="margin-top: 8px; padding: 8px; background: #f5f5f5; border-radius: 4px; font-size: 12px;">
+                                        ${fire.description || 'Active wildfire - Monitor conditions and stay alert for evacuation orders'}
+                                    </div>
+                                </div>
+                            `);
                         
                         fireMarkers.push(marker);
                     }
@@ -2219,7 +2230,7 @@
                     <div class="no-fires">
                         <div class="no-fires-icon">✅</div>
                         <h3>No Active Fires Nearby</h3>
-                        <p>No wildfires detected within 500 miles of your location.</p>
+                        <p>No wildfires detected within 1000 miles of your location. Check back regularly during fire season.</p>
                     </div>
                 `;
                 return;
@@ -2237,7 +2248,7 @@
                 return { ...fire, distance: 999999 };
             }).sort((a, b) => a.distance - b.distance);
             
-            listContainer.innerHTML = firesWithDistance.slice(0, 5).map(fire => `
+            listContainer.innerHTML = firesWithDistance.slice(0, 10).map(fire => `
                 <div class="fire-item">
                     <div class="fire-header">
                         <div class="fire-title">${fire.title}</div>
