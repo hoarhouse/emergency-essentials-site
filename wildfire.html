@@ -130,7 +130,7 @@
             border: 1px solid #333333;
             border-radius: 8px;
             padding: 40px;
-            margin: 40px 0;
+            margin: 8px 0; /* Reduced from 40px 0 */
         }
 
         .fire-map-header {
@@ -298,7 +298,7 @@
         .data-dashboard {
             background: #1a1a1a;
             border: 1px solid #333333;
-            margin: 60px 0 40px 0;
+            margin: 12px 0 8px 0; /* Reduced from 60px 0 40px 0 */
             border-radius: 8px;
             overflow: hidden;
         }
@@ -410,7 +410,7 @@
             border: 1px solid #333333;
             border-radius: 8px;
             padding: 40px;
-            margin: 20px 0;
+            margin: 4px 0; /* Reduced from 20px 0 */
         }
 
         .weather-grid {
@@ -478,7 +478,7 @@
             border: 1px solid #333333;
             border-radius: 8px;
             padding: 40px;
-            margin: 20px 0;
+            margin: 4px 0; /* Reduced from 20px 0 */
             text-align: center;
         }
         
@@ -601,7 +601,7 @@
             border: 1px solid #333333;
             border-radius: 8px;
             padding: 40px;
-            margin: 20px 0;
+            margin: 4px 0; /* Reduced from 20px 0 */
         }
 
         .alerts-container {
@@ -718,7 +718,7 @@
         
         /* Section Styling */
         .section {
-            padding: 60px 0;
+            padding: 12px 0; /* Reduced from 60px to 12px (80% reduction) */
         }
         
         .section-title {
@@ -736,7 +736,7 @@
             border: 1px solid #333333;
             border-radius: 8px;
             padding: 60px;
-            margin: 30px 0;
+            margin: 6px 0; /* Reduced from 30px 0 */
         }
         
         .timeline-header {
@@ -919,7 +919,7 @@
             border: 1px solid #333333;
             border-radius: 8px;
             padding: 60px;
-            margin: 30px 0;
+            margin: 6px 0; /* Reduced from 30px 0 */
         }
         
         .contacts-grid {
@@ -978,7 +978,7 @@
             text-align: center;
             padding: 80px 40px;
             border-radius: 8px;
-            margin: 40px 0;
+            margin: 8px 0; /* Reduced from 40px 0 */
         }
         
         .cta-title {
@@ -1181,7 +1181,7 @@
             <div class="fire-map-section">
                 <div class="fire-map-header">
                     <h2 class="fire-map-title">🗺️ Active Wildfire Map</h2>
-                    <p class="fire-map-subtitle">Real-time locations of active wildfires within 300 miles</p>
+                    <p class="fire-map-subtitle">Real-time locations of active wildfires across North America</p>
                 </div>
                 
                 <div class="map-instructions">
@@ -1621,7 +1621,7 @@
             // Create map with scroll zoom disabled by default (option #1)
             fireMap = L.map('fire-map', {
                 center: [currentLatitude, currentLongitude],
-                zoom: 8,
+                zoom: 5, // Zoomed out more to show wider area
                 scrollWheelZoom: false,  // Disabled by default
                 dragging: true,
                 touchZoom: true,
@@ -1803,7 +1803,7 @@
                     event.categories.some(cat => cat.title.toLowerCase().includes('wildfire'))
                 );
                 
-                // Filter by proximity (within 300 miles) and add distance
+                // Filter by proximity (within 1000 miles for map display) and add distance
                 const nearbyWildfires = wildfires.filter(fire => {
                     if (!fire.geometry || fire.geometry.length === 0) return false;
                     
@@ -1814,7 +1814,7 @@
                         fire.distance = distance;
                         fire.latitude = fireLat;
                         fire.longitude = fireLon;
-                        return distance <= 300; // Within 300 miles
+                        return distance <= 1000; // Within 1000 miles for compelling display
                     }
                     return false;
                 });
@@ -1832,15 +1832,19 @@
                 if (nearbyWildfires.length === 0) {
                     document.getElementById('wildfires-status').textContent = 'No Active Fires';
                     document.getElementById('wildfires-status').className = 'data-status status-normal';
-                    document.getElementById('wildfires-detail').textContent = 'No active wildfires within 300 miles';
-                } else if (nearbyWildfires.length < 3) {
+                    document.getElementById('wildfires-detail').textContent = 'No active wildfires within 1000 miles';
+                } else if (nearbyWildfires.length < 5) {
                     document.getElementById('wildfires-status').textContent = 'Monitor Conditions';
                     document.getElementById('wildfires-status').className = 'data-status status-watch';
-                    document.getElementById('wildfires-detail').textContent = `${nearbyWildfires.length} active fire${nearbyWildfires.length > 1 ? 's' : ''} within 300 miles`;
+                    document.getElementById('wildfires-detail').textContent = `${nearbyWildfires.length} active fire${nearbyWildfires.length > 1 ? 's' : ''} within 1000 miles`;
+                } else if (nearbyWildfires.length < 15) {
+                    document.getElementById('wildfires-status').textContent = 'Regional Activity';
+                    document.getElementById('wildfires-status').className = 'data-status status-watch';
+                    document.getElementById('wildfires-detail').textContent = `${nearbyWildfires.length} active fires detected across region`;
                 } else {
                     document.getElementById('wildfires-status').textContent = 'High Activity';
                     document.getElementById('wildfires-status').className = 'data-status status-warning';
-                    document.getElementById('wildfires-detail').textContent = `${nearbyWildfires.length} active fires detected in region`;
+                    document.getElementById('wildfires-detail').textContent = `${nearbyWildfires.length} active fires detected nationwide`;
                 }
                 
                 // Update map and list
@@ -1920,7 +1924,7 @@
                     <div class="no-fires">
                         <div class="no-fires-icon">✅</div>
                         <div style="font-size: 18px; margin-bottom: 8px; color: #44AA44;">No Active Fires Nearby</div>
-                        <div>No active wildfires detected within 300 miles of your location.</div>
+                        <div>No active wildfires detected within 1000 miles of your location.</div>
                     </div>
                 `;
                 return;
