@@ -2010,7 +2010,8 @@
             
             if (!navigator.geolocation) {
                 console.log('Geolocation not supported');
-                updateLocationDisplay('Denver, CO (Default)');
+                currentLocationName = 'Denver, CO (Default)';
+                updateLocationDisplay(currentLocationName);
                 initializeMap();
                 updateAllThreatData();
                 return;
@@ -2039,7 +2040,8 @@
                 
             } catch (error) {
                 console.log('Location detection failed:', error.message);
-                updateLocationDisplay('Denver, CO (Default - Location Access Denied)');
+                currentLocationName = 'Denver, CO (Default - Location Access Denied)';
+                updateLocationDisplay(currentLocationName);
                 initializeMap();
                 updateAllThreatData();
             }
@@ -2096,7 +2098,7 @@
                     iconAnchor: [8, 8]
                 });
                 
-                // Add user location marker
+                // Add user location marker with current location name
                 userLocationMarker = L.marker([currentLatitude, currentLongitude], { icon: userIcon })
                     .addTo(fireMap)
                     .bindPopup(`<strong>Your Location</strong><br>${currentLocationName}`)
