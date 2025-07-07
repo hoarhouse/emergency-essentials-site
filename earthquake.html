@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://api.allorigins.win https://corsproxy.io https://api.codetabs.com https://geocoding-api.open-meteo.com https://earthquake.usgs.gov; connect-src 'self' https://fonts.googleapis.com https://api.allorigins.win https://corsproxy.io https://api.codetabs.com https://geocoding-api.open-meteo.com https://earthquake.usgs.gov; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;">
+    <title>Earthquake Emergency Preparedness - EmergencyEssentials</title>
+    <meta name="description" content="Comprehensive earthquake preparedness guide with seismic monitoring, safety strategies, and professional equipment recommendations.">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+           font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000000;
+            color: #FFFFFF;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 100;
+            border-bottom: 1px solid #333333;
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #FFFFFF;
+            letter-spacing: -0.5px;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: #CCCCCC;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover,
+        .nav-link.active {
+            color: #FFFFFF;
+        }
+        
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 120px 0;
+            background: linear-gradient(180deg, #000000 0%, #111111 100%);
+            position: relative;
+        }
+        
+        .hero h1 {
+            font-size: 72px;
+            font-weight: 300;
+            margin-bottom: 24px;
+            letter-spacing: -2px;
+            line-height: 1.1;
+        }
+        
+        .hero p {
+            font-size: 24px;
+            color: #CCCCCC;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            font-weight: 300;
+        }
+        
+        .threat-level {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .threat-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #FFAA44;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Real-Time Data Dashboard */
+        .data-dashboard {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            margin: 60px 0 40px 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .dashboard-header {
+            background: #111111;
+            padding: 20px 40px;
+            border-bottom: 1px solid #333333;
+        }
+
+        .dashboard-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #FFFFFF;
+        }
+
+        .dashboard-subtitle {
+            color: #CCCCCC;
+            font-size: 14px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 0;
+        }
+
+        .data-card {
+            background: #1a1a1a;
+            border-right: 1px solid #333333;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .data-card:last-child {
+            border-right: none;
+        }
+
+        .data-card:hover {
+            background: #242424;
+        }
+
+        .data-label {
+            font-size: 12px;
+            color: #999999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .data-value {
+            font-size: 32px;
+            font-weight: 300;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .data-status {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .data-detail {
+            font-size: 12px;
+            color: #CCCCCC;
+            line-height: 1.4;
+        }
+
+        /* Status Colors */
+        .status-normal { color: #44AA44; }
+        .status-watch { color: #FFDD44; }
+        .status-warning { color: #FFAA44; }
+        .status-critical { color: #FF4444; }
+
+        .card-earthquakes .data-value { color: #FFAA44; }
+        .card-largest .data-value { color: #FF4444; }
+        .card-activity .data-value { color: #44AAFF; }
+        .card-risk .data-value { color: #FFDD44; }
+
+        /* Update indicator */
+        .update-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #44AA44;
+            animation: pulse 2s infinite;
+        }
+
+        .updating {
+            background: #FFAA44;
+        }
+
+        .error {
+            background: #FF4444;
+            animation: none;
+        }
+
+        /* Recent Earthquakes List */
+        .recent-earthquakes {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 40px;
+            margin: 20px 0;
+        }
+
+        .earthquakes-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 20px 0;
+        }
+
+        .earthquake-item {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .earthquake-item:hover {
+            background: #242424;
+            border-color: #666666;
+        }
+
+        .earthquake-info {
+            flex-grow: 1;
+        }
+
+        .earthquake-magnitude {
+            font-size: 24px;
+            font-weight: 600;
+            margin-right: 20px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .magnitude-1 { color: #44AA44; }
+        .magnitude-2 { color: #FFDD44; }
+        .magnitude-3 { color: #FFAA44; }
+        .magnitude-4 { color: #FF4444; }
+
+        .earthquake-details {
+            margin-bottom: 4px;
+        }
+
+        .earthquake-location {
+            font-weight: 500;
+            color: #FFFFFF;
+            margin-bottom: 4px;
+        }
+
+        .earthquake-meta {
+            font-size: 12px;
+            color: #CCCCCC;
+        }
+
+        .earthquake-distance {
+            font-size: 14px;
+            color: #999999;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        /* Seismic Risk Assessment */
+        .risk-assessment {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 40px;
+            margin: 20px 0;
+        }
+
+        .risk-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .risk-card {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .risk-card:hover {
+            background: #242424;
+            border-color: #666666;
+            transform: translateY(-2px);
+        }
+
+        .risk-label {
+            font-size: 14px;
+            color: #CCCCCC;
+            margin-bottom: 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .risk-value {
+            font-size: 36px;
+            font-weight: 300;
+            color: #FFFFFF;
+            margin-bottom: 4px;
+            line-height: 1;
+        }
+
+        .risk-description {
+            font-size: 14px;
+            color: #999999;
+            font-weight: 500;
+        }
+
+        .risk-low { color: #44AA44; }
+        .risk-moderate { color: #FFDD44; }
+        .risk-high { color: #FFAA44; }
+        .risk-very-high { color: #FF4444; }
+
+        /* Location Controls */
+        .location-controls {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .location-display {
+            font-size: 16px;
+            color: #CCCCCC;
+            margin-bottom: 8px;
+        }
+
+        .refresh-btn {
+            background: transparent;
+            border: 1px solid #FFFFFF;
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 16px;
+        }
+        
+        .refresh-btn:hover {
+            background: #FFFFFF;
+            color: #000000;
+        }
+
+        /* Equipment Grid */
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+        
+        .equipment-card {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 40px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .equipment-card:hover {
+            background: #2a2a2a;
+            border-color: #555555;
+            transform: translateY(-2px);
+        }
+        
+        .equipment-priority {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .equipment-priority.critical {
+            background: rgba(255, 68, 68, 0.1);
+            color: #FF4444;
+            border: 1px solid #FF4444;
+        }
+        
+        .equipment-priority.important {
+            background: rgba(255, 170, 68, 0.1);
+            color: #FFAA44;
+            border: 1px solid #FFAA44;
+        }
+        
+        .equipment-priority.recommended {
+            background: rgba(68, 170, 255, 0.1);
+            color: #44AAFF;
+            border: 1px solid #44AAFF;
+        }
+        
+        .equipment-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 24px;
+            stroke: #FFFFFF;
+            stroke-width: 1.5;
+            fill: none;
+        }
+        
+        .equipment-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #FFFFFF;
+        }
+        
+        .equipment-description {
+            color: #CCCCCC;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .equipment-specs {
+            font-size: 12px;
+            color: #999999;
+            background: #161616;
+            padding: 12px;
+            border-radius: 4px;
+            border-left: 2px solid #333333;
+        }
+        
+        .affiliate-link {
+            display: inline-block;
+            margin-top: 16px;
+            background: #FF9900;
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+        
+        .affiliate-link:hover {
+            background: #E68900;
+        }
+
+        /* Emergency Contacts */
+        .emergency-contacts {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 60px;
+            margin: 30px 0;
+        }
+        
+        .contacts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        
+        .contact-card {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 8px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-card:hover {
+            background: #242424;
+            border-color: #666666;
+        }
+        
+        .contact-type {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #999999;
+            margin-bottom: 8px;
+        }
+        
+        .contact-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #FFFFFF;
+        }
+        
+        .contact-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 8px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .contact-description {
+            font-size: 14px;
+            color: #CCCCCC;
+            line-height: 1.5;
+        }
+
+        /* Call to Action */
+        .cta-section {
+            background: #FFFFFF;
+            color: #000000;
+            text-align: center;
+            padding: 80px 40px;
+            border-radius: 8px;
+            margin: 40px 0;
+        }
+        
+        .cta-title {
+            font-size: 48px;
+            font-weight: 300;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+        
+        .cta-subtitle {
+            font-size: 20px;
+            margin-bottom: 32px;
+            color: #666666;
+            font-weight: 300;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .cta-button {
+            background: #000000;
+            color: #FFFFFF;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .cta-button:hover {
+            background: #333333;
+        }
+        
+        .cta-button.secondary {
+            background: transparent;
+            color: #000000;
+            border: 1px solid #000000;
+        }
+        
+        .cta-button.secondary:hover {
+            background: #000000;
+            color: #FFFFFF;
+        }
+
+        /* Section Styling */
+        .section {
+            padding: 60px 0;
+        }
+        
+        .section-title {
+            font-size: 56px;
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #FFFFFF;
+            letter-spacing: -1px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 48px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .section-title {
+                font-size: 36px;
+            }
+            
+            .nav {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .cta-title {
+                font-size: 32px;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .data-card {
+                border-right: none;
+                border-bottom: 1px solid #333333;
+            }
+
+            .data-card:last-child {
+                border-bottom: none;
+            }
+
+            .earthquake-item {
+                flex-direction: column;
+                text-align: left;
+            }
+
+            .earthquake-magnitude {
+                margin-right: 0;
+                margin-bottom: 12px;
+            }
+
+            .earthquake-distance {
+                text-align: left;
+                margin-top: 8px;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="index.html" class="logo">EmergencyEssentials</a>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">All Emergencies</a>
+                    <a href="wildfire.html" class="nav-link">Wildfire</a>
+                    <a href="flood.html" class="nav-link">Flood</a>
+                    <a href="#" class="nav-link">Power Outage</a>
+                    <a href="earthquake.html" class="nav-link active">Earthquake</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Earthquake Preparedness</h1>
+            <p>Comprehensive seismic safety strategies for earthquake-prone regions</p>
+            <div class="threat-level">
+                <div class="threat-indicator"></div>
+                <span id="threat-level-text">Current Status: <strong>LOADING</strong> - Detecting location...</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Real-Time Data Dashboard -->
+    <section class="section" style="padding: 40px 0;">
+        <div class="container">
+            <div class="data-dashboard">
+                <div class="dashboard-header">
+                    <h2 class="dashboard-title">🌍 Live Seismic Activity Monitor</h2>
+                    <p class="dashboard-subtitle">Real-time earthquake data for <span id="dashboard-location">detecting location...</span></p>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="data-card card-earthquakes">
+                        <div class="update-indicator" id="earthquakes-indicator"></div>
+                        <div class="data-label">Recent Earthquakes</div>
+                        <div class="data-value" id="earthquakes-count">Loading...</div>
+                        <div class="data-status" id="earthquakes-status">Scanning area...</div>
+                        <div class="data-detail" id="earthquakes-detail">Last 7 days, magnitude 2.5+</div>
+                    </div>
+                    
+                    <div class="data-card card-largest">
+                        <div class="update-indicator" id="largest-indicator"></div>
+                        <div class="data-label">Largest Recent</div>
+                        <div class="data-value" id="largest-magnitude">Loading...</div>
+                        <div class="data-status" id="largest-status">Checking activity...</div>
+                        <div class="data-detail" id="largest-detail">Maximum magnitude this week</div>
+                    </div>
+                    
+                    <div class="data-card card-activity">
+                        <div class="update-indicator" id="activity-indicator"></div>
+                        <div class="data-label">Activity Level</div>
+                        <div class="data-value" id="activity-level">Loading...</div>
+                        <div class="data-status" id="activity-status">Calculating...</div>
+                        <div class="data-detail" id="activity-detail">Compared to normal patterns</div>
+                    </div>
+                    
+                    <div class="data-card card-risk">
+                        <div class="update-indicator" id="risk-indicator"></div>
+                        <div class="data-label">Seismic Risk</div>
+                        <div class="data-value" id="risk-level">Loading...</div>
+                        <div class="data-status" id="risk-status">Assessing area...</div>
+                        <div class="data-detail" id="risk-detail">Based on location & geology</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Earthquakes List -->
+    <section class="section">
+        <div class="container">
+            <div class="recent-earthquakes">
+                <h2 style="color: #FFFFFF; margin-bottom: 16px; font-weight: 300;">Recent Earthquakes Near You</h2>
+                
+                <div class="location-controls">
+                    <div class="location-display">Monitoring: <span id="earthquakes-location">Detecting your location...</span></div>
+                    <div class="location-display">Search Radius: <span id="search-radius">300 miles</span></div>
+                </div>
+                
+                <div id="earthquakes-list" class="earthquakes-list">
+                    <div style="text-align: center; padding: 40px; color: #CCCCCC;">
+                        <div style="font-size: 18px; margin-bottom: 8px;">Loading recent earthquakes...</div>
+                        <div style="color: #CCCCCC;">Fetching data from USGS earthquake monitoring network</div>
+                    </div>
+                </div>
+                
+                <button class="refresh-btn" onclick="refreshEarthquakeData()">Refresh Earthquake Data</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seismic Risk Assessment -->
+    <section class="section">
+        <div class="container">
+            <div class="risk-assessment">
+                <h2 style="color: #FFFFFF; margin-bottom: 16px; font-weight: 300;">Regional Seismic Risk Assessment</h2>
+                
+                <div class="location-controls">
+                    <div class="location-display">Assessment for: <span id="risk-location">Detecting your location...</span></div>
+                </div>
+                
+                <div class="risk-grid">
+                    <div class="risk-card">
+                        <div class="risk-label">Peak Ground Acceleration</div>
+                        <div class="risk-value risk-moderate" id="pga-risk">Loading...</div>
+                        <div class="risk-description" id="pga-description">Estimated ground shaking</div>
+                    </div>
+                    
+                    <div class="risk-card">
+                        <div class="risk-label">Major Fault Distance</div>
+                        <div class="risk-value risk-low" id="fault-distance">Loading...</div>
+                        <div class="risk-description">Miles to nearest active fault</div>
+                    </div>
+                    
+                    <div class="risk-card">
+                        <div class="risk-label">Historical Activity</div>
+                        <div class="risk-value risk-moderate" id="historical-activity">Loading...</div>
+                        <div class="risk-description">Past 100 years regional data</div>
+                    </div>
+                    
+                    <div class="risk-card">
+                        <div class="risk-label">Soil Liquefaction</div>
+                        <div class="risk-value risk-low" id="liquefaction-risk">Loading...</div>
+                        <div class="risk-description">Ground stability assessment</div>
+                    </div>
+                </div>
+                
+                <button class="refresh-btn" onclick="refreshRiskAssessment()">Refresh Risk Assessment</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Earthquake Equipment -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Earthquake Safety Equipment</h2>
+            <div class="equipment-grid">
+                <div class="equipment-card">
+                    <div class="equipment-priority critical">Critical</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+                    </svg>
+                    <h3 class="equipment-title">Emergency Go-Bag</h3>
+                    <p class="equipment-description">Portable 72-hour survival kit for immediate evacuation. Pre-packed with essentials for each family member, stored in accessible location.</p>
+                    <div class="equipment-specs">
+                        Specification: 72-hour supplies, waterproof bag, flashlight, first aid, emergency food & water
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('emergency-go-bag', 'amazon')">View on Amazon - $129.99</a>
+                </div>
+
+                <div class="equipment-card">
+                    <div class="equipment-priority critical">Critical</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                    <h3 class="equipment-title">Furniture Anchoring Kit</h3>
+                    <p class="equipment-description">Secure tall furniture, appliances, and TVs to walls. Prevents tipping during earthquakes, reducing injury and escape route blockage.</p>
+                    <div class="equipment-specs">
+                        Specification: Wall anchors, safety straps, L-brackets, anti-tip fasteners for furniture up to 200lbs
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('furniture-anchors', 'amazon')">View on Amazon - $34.99</a>
+                </div>
+
+                <div class="equipment-card">
+                    <div class="equipment-priority critical">Critical</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                    </svg>
+                    <h3 class="equipment-title">Emergency Lighting Kit</h3>
+                    <p class="equipment-description">Battery-powered LED lanterns and flashlights for post-earthquake navigation. Essential when power grids fail after major seismic events.</p>
+                    <div class="equipment-specs">
+                        Specification: 400+ hour battery life, multiple brightness levels, shock-resistant, emergency beacon mode
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('emergency-lighting', 'amazon')">View on Amazon - $59.99</a>
+                </div>
+
+                <div class="equipment-card">
+                    <div class="equipment-priority important">Important</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    <h3 class="equipment-title">Gas Shut-off Wrench</h3>
+                    <p class="equipment-description">Essential tool for turning off gas main after earthquakes. Prevents gas leaks and potential fires when pipes may be damaged.</p>
+                    <div class="equipment-specs">
+                        Specification: Fits standard gas meter valves, steel construction, emergency instructions included
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('gas-shutoff-wrench', 'amazon')">View on Amazon - $19.99</a>
+                </div>
+
+                <div class="equipment-card">
+                    <div class="equipment-priority important">Important</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-15.355 21.213 0"/>
+                    </svg>
+                    <h3 class="equipment-title">Emergency Radio</h3>
+                    <p class="equipment-description">Hand-crank emergency radio for post-earthquake communication and updates. Solar/battery powered with NOAA weather alerts.</p>
+                    <div class="equipment-specs">
+                        Specification: NOAA weather alerts, hand-crank & solar charging, LED flashlight, USB phone charging
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('emergency-radio', 'amazon')">View on Amazon - $39.99</a>
+                </div>
+
+                <div class="equipment-card">
+                    <div class="equipment-priority recommended">Recommended</div>
+                    <svg class="equipment-icon" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                    </svg>
+                    <h3 class="equipment-title">Seismic Cabinet Latches</h3>
+                    <p class="equipment-description">Automatic latches that secure cabinet doors during shaking. Prevents contents from spilling and blocking escape routes.</p>
+                    <div class="equipment-specs">
+                        Specification: Earthquake-activated latches, easy installation, works on most cabinet types
+                    </div>
+                    <a href="#" class="affiliate-link" onclick="trackAffiliate('cabinet-latches', 'amazon')">View on Amazon - $24.99</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency Contacts -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Critical Emergency Contacts</h2>
+            <div class="emergency-contacts">
+                <div class="contacts-grid">
+                    <div class="contact-card">
+                        <div class="contact-type">Emergency Services</div>
+                        <div class="contact-name">Emergency Dispatch</div>
+                        <div class="contact-number">911</div>
+                        <div class="contact-description">For immediate life-threatening emergencies and rescue operations</div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-type">Earthquake Information</div>
+                        <div class="contact-name">USGS Earthquake Hazards</div>
+                        <div class="contact-number">(303) 273-8500</div>
+                        <div class="contact-description">Real-time earthquake data and scientific information</div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-type">Emergency Management</div>
+                        <div class="contact-name">Denver Emergency Mgmt</div>
+                        <div class="contact-number">(720) 913-1311</div>
+                        <div class="contact-description">Local emergency coordination and public safety information</div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-type">Utilities Emergency</div>
+                        <div class="contact-name">Xcel Energy</div>
+                        <div class="contact-number">(800) 895-1999</div>
+                        <div class="contact-description">Report gas leaks and electrical hazards after earthquakes</div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-type">Red Cross Shelter</div>
+                        <div class="contact-name">American Red Cross</div>
+                        <div class="contact-number">(303) 722-7474</div>
+                        <div class="contact-description">Emergency shelter locations and disaster relief services</div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-type">Structural Assessment</div>
+                        <div class="contact-name">Building Inspection</div>
+                        <div class="contact-number">(720) 865-2500</div>
+                        <div class="contact-description">Post-earthquake building safety inspections</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="section">
+        <div class="container">
+            <div class="cta-section">
+                <h2 class="cta-title">Create Your Earthquake Action Plan</h2>
+                <p class="cta-subtitle">Generate a customized earthquake preparedness plan for your specific location and seismic risk</p>
+                <div class="cta-buttons">
+                    <button class="cta-button" onclick="generateEarthquakePlan()">Generate Plan</button>
+                    <a href="#" class="cta-button secondary">Download Checklist</a>
+                    <a href="#" class="cta-button secondary">Find Seismic Risk</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Global variables
+        let currentLatitude = 39.7392; // Default to Denver
+        let currentLongitude = -104.9903;
+        let currentLocationName = 'Denver, CO';
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Earthquake page loaded, starting data collection');
+            detectUserLocation();
+        });
+
+        // Auto-detect user location
+        async function detectUserLocation() {
+            // Update initial status
+            document.getElementById('threat-level-text').innerHTML = `Current Status: <strong>DETECTING LOCATION</strong>...`;
+            
+            if (!navigator.geolocation) {
+                console.log('Geolocation not supported');
+                updateLocationDisplay('Denver, CO (Default)');
+                updateAllData();
+                return;
+            }
+
+            try {
+                const position = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        timeout: 10000,
+                        enableHighAccuracy: true
+                    });
+                });
+
+                currentLatitude = position.coords.latitude;
+                currentLongitude = position.coords.longitude;
+                
+                document.getElementById('threat-level-text').innerHTML = `Current Status: <strong>LOADING DATA</strong>...`;
+                
+                const locationName = await getCityName(currentLatitude, currentLongitude);
+                currentLocationName = locationName;
+                updateLocationDisplay(locationName);
+                
+                console.log(`Location detected: ${locationName} (${currentLatitude}, ${currentLongitude})`);
+                updateAllData();
+                
+            } catch (error) {
+                console.log('Location detection failed:', error.message);
+                updateLocationDisplay('Denver, CO (Default - Location Access Denied)');
+                updateAllData();
+            }
+        }
+
+        // Get city name from coordinates
+        async function getCityName(lat, lon) {
+            try {
+                const response = await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&count=1`);
+                const data = await response.json();
+                
+                if (data.results && data.results.length > 0) {
+                    const result = data.results[0];
+                    const city = result.name || result.admin1 || 'Unknown City';
+                    const state = result.admin1 || result.country_code || '';
+                    return state ? `${city}, ${state}` : city;
+                }
+                return 'Your Location';
+            } catch (error) {
+                console.error('Reverse geocoding failed:', error);
+                return 'Your Location';
+            }
+        }
+
+        // Update all location displays
+        function updateLocationDisplay(locationName) {
+            document.getElementById('dashboard-location').textContent = locationName;
+            document.getElementById('earthquakes-location').textContent = locationName;
+            document.getElementById('risk-location').textContent = locationName;
+        }
+
+        // Update all data sources
+        function updateAllData() {
+            console.log('Starting earthquake data updates...');
+            updateEarthquakeData();
+            updateSeismicRiskAssessment();
+            updateThreatLevelDisplay();
+        }
+
+        // Calculate distance between two coordinates (in miles)
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 3959; // Earth's radius in miles
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // Format time ago
+        function timeAgo(dateString) {
+            const now = new Date();
+            const eventTime = new Date(dateString);
+            const diffMs = now - eventTime;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 60) {
+                return `${diffMins} min ago`;
+            } else if (diffHours < 24) {
+                return `${diffHours} hr ago`;
+            } else {
+                return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+            }
+        }
+
+        // Update earthquake data from USGS
+        async function updateEarthquakeData() {
+            const earthquakesIndicator = document.getElementById('earthquakes-indicator');
+            const largestIndicator = document.getElementById('largest-indicator');
+            const activityIndicator = document.getElementById('activity-indicator');
+            
+            earthquakesIndicator.className = 'update-indicator updating';
+            largestIndicator.className = 'update-indicator updating';
+            activityIndicator.className = 'update-indicator updating';
+            
+            try {
+                // Get earthquakes from last 7 days within 300 miles, magnitude 2.5+
+                const response = await fetch(`https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${getDateDaysAgo(7)}&latitude=${currentLatitude}&longitude=${currentLongitude}&maxradiuskm=483&minmagnitude=2.5`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch earthquake data');
+                }
+                
+                const data = await response.json();
+                const earthquakes = data.features || [];
+                
+                // Update earthquake count
+                document.getElementById('earthquakes-count').textContent = earthquakes.length;
+                
+                // Find largest earthquake
+                let largestMag = 0;
+                let largestQuake = null;
+                earthquakes.forEach(eq => {
+                    const mag = eq.properties.mag;
+                    if (mag > largestMag) {
+                        largestMag = mag;
+                        largestQuake = eq;
+                    }
+                });
+                
+                // Update largest earthquake display
+                if (largestQuake) {
+                    document.getElementById('largest-magnitude').textContent = `M${largestMag.toFixed(1)}`;
+                    document.getElementById('largest-status').textContent = largestQuake.properties.place.split(',')[0];
+                    document.getElementById('largest-detail').textContent = timeAgo(largestQuake.properties.time);
+                } else {
+                    document.getElementById('largest-magnitude').textContent = 'M0.0';
+                    document.getElementById('largest-status').textContent = 'No Significant Activity';
+                    document.getElementById('largest-detail').textContent = 'No earthquakes M2.5+ this week';
+                }
+                
+                // Calculate activity level
+                const activityLevel = calculateActivityLevel(earthquakes);
+                document.getElementById('activity-level').textContent = activityLevel.level;
+                document.getElementById('activity-status').textContent = activityLevel.description;
+                document.getElementById('activity-detail').textContent = `${earthquakes.length} earthquakes in 7 days`;
+                
+                // Update status based on count
+                updateEarthquakeStatus(earthquakes.length);
+                
+                // Update recent earthquakes list
+                updateEarthquakesList(earthquakes);
+                
+                earthquakesIndicator.className = 'update-indicator';
+                largestIndicator.className = 'update-indicator';
+                activityIndicator.className = 'update-indicator';
+                
+                console.log(`Found ${earthquakes.length} earthquakes near ${currentLocationName}`);
+                
+            } catch (error) {
+                console.error('Error fetching earthquake data:', error);
+                
+                // Update with error state
+                document.getElementById('earthquakes-count').textContent = 'Error';
+                document.getElementById('earthquakes-status').textContent = 'Data Unavailable';
+                document.getElementById('earthquakes-detail').textContent = 'Unable to connect to USGS';
+                
+                document.getElementById('largest-magnitude').textContent = 'Error';
+                document.getElementById('largest-status').textContent = 'Data Unavailable';
+                document.getElementById('largest-detail').textContent = 'Unable to connect to USGS';
+                
+                document.getElementById('activity-level').textContent = 'Error';
+                document.getElementById('activity-status').textContent = 'Data Unavailable';
+                document.getElementById('activity-detail').textContent = 'Unable to connect to USGS';
+                
+                earthquakesIndicator.className = 'update-indicator error';
+                largestIndicator.className = 'update-indicator error';
+                activityIndicator.className = 'update-indicator error';
+                
+                // Show error in list
+                document.getElementById('earthquakes-list').innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #FF4444;">
+                        <div style="font-size: 18px; margin-bottom: 8px;">Unable to Load Earthquake Data</div>
+                        <div style="color: #CCCCCC;">Could not fetch data from USGS. Please try refreshing.</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Get date string for N days ago
+        function getDateDaysAgo(days) {
+            const date = new Date();
+            date.setDate(date.getDate() - days);
+            return date.toISOString().split('T')[0];
+        }
+
+        // Calculate activity level based on earthquake count
+        function calculateActivityLevel(earthquakes) {
+            const count = earthquakes.length;
+            
+            if (count === 0) {
+                return { level: 'Quiet', description: 'Very Low Activity' };
+            } else if (count <= 5) {
+                return { level: 'Low', description: 'Normal Activity' };
+            } else if (count <= 15) {
+                return { level: 'Moderate', description: 'Above Normal' };
+            } else if (count <= 30) {
+                return { level: 'High', description: 'Elevated Activity' };
+            } else {
+                return { level: 'Very High', description: 'Exceptional Activity' };
+            }
+        }
+
+        // Update earthquake status based on count
+        function updateEarthquakeStatus(count) {
+            const statusElement = document.getElementById('earthquakes-status');
+            
+            if (count === 0) {
+                statusElement.textContent = 'Quiet Period';
+                statusElement.className = 'data-status status-normal';
+            } else if (count <= 5) {
+                statusElement.textContent = 'Normal Activity';
+                statusElement.className = 'data-status status-normal';
+            } else if (count <= 15) {
+                statusElement.textContent = 'Elevated Activity';
+                statusElement.className = 'data-status status-watch';
+            } else {
+                statusElement.textContent = 'High Activity';
+                statusElement.className = 'data-status status-warning';
+            }
+        }
+
+        // Update recent earthquakes list
+        function updateEarthquakesList(earthquakes) {
+            const listContainer = document.getElementById('earthquakes-list');
+            
+            if (earthquakes.length === 0) {
+                listContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #CCCCCC;">
+                        <div style="font-size: 18px; margin-bottom: 8px; color: #44AA44;">No Recent Earthquakes</div>
+                        <div>No earthquakes magnitude 2.5+ detected within 300 miles in the last 7 days.</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort by magnitude (largest first)
+            earthquakes.sort((a, b) => b.properties.mag - a.properties.mag);
+            
+            // Take top 10 earthquakes
+            const topEarthquakes = earthquakes.slice(0, 10);
+            
+            let earthquakesHTML = '';
+            
+            topEarthquakes.forEach(eq => {
+                const props = eq.properties;
+                const coords = eq.geometry.coordinates;
+                const magnitude = props.mag.toFixed(1);
+                const place = props.place;
+                const time = new Date(props.time).toLocaleString();
+                const timeAgoText = timeAgo(props.time);
+                const depth = coords[2].toFixed(1);
+                const distance = calculateDistance(currentLatitude, currentLongitude, coords[1], coords[0]).toFixed(0);
+                
+                // Determine magnitude class for coloring
+                let magClass = 'magnitude-1';
+                if (magnitude >= 6.0) magClass = 'magnitude-4';
+                else if (magnitude >= 4.0) magClass = 'magnitude-3';
+                else if (magnitude >= 3.0) magClass = 'magnitude-2';
+                
+                earthquakesHTML += `
+                    <div class="earthquake-item">
+                        <div class="earthquake-magnitude ${magClass}">M${magnitude}</div>
+                        <div class="earthquake-info">
+                            <div class="earthquake-location">${place}</div>
+                            <div class="earthquake-meta">
+                                <strong>Time:</strong> ${timeAgoText} (${time})<br>
+                                <strong>Depth:</strong> ${depth} km
+                            </div>
+                        </div>
+                        <div class="earthquake-distance">${distance} mi</div>
+                    </div>
+                `;
+            });
+            
+            listContainer.innerHTML = earthquakesHTML;
+        }
+
+        // Update seismic risk assessment
+        function updateSeismicRiskAssessment() {
+            const riskIndicator = document.getElementById('risk-indicator');
+            riskIndicator.className = 'update-indicator updating';
+            
+            try {
+                // Calculate risk based on location (simplified assessment)
+                const riskAssessment = calculateSeismicRisk(currentLatitude, currentLongitude);
+                
+                // Update PGA (Peak Ground Acceleration)
+                document.getElementById('pga-risk').textContent = riskAssessment.pga.level;
+                document.getElementById('pga-risk').className = `risk-value ${riskAssessment.pga.class}`;
+                document.getElementById('pga-description').textContent = riskAssessment.pga.description;
+                
+                // Update fault distance
+                document.getElementById('fault-distance').textContent = riskAssessment.faultDistance.distance;
+                document.getElementById('fault-distance').className = `risk-value ${riskAssessment.faultDistance.class}`;
+                
+                // Update historical activity
+                document.getElementById('historical-activity').textContent = riskAssessment.historical.level;
+                document.getElementById('historical-activity').className = `risk-value ${riskAssessment.historical.class}`;
+                
+                // Update liquefaction risk
+                document.getElementById('liquefaction-risk').textContent = riskAssessment.liquefaction.level;
+                document.getElementById('liquefaction-risk').className = `risk-value ${riskAssessment.liquefaction.class}`;
+                
+                // Update overall risk level
+                document.getElementById('risk-level').textContent = riskAssessment.overall.level;
+                document.getElementById('risk-status').textContent = riskAssessment.overall.description;
+                document.getElementById('risk-detail').textContent = riskAssessment.overall.detail;
+                
+                riskIndicator.className = 'update-indicator';
+                
+                console.log(`Risk assessment completed for ${currentLocationName}: ${riskAssessment.overall.level}`);
+                
+            } catch (error) {
+                console.error('Error calculating seismic risk:', error);
+                
+                riskIndicator.className = 'update-indicator error';
+                document.getElementById('risk-level').textContent = 'Error';
+                document.getElementById('risk-status').textContent = 'Assessment Failed';
+                document.getElementById('risk-detail').textContent = 'Unable to calculate risk';
+            }
+        }
+
+        // Calculate seismic risk based on location (simplified)
+        function calculateSeismicRisk(lat, lon) {
+            let overallRisk = 'Moderate';
+            let pgaLevel = 'Moderate';
+            let pgaClass = 'risk-moderate';
+            let faultDistance = '50+ mi';
+            let faultClass = 'risk-low';
+            let historicalLevel = 'Moderate';
+            let historicalClass = 'risk-moderate';
+            let liquefactionLevel = 'Low';
+            let liquefactionClass = 'risk-low';
+            
+            // California - Very High Risk
+            if (lon < -115 && lat > 32 && lat < 42) {
+                overallRisk = 'Very High';
+                pgaLevel = 'Very High';
+                pgaClass = 'risk-very-high';
+                faultDistance = '< 10 mi';
+                faultClass = 'risk-very-high';
+                historicalLevel = 'Very High';
+                historicalClass = 'risk-very-high';
+                liquefactionLevel = 'High';
+                liquefactionClass = 'risk-high';
+            }
+            // Alaska - Very High Risk
+            else if (lat > 60) {
+                overallRisk = 'Very High';
+                pgaLevel = 'Very High';
+                pgaClass = 'risk-very-high';
+                faultDistance = '< 25 mi';
+                faultClass = 'risk-high';
+                historicalLevel = 'Very High';
+                historicalClass = 'risk-very-high';
+            }
+            // Pacific Northwest - High Risk
+            else if (lon < -115 && lat > 42 && lat < 49) {
+                overallRisk = 'High';
+                pgaLevel = 'High';
+                pgaClass = 'risk-high';
+                faultDistance = '< 50 mi';
+                faultClass = 'risk-moderate';
+                historicalLevel = 'High';
+                historicalClass = 'risk-high';
+            }
+            // New Madrid Seismic Zone (Missouri/Tennessee area)
+            else if (lon > -95 && lon < -85 && lat > 35 && lat < 40) {
+                overallRisk = 'High';
+                pgaLevel = 'High';
+                pgaClass = 'risk-high';
+                faultDistance = '< 30 mi';
+                faultClass = 'risk-moderate';
+                liquefactionLevel = 'High';
+                liquefactionClass = 'risk-high';
+            }
+            // Charleston Seismic Zone (South Carolina)
+            else if (lon > -85 && lon < -75 && lat > 30 && lat < 35) {
+                overallRisk = 'Moderate';
+                pgaLevel = 'Moderate';
+                pgaClass = 'risk-moderate';
+            }
+            // Eastern US - Generally Low Risk
+            else if (lon > -95) {
+                overallRisk = 'Low';
+                pgaLevel = 'Low';
+                pgaClass = 'risk-low';
+                faultDistance = '100+ mi';
+                faultClass = 'risk-low';
+                historicalLevel = 'Low';
+                historicalClass = 'risk-low';
+            }
+            
+            return {
+                overall: {
+                    level: overallRisk,
+                    description: overallRisk === 'Very High' ? 'Major Earthquake Zone' :
+                               overallRisk === 'High' ? 'High Seismic Activity' :
+                               overallRisk === 'Moderate' ? 'Moderate Risk Zone' : 'Low Seismic Risk',
+                    detail: overallRisk === 'Very High' ? 'Prepare for major earthquakes' :
+                           overallRisk === 'High' ? 'Significant earthquake potential' :
+                           overallRisk === 'Moderate' ? 'Occasional earthquake activity' : 'Rare earthquake activity'
+                },
+                pga: {
+                    level: pgaLevel,
+                    class: pgaClass,
+                    description: pgaLevel === 'Very High' ? 'Severe ground shaking expected' :
+                               pgaLevel === 'High' ? 'Strong ground shaking possible' :
+                               pgaLevel === 'Moderate' ? 'Moderate shaking possible' : 'Light shaking expected'
+                },
+                faultDistance: {
+                    distance: faultDistance,
+                    class: faultClass
+                },
+                historical: {
+                    level: historicalLevel,
+                    class: historicalClass
+                },
+                liquefaction: {
+                    level: liquefactionLevel,
+                    class: liquefactionClass
+                }
+            };
+        }
+
+        // Update threat level display
+        function updateThreatLevelDisplay() {
+            const threatText = document.getElementById('threat-level-text');
+            
+            // Get current risk level
+            const riskLevel = document.getElementById('risk-level').textContent;
+            
+            let statusText = 'MODERATE SEISMIC RISK';
+            let statusColor = '#FFAA44';
+            
+            if (riskLevel === 'Very High') {
+                statusText = 'VERY HIGH SEISMIC RISK';
+                statusColor = '#FF4444';
+            } else if (riskLevel === 'High') {
+                statusText = 'HIGH SEISMIC RISK';
+                statusColor = '#FFAA44';
+            } else if (riskLevel === 'Low') {
+                statusText = 'LOW SEISMIC RISK';
+                statusColor = '#44AA44';
+            }
+            
+            threatText.innerHTML = `Current Status: <strong>${statusText}</strong> - ${currentLocationName}`;
+            
+            // Update threat indicator color
+            const indicator = document.querySelector('.threat-indicator');
+            if (indicator) {
+                indicator.style.background = statusColor;
+            }
+        }
+
+        // Manual refresh functions
+        function refreshEarthquakeData() {
+            document.getElementById('earthquakes-count').textContent = 'Loading...';
+            document.getElementById('largest-magnitude').textContent = 'Loading...';
+            document.getElementById('activity-level').textContent = 'Loading...';
+            updateEarthquakeData();
+        }
+
+        function refreshRiskAssessment() {
+            document.getElementById('risk-level').textContent = 'Loading...';
+            updateSeismicRiskAssessment();
+        }
+
+        // Affiliate tracking function
+        function trackAffiliate(productId, retailer) {
+            console.log(`Affiliate click tracked: ${productId} -> ${retailer}`);
+            alert(`Redirecting to ${retailer} for ${productId}...\n\nIn production, this would:\n• Track the affiliate click\n• Redirect to the actual product page\n• Earn commission if purchase is made`);
+            return false;
+        }
+
+        // Generate earthquake plan functionality
+        function generateEarthquakePlan() {
+            alert('Generating your personalized earthquake action plan...\n\nThis will include:\n• Seismic risk assessment for your area\n• Home earthquake retrofitting recommendations\n• Drop, Cover, Hold practice scenarios\n• Emergency supply checklists\n• Family communication plan');
+        }
+
+        // Update data every 30 minutes
+        setInterval(updateAllData, 1800000);
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.equipment-card, .contact-card, .earthquake-item').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Emergency contact click to call (on mobile)
+        document.querySelectorAll('.contact-number').forEach(number => {
+            number.addEventListener('click', function() {
+                if (/Mobi|Android/i.test(navigator.userAgent)) {
+                    window.location.href = 'tel:' + this.textContent.replace(/\D/g, '');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
