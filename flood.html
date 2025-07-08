@@ -1099,7 +1099,7 @@
                 </div>
                 
                 <div class="map-instructions">
-                    📍 <strong>Click on the map to enable zoom.</strong> Blue markers show USGS gauges, red markers show flood events.
+                    🔒 <strong>Map is locked to prevent accidental scrolling.</strong> Click anywhere on the map to enable zoom and pan controls. Blue markers show USGS gauges, red markers show flood events.
                 </div>
                 
                 <div class="map-container">
@@ -1851,25 +1851,122 @@
          */
         async function initializeFloodMap() {
             try {
-                // Initialize map
-                floodMap = L.map('flood-map').setView([currentLatitude, currentLongitude], 10);
+                console.log('Initializing flood map...');
+                
+                // Wait for map container to be ready
+                const mapContainer = document.getElementById('flood-map');
+                if (!mapContainer) {
+                    console.error('Map container not found');
+                    return;
+                }
+                
+                // Initialize map with disabled interactions
+                floodMap = L.map('flood-map', {
+                    center: [currentLatitude, currentLongitude],
+                    zoom: 10,
+                    zoomControl: false,
+                    dragging: false,
+                    touchZoom: false,
+                    doubleClickZoom: false,
+                    scrollWheelZoom: false,
+                    boxZoom: false,
+                    keyboard: false
+                });
                 
                 // Add tile layer
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap contributors'
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 18
                 }).addTo(floodMap);
                 
+                // Add click-to-enable functionality
+                let mapEnabled = false;
+                const mapOverlay = document.createElement('div');
+                mapOverlay.style.cssText = `
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0,0,0,0.1);
+                    z-index: 1000;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-weight: bold;
+                    font-size: 16px;
+                    text-align: center;
+                    backdrop-filter: blur(1px);
+                `;
+                mapOverlay.innerHTML = '🔒 Click to Enable Map Interaction<br><small>Click anywhere to zoom and pan</small>';
+                mapContainer.style.position = 'relative';
+                mapContainer.appendChild(mapOverlay);
+                
+                // Enable map on click
+                mapOverlay.addEventListener('click', function() {
+                    if (!mapEnabled) {
+                        mapEnabled = true;
+                        mapOverlay.remove();
+                        
+                        // Enable all map interactions
+                        floodMap.dragging.enable();
+                        floodMap.touchZoom.enable();
+                        floodMap.doubleClickZoom.enable();
+                        floodMap.scrollWheelZoom.enable();
+                        floodMap.boxZoom.enable();
+                        floodMap.keyboard.enable();
+                        
+                        // Add zoom control
+                        L.control.zoom({ position: 'topright' }).addTo(floodMap);
+                        
+                        console.log('Map interactions enabled');
+                    }
+                });
+                
+                // Force map to render properly
+                setTimeout(() => {
+                    floodMap.invalidateSize();
+                }, 100);
+                
                 // Add user location marker
-                userLocationMarker = L.marker([currentLatitude, currentLongitude])
-                    .addTo(floodMap)
-                    .bindPopup('Your Location')
-                    .openPopup();
+                userLocationMarker = L.marker([currentLatitude, currentLongitude], {
+                    icon: L.icon({
+                        iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+                            <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="15" cy="15" r="14" fill="#4CAF50" stroke="#FFFFFF" stroke-width="2"/>
+                                <circle cx="15" cy="15" r="6" fill="#FFFFFF"/>
+                                <circle cx="15" cy="15" r="3" fill="#4CAF50"/>
+                            </svg>
+                        `),
+                        iconSize: [30, 30],
+                        iconAnchor: [15, 15],
+                        popupAnchor: [0, -15]
+                    })
+                })
+                .addTo(floodMap)
+                .bindPopup('<strong>Your Current Location</strong><br>Emergency services will be contacted for this area')
+                .openPopup();
                 
                 // Fetch and display flood events
                 await updateFloodMap();
                 
+                console.log('Flood map initialized successfully');
+                
             } catch (error) {
                 console.error('Map initialization error:', error);
+                // Show error message in map container
+                const mapContainer = document.getElementById('flood-map');
+                if (mapContainer) {
+                    mapContainer.innerHTML = `
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #CCCCCC; text-align: center; flex-direction: column;">
+                            <div style="font-size: 48px; margin-bottom: 16px;">🗺️</div>
+                            <div style="font-size: 18px; margin-bottom: 8px;">Map Temporarily Unavailable</div>
+                            <div style="font-size: 14px;">Flood data is still being loaded below</div>
+                        </div>
+                    `;
+                }
             }
         }
 
@@ -1878,9 +1975,29 @@
          */
         async function updateFloodMap() {
             try {
+                console.log('Updating flood map data...');
+                
+                // Check if map is initialized
+                if (!floodMap) {
+                    console.log('Map not initialized yet, skipping update');
+                    return;
+                }
+                
                 // Clear existing markers
-                floodMarkers.forEach(marker => floodMap.removeLayer(marker));
-                gaugeMarkers.forEach(marker => floodMap.removeLayer(marker));
+                floodMarkers.forEach(marker => {
+                    try {
+                        floodMap.removeLayer(marker);
+                    } catch (e) {
+                        console.warn('Could not remove flood marker:', e);
+                    }
+                });
+                gaugeMarkers.forEach(marker => {
+                    try {
+                        floodMap.removeLayer(marker);
+                    } catch (e) {
+                        console.warn('Could not remove gauge marker:', e);
+                    }
+                });
                 floodMarkers = [];
                 gaugeMarkers = [];
                 
@@ -1889,62 +2006,91 @@
                 currentFloodsData = floods;
                 
                 // Add flood event markers
-                floods.forEach(flood => {
-                    const marker = L.marker([flood.latitude, flood.longitude], {
-                        icon: L.icon({
-                            iconUrl: 'data:image/svg+xml;base64,' + btoa(`
-                                <svg width="25" height="25" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="12.5" cy="12.5" r="12" fill="#FF4444" stroke="#FFFFFF" stroke-width="2"/>
-                                    <text x="12.5" y="17" font-family="Arial" font-size="14" fill="white" text-anchor="middle">💧</text>
-                                </svg>
-                            `),
-                            iconSize: [25, 25],
-                            iconAnchor: [12, 25],
-                            popupAnchor: [0, -25]
-                        })
-                    });
-                    
-                    marker.bindPopup(`
-                        <strong>${flood.title}</strong><br>
-                        Severity: ${flood.severity}<br>
-                        Distance: ${flood.distance} miles<br>
-                        ${flood.description}
-                    `);
-                    
-                    marker.addTo(floodMap);
-                    floodMarkers.push(marker);
+                floods.forEach((flood, index) => {
+                    try {
+                        const marker = L.marker([flood.latitude, flood.longitude], {
+                            icon: L.icon({
+                                iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+                                    <svg width="25" height="25" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="12.5" cy="12.5" r="12" fill="#FF4444" stroke="#FFFFFF" stroke-width="2"/>
+                                        <text x="12.5" y="17" font-family="Arial" font-size="12" fill="white" text-anchor="middle">⚠️</text>
+                                    </svg>
+                                `),
+                                iconSize: [25, 25],
+                                iconAnchor: [12, 25],
+                                popupAnchor: [0, -25]
+                            })
+                        });
+                        
+                        marker.bindPopup(`
+                            <div style="min-width: 200px;">
+                                <strong style="color: #FF4444;">${flood.title}</strong><br>
+                                <strong>Severity:</strong> ${flood.severity}<br>
+                                <strong>Distance:</strong> ${flood.distance} miles<br>
+                                <strong>Description:</strong> ${flood.description}<br>
+                                <strong>Reported:</strong> ${new Date(flood.timestamp).toLocaleString()}
+                            </div>
+                        `);
+                        
+                        marker.addTo(floodMap);
+                        floodMarkers.push(marker);
+                    } catch (error) {
+                        console.error(`Error adding flood marker ${index}:`, error);
+                    }
                 });
                 
-                // Add USGS gauge markers (mock locations)
+                // Add USGS gauge markers
                 const gauges = generateMockGauges();
-                gauges.forEach(gauge => {
-                    const marker = L.marker([gauge.latitude, gauge.longitude], {
-                        icon: L.icon({
-                            iconUrl: 'data:image/svg+xml;base64,' + btoa(`
-                                <svg width="25" height="25" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="12.5" cy="12.5" r="12" fill="#44AAFF" stroke="#FFFFFF" stroke-width="2"/>
-                                    <text x="12.5" y="17" font-family="Arial" font-size="14" fill="white" text-anchor="middle">📊</text>
-                                </svg>
-                            `),
-                            iconSize: [25, 25],
-                            iconAnchor: [12, 25],
-                            popupAnchor: [0, -25]
-                        })
-                    });
-                    
-                    marker.bindPopup(`
-                        <strong>USGS Gauge</strong><br>
-                        ${gauge.name}<br>
-                        Current Level: ${gauge.level} ft<br>
-                        Status: ${gauge.status}
-                    `);
-                    
-                    marker.addTo(floodMap);
-                    gaugeMarkers.push(marker);
+                gauges.forEach((gauge, index) => {
+                    try {
+                        const marker = L.marker([gauge.latitude, gauge.longitude], {
+                            icon: L.icon({
+                                iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+                                    <svg width="25" height="25" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="12.5" cy="12.5" r="12" fill="#44AAFF" stroke="#FFFFFF" stroke-width="2"/>
+                                        <text x="12.5" y="17" font-family="Arial" font-size="12" fill="white" text-anchor="middle">📊</text>
+                                    </svg>
+                                `),
+                                iconSize: [25, 25],
+                                iconAnchor: [12, 25],
+                                popupAnchor: [0, -25]
+                            })
+                        });
+                        
+                        marker.bindPopup(`
+                            <div style="min-width: 200px;">
+                                <strong style="color: #44AAFF;">USGS Monitoring Station</strong><br>
+                                <strong>Station:</strong> ${gauge.name}<br>
+                                <strong>Current Level:</strong> ${gauge.level} ft<br>
+                                <strong>Status:</strong> ${gauge.status}<br>
+                                <strong>Last Updated:</strong> ${new Date().toLocaleTimeString()}
+                            </div>
+                        `);
+                        
+                        marker.addTo(floodMap);
+                        gaugeMarkers.push(marker);
+                    } catch (error) {
+                        console.error(`Error adding gauge marker ${index}:`, error);
+                    }
                 });
+                
+                // Update map view to include all markers
+                if (floodMarkers.length > 0 || gaugeMarkers.length > 0) {
+                    try {
+                        const allMarkers = [...floodMarkers, ...gaugeMarkers];
+                        if (userLocationMarker) allMarkers.push(userLocationMarker);
+                        
+                        const group = new L.featureGroup(allMarkers);
+                        floodMap.fitBounds(group.getBounds().pad(0.1));
+                    } catch (error) {
+                        console.warn('Could not fit map bounds:', error);
+                    }
+                }
                 
                 // Update floods list
                 updateFloodsList(floods);
+                
+                console.log(`Map updated with ${floods.length} flood events and ${gauges.length} gauge stations`);
                 
             } catch (error) {
                 console.error('Map update error:', error);
@@ -2207,15 +2353,41 @@
             // Get user location and load initial data
             getCurrentLocation();
             
-            // Initialize map after a brief delay to ensure DOM is ready
+            // Initialize map after DOM is fully ready and elements are visible
             setTimeout(() => {
-                initializeFloodMap();
-            }, 1000);
+                const mapContainer = document.getElementById('flood-map');
+                if (mapContainer && mapContainer.offsetHeight > 0) {
+                    initializeFloodMap();
+                } else {
+                    // Retry after another delay if container not ready
+                    setTimeout(() => {
+                        initializeFloodMap();
+                    }, 2000);
+                }
+            }, 500);
             
             // Set up periodic updates every 5 minutes
-            setInterval(updateAllData, 5 * 60 * 1000);
+            setInterval(() => {
+                updateAllDataExceptMap();
+            }, 5 * 60 * 1000);
             
             console.log('Flood monitoring system initialized');
+        }
+
+        /**
+         * Update all data except map (for periodic updates)
+         */
+        async function updateAllDataExceptMap() {
+            try {
+                await Promise.all([
+                    updateDashboard(),
+                    updateRiverLevelMonitor(),
+                    updateWeatherAlerts()
+                ]);
+                console.log('Periodic data update completed');
+            } catch (error) {
+                console.error('Error during periodic update:', error);
+            }
         }
 
         // Start monitoring when page loads
