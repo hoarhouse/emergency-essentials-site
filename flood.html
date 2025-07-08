@@ -1099,7 +1099,7 @@
                 </div>
                 
                 <div class="map-instructions">
-                    🔒 <strong>Map is locked to prevent accidental scrolling.</strong> Click anywhere on the map to enable zoom and pan controls. Blue markers show USGS gauges, red markers show flood events.
+                    📍 <strong>Interactive map showing flood events and USGS monitoring stations.</strong> Blue markers show USGS gauges, red markers show flood events. Click map to enable zoom/pan controls.
                 </div>
                 
                 <div class="map-container">
@@ -1887,20 +1887,20 @@
                     top: 0;
                     left: 0;
                     right: 0;
-                    bottom: 0;
-                    background: rgba(0,0,0,0.1);
+                    height: 40px;
+                    background: rgba(0, 0, 0, 0.8);
                     z-index: 1000;
                     cursor: pointer;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     color: white;
-                    font-weight: bold;
-                    font-size: 16px;
+                    font-weight: 500;
+                    font-size: 14px;
                     text-align: center;
-                    backdrop-filter: blur(1px);
+                    border-radius: 4px 4px 0 0;
                 `;
-                mapOverlay.innerHTML = '🔒 Click to Enable Map Interaction<br><small>Click anywhere to zoom and pan</small>';
+                mapOverlay.innerHTML = '🔒 Click map to enable zoom and pan • Last 7 days, flood events within 100 miles';
                 mapContainer.style.position = 'relative';
                 mapContainer.appendChild(mapOverlay);
                 
