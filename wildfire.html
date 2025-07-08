@@ -1578,7 +1578,7 @@
                         </div>
                     </div>
 
-                    <a href="fire-protection-products.html" class="see-all-btn">See All Fire Protection Products →</a>
+                    <a href="#" class="see-all-btn" onclick="trackAffiliate('see-all-respirators', 'category')">See All Respiratory Protection →</a>
                     
                     <div class="equipment-specs">
                         Key Specifications: NIOSH approval required, minimum N95 rating, P100 preferred for heavy smoke, individual fit testing recommended
@@ -1921,49 +1921,12 @@
     <!-- Emergency Contacts -->
     <section class="section">
         <div class="container">
-            <h2 class="section-title">Critical Emergency Contacts</h2>
+            <h2 class="section-title" id="emergency-contacts-title">Critical Emergency Contacts</h2>
             <div class="emergency-contacts">
-                <div class="contacts-grid">
-                    <div class="contact-card">
-                        <div class="contact-type">Emergency Services</div>
-                        <div class="contact-name">Fire Department</div>
-                        <div class="contact-number">911</div>
-                        <div class="contact-description">For immediate life-threatening emergencies and active fire reports</div>
-                    </div>
-                    
-                    <div class="contact-card">
-                        <div class="contact-type">Evacuation Info</div>
-                        <div class="contact-name">Jefferson County Sheriff</div>
-                        <div class="contact-number">(303) 277-0211</div>
-                        <div class="contact-description">Non-emergency line for evacuation status and road closures</div>
-                    </div>
-                    
-                    <div class="contact-card">
-                        <div class="contact-type">Fire Information</div>
-                        <div class="contact-name">CO Fire Information</div>
-                        <div class="contact-number">(303) 275-5360</div>
-                        <div class="contact-description">Current fire conditions, restrictions, and weather updates</div>
-                    </div>
-                    
-                    <div class="contact-card">
-                        <div class="contact-type">Utilities Emergency</div>
-                        <div class="contact-name">Xcel Energy</div>
-                        <div class="contact-number">(800) 895-1999</div>
-                        <div class="contact-description">Report power lines down or request emergency shutoffs</div>
-                    </div>
-                    
-                    <div class="contact-card">
-                        <div class="contact-type">Red Cross Shelter</div>
-                        <div class="contact-name">American Red Cross</div>
-                        <div class="contact-number">(303) 722-7474</div>
-                        <div class="contact-description">Emergency shelter locations and disaster relief services</div>
-                    </div>
-                    
-                    <div class="contact-card">
-                        <div class="contact-type">Animal Services</div>
-                        <div class="contact-name">Jefferson County Animal Control</div>
-                        <div class="contact-number">(303) 271-5070</div>
-                        <div class="contact-description">Emergency pet sheltering and large animal evacuation</div>
+                <div class="contacts-grid" id="emergency-contacts-grid">
+                    <!-- Emergency contacts will be populated automatically based on location -->
+                    <div style="text-align: center; padding: 40px; color: #CCCCCC;">
+                        Loading emergency contacts for your location...
                     </div>
                 </div>
             </div>
@@ -1989,6 +1952,870 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <script>
+        // Emergency Contacts Database - Integrated directly into the page
+        const EMERGENCY_CONTACTS_DB = {
+            // Arizona
+            'phoenix_az': {
+                cityName: 'Phoenix, AZ',
+                contacts: [
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Maricopa County Emergency Management',
+                        number: '(602) 273-1411',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Fire Information',
+                        name: 'Arizona State Forestry',
+                        number: '(602) 771-1400',
+                        description: 'Current fire conditions, restrictions, and weather updates'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'APS Emergency Line',
+                        number: '(855) 688-2437',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Red Cross Shelter',
+                        name: 'American Red Cross Arizona',
+                        number: '(602) 336-6660',
+                        description: 'Emergency shelter locations and disaster relief services'
+                    },
+                    {
+                        type: 'Animal Services',
+                        name: 'Maricopa County Animal Control',
+                        number: '(602) 506-7387',
+                        description: 'Emergency pet sheltering and large animal evacuation'
+                    }
+                ]
+            },
+
+            // California
+            'los_angeles_ca': {
+                cityName: 'Los Angeles, CA',
+                contacts: [
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'LA County Emergency Management',
+                        number: '(323) 881-2300',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Fire Information',
+                        name: 'CAL FIRE Information Line',
+                        number: '(916) 653-7772',
+                        description: 'Current fire conditions, restrictions, and weather updates'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'LADWP Emergency',
+                        number: '(800) 342-5397',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Red Cross Shelter',
+                        name: 'American Red Cross LA',
+                        number: '(323) 739-5200',
+                        description: 'Emergency shelter locations and disaster relief services'
+                    },
+                    {
+                        type: 'Animal Services',
+                        name: 'LA Animal Services',
+                        number: '(888) 452-7381',
+                        description: 'Emergency pet sheltering and large animal evacuation'
+                    }
+                ]
+            },
+
+            'san_francisco_ca': {
+                cityName: 'San Francisco, CA',
+                contacts: [
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'SF Emergency Management',
+                        number: '(415) 558-2700',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Fire Information',
+                        name: 'CAL FIRE Bay Area',
+                        number: '(707) 967-5941',
+                        description: 'Current fire conditions, restrictions, and weather updates'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'PG&E Emergency Line',
+                        number: '(800) 743-5000',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Red Cross Shelter',
+                        name: 'American Red Cross Bay Area',
+                        number: '(415) 427-8000',
+                        description: 'Emergency shelter locations and disaster relief services'
+                    },
+                    {
+                        type: 'Animal Services',
+                        name: 'SF Animal Control',
+                        number: '(415) 554-6364',
+                        description: 'Emergency pet sheltering and large animal evacuation'
+                    }
+                ]
+            },
+
+            'sacramento_ca': {
+                cityName: 'Sacramento, CA',
+                contacts: [
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Sacramento County Emergency Services',
+                        number: '(916) 874-6851',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Fire Information',
+                        name: 'CAL FIRE Sacramento Unit',
+                        number: '(530) 889-0111',
+                        description: 'Current fire conditions, restrictions, and weather updates'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'SMUD Emergency Line',
+                        number: '(888) 456-7683',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Red Cross Shelter',
+                        name: 'American Red Cross Sacramento',
+                        number: '(916) 993-7070',
+                        description: 'Emergency shelter locations and disaster relief services'
+                    },
+                    {
+                        type: 'Animal Services',
+                        name: 'Sacramento County Animal Control',
+                        number: '(916) 874-6894',
+                        description: 'Emergency pet sheltering and large animal evacuation'
+                    }
+                ]
+            },
+
+            // Colorado
+            'denver_co': {
+                cityName: 'Denver, CO',
+                contacts: [
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Jefferson County Sheriff',
+                        number: '(303) 277-0211',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Fire Information',
+                        name: 'CO Fire Information',
+                        number: '(303) 275-5360',
+                        description: 'Current fire conditions, restrictions, and weather updates'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Xcel Energy',
+                        number: '(800) 895-1999',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Red Cross Shelter',
+                        name: 'American Red Cross',
+                        number: '(303) 722-7474',
+                        description: 'Emergency shelter locations and disaster relief services'
+                    },
+                    {
+                        type: 'Animal Services',
+                        name: 'Jefferson County Animal Control',
+                        number: '(303) 271-5070',
+                        description: 'Emergency pet sheltering and large animal evacuation'
+                    }
+                ]
+            },
+
+            // Pennsylvania (State-wide)
+            'pennsylvania': {
+                cityName: 'Pennsylvania',
+                contacts: [
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'PA Emergency Management',
+                        number: '(717) 651-2001',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Fire Information',
+                        name: 'PA Department of Conservation',
+                        number: '(717) 787-2925',
+                        description: 'Current fire conditions, restrictions, and weather updates'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'PPL Electric Emergency',
+                        number: '(800) 342-5775',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Red Cross Shelter',
+                        name: 'American Red Cross PA',
+                        number: '(717) 526-1681',
+                        description: 'Emergency shelter locations and disaster relief services'
+                    },
+                    {
+                        type: 'Animal Services',
+                        name: 'PA Department of Agriculture',
+                        number: '(717) 772-2852',
+                        description: 'Emergency pet sheltering and large animal evacuation'
+                    }
+                ]
+            },
+
+            // Idaho
+            'boise_id': {
+                cityName: 'Boise, ID',
+                contacts: [
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Ada County Emergency Management',
+                        number: '(208) 577-4750',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Fire Information',
+                        name: 'Idaho Department of Lands',
+                        number: '(208) 334-3316',
+                        description: 'Current fire conditions, restrictions, and weather updates'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Idaho Power Emergency',
+                        number: '(208) 388-2323',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Red Cross Shelter',
+                        name: 'American Red Cross Idaho',
+                        number: '(208) 375-0596',
+                        description: 'Emergency shelter locations and disaster relief services'
+                    },
+                    {
+                        type: 'Animal Services',
+                        name: 'Ada County Animal Control',
+                        number: '(208) 577-4262',
+                        description: 'Emergency pet sheltering and large animal evacuation'
+                    }
+                ]
+            },
+
+            // Illinois
+            'chicago_il': {
+                cityName: 'Chicago, IL',
+                contacts: [
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Chicago Emergency Management',
+                        number: '(312) 746-5100',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Fire Information',
+                        name: 'IL Emergency Management',
+                        number: '(217) 782-7860',
+                        description: 'Current conditions, restrictions, and weather updates'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'ComEd Emergency Line',
+                        number: '(800) 334-7661',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Red Cross Shelter',
+                        name: 'American Red Cross Chicago',
+                        number: '(312) 729-6100',
+                        description: 'Emergency shelter locations and disaster relief services'
+                    },
+                    {
+                        type: 'Animal Services',
+                        name: 'Chicago Animal Control',
+                        number: '(312) 747-1406',
+                        description: 'Emergency pet sheltering and large animal evacuation'
+                    }
+                ]
+            },
+
+            // Indiana
+            'indianapolis_in': {
+                cityName: 'Indianapolis, IN',
+                contacts: [
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Marion County Emergency Management',
+                        number: '(317) 327-3722',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Fire Information',
+                        name: 'IN Department of Natural Resources',
+                        number: '(317) 232-4200',
+                        description: 'Current conditions, restrictions, and weather updates'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Indianapolis Power & Light',
+                        number: '(317) 261-8111',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Red Cross Shelter',
+                        name: 'American Red Cross Indiana',
+                        number: '(317) 684-7800',
+                        description: 'Emergency shelter locations and disaster relief services'
+                    },
+                    {
+                        type: 'Animal Services',
+                        name: 'Indianapolis Animal Control',
+                        number: '(317) 327-1397',
+                        description: 'Emergency pet sheltering and large animal evacuation'
+                    }
+                ]
+            },
+
+            // Missouri (State-wide)
+            'missouri': {
+                cityName: 'Missouri',
+                contacts: [
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'MO Emergency Management',
+                        number: '(573) 526-9100',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Fire Information',
+                        name: 'MO Department of Conservation',
+                        number: '(573) 751-4115',
+                        description: 'Current fire conditions, restrictions, and weather updates'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Ameren Missouri Emergency',
+                        number: '(800) 552-7583',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Red Cross Shelter',
+                        name: 'American Red Cross Missouri',
+                        number: '(314) 516-2700',
+                        description: 'Emergency shelter locations and disaster relief services'
+                    },
+                    {
+                        type: 'Animal Services',
+                        name: 'MO Department of Agriculture',
+                        number: '(573) 751-3377',
+                        description: 'Emergency pet sheltering and large animal evacuation'
+                    }
+                ]
+            },
+
+            // North Dakota
+            'fargo_nd': {
+                cityName: 'Fargo, ND',
+                contacts: [
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Cass County Emergency Management',
+                        number: '(701) 241-5555',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Fire Information',
+                        name: 'ND Forest Service',
+                        number: '(701) 328-9945',
+                        description: 'Current fire conditions, restrictions, and weather updates'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Xcel Energy North Dakota',
+                        number: '(800) 895-1999',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Red Cross Shelter',
+                        name: 'American Red Cross Dakota',
+                        number: '(701) 232-7601',
+                        description: 'Emergency shelter locations and disaster relief services'
+                    },
+                    {
+                        type: 'Animal Services',
+                        name: 'Cass County Animal Control',
+                        number: '(701) 241-5888',
+                        description: 'Emergency pet sheltering and large animal evacuation'
+                    }
+                ]
+            },
+
+            // Tennessee
+            'nashville_tn': {
+                cityName: 'Nashville, TN',
+                contacts: [
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Davidson County Emergency Management',
+                        number: '(615) 862-8740',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Fire Information',
+                        name: 'TN Division of Forestry',
+                        number: '(615) 837-5520',
+                        description: 'Current fire conditions, restrictions, and weather updates'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Nashville Electric Service',
+                        number: '(615) 736-6900',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Red Cross Shelter',
+                        name: 'American Red Cross Tennessee',
+                        number: '(615) 250-4300',
+                        description: 'Emergency shelter locations and disaster relief services'
+                    },
+                    {
+                        type: 'Animal Services',
+                        name: 'Metro Animal Control',
+                        number: '(615) 862-7928',
+                        description: 'Emergency pet sheltering and large animal evacuation'
+                    }
+                ]
+            },
+
+            // Texas
+            'austin_tx': {
+                cityName: 'Austin, TX',
+                contacts: [
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Travis County Emergency Services',
+                        number: '(512) 854-4050',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Fire Information',
+                        name: 'TX A&M Forest Service',
+                        number: '(979) 458-6606',
+                        description: 'Current fire conditions, restrictions, and weather updates'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Austin Energy Emergency',
+                        number: '(512) 322-9100',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Red Cross Shelter',
+                        name: 'American Red Cross Central Texas',
+                        number: '(512) 928-4271',
+                        description: 'Emergency shelter locations and disaster relief services'
+                    },
+                    {
+                        type: 'Animal Services',
+                        name: 'Austin Animal Services',
+                        number: '(311)',
+                        description: 'Emergency pet sheltering and large animal evacuation'
+                    }
+                ]
+            },
+
+            'dallas_tx': {
+                cityName: 'Dallas, TX',
+                contacts: [
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Dallas County Emergency Management',
+                        number: '(214) 819-6300',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Fire Information',
+                        name: 'TX A&M Forest Service',
+                        number: '(979) 458-6606',
+                        description: 'Current fire conditions, restrictions, and weather updates'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Oncor Emergency Line',
+                        number: '(888) 313-4747',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Red Cross Shelter',
+                        name: 'American Red Cross North Texas',
+                        number: '(214) 678-8200',
+                        description: 'Emergency shelter locations and disaster relief services'
+                    },
+                    {
+                        type: 'Animal Services',
+                        name: 'Dallas Animal Services',
+                        number: '(214) 670-7694',
+                        description: 'Emergency pet sheltering and large animal evacuation'
+                    }
+                ]
+            },
+
+            'houston_tx': {
+                cityName: 'Houston, TX',
+                contacts: [
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Harris County Emergency Management',
+                        number: '(713) 881-3100',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Fire Information',
+                        name: 'TX A&M Forest Service',
+                        number: '(979) 458-6606',
+                        description: 'Current fire conditions, restrictions, and weather updates'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'CenterPoint Energy Emergency',
+                        number: '(713) 207-2222',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Red Cross Shelter',
+                        name: 'American Red Cross Gulf Coast',
+                        number: '(713) 313-2700',
+                        description: 'Emergency shelter locations and disaster relief services'
+                    },
+                    {
+                        type: 'Animal Services',
+                        name: 'Harris County Animal Control',
+                        number: '(281) 999-3191',
+                        description: 'Emergency pet sheltering and large animal evacuation'
+                    }
+                ]
+            },
+
+            // Utah
+            'salt_lake_city_ut': {
+                cityName: 'Salt Lake City, UT',
+                contacts: [
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Salt Lake County Emergency Management',
+                        number: '(385) 468-6700',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Fire Information',
+                        name: 'Utah Division of Forestry',
+                        number: '(801) 538-5555',
+                        description: 'Current fire conditions, restrictions, and weather updates'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Rocky Mountain Power Emergency',
+                        number: '(888) 221-7070',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Red Cross Shelter',
+                        name: 'American Red Cross Utah',
+                        number: '(801) 323-7000',
+                        description: 'Emergency shelter locations and disaster relief services'
+                    },
+                    {
+                        type: 'Animal Services',
+                        name: 'Salt Lake County Animal Control',
+                        number: '(385) 468-7387',
+                        description: 'Emergency pet sheltering and large animal evacuation'
+                    }
+                ]
+            },
+
+            // Washington
+            'olympia_wa': {
+                cityName: 'Olympia, WA',
+                contacts: [
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Thurston County Emergency Management',
+                        number: '(360) 754-2933',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Fire Information',
+                        name: 'WA Department of Natural Resources',
+                        number: '(360) 902-1450',
+                        description: 'Current fire conditions, restrictions, and weather updates'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Puget Sound Energy Emergency',
+                        number: '(888) 225-5773',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Red Cross Shelter',
+                        name: 'American Red Cross Pacific Northwest',
+                        number: '(206) 323-2345',
+                        description: 'Emergency shelter locations and disaster relief services'
+                    },
+                    {
+                        type: 'Animal Services',
+                        name: 'Thurston County Animal Control',
+                        number: '(360) 786-5490',
+                        description: 'Emergency pet sheltering and large animal evacuation'
+                    }
+                ]
+            },
+
+            'seattle_wa': {
+                cityName: 'Seattle, WA',
+                contacts: [
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'King County Emergency Management',
+                        number: '(206) 296-3830',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Fire Information',
+                        name: 'WA Department of Natural Resources',
+                        number: '(360) 902-1450',
+                        description: 'Current fire conditions, restrictions, and weather updates'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Seattle City Light Emergency',
+                        number: '(206) 684-3000',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Red Cross Shelter',
+                        name: 'American Red Cross Puget Sound',
+                        number: '(206) 323-2345',
+                        description: 'Emergency shelter locations and disaster relief services'
+                    },
+                    {
+                        type: 'Animal Services',
+                        name: 'Seattle Animal Control',
+                        number: '(206) 386-7387',
+                        description: 'Emergency pet sheltering and large animal evacuation'
+                    }
+                ]
+            }
+        };
+
+        // City coordinate to database key mapping
+        const CITY_COORDINATES_TO_KEY = {
+            '33.4484,-112.0740': 'phoenix_az',
+            '34.0522,-118.2437': 'los_angeles_ca',
+            '37.7749,-122.4194': 'san_francisco_ca',
+            '38.5816,-121.4944': 'sacramento_ca',
+            '39.7392,-104.9903': 'denver_co',
+            '41.2033,-77.1945': 'pennsylvania',
+            '43.6532,-116.3113': 'boise_id',
+            '41.8781,-87.6298': 'chicago_il',
+            '39.7817,-86.1478': 'indianapolis_in',
+            '38.2904,-92.6390': 'missouri',
+            '46.8772,-96.7898': 'fargo_nd',
+            '36.1627,-86.7816': 'nashville_tn',
+            '30.2672,-97.7431': 'austin_tx',
+            '32.7767,-96.7970': 'dallas_tx',
+            '29.7604,-95.3698': 'houston_tx',
+            '40.7608,-111.8910': 'salt_lake_city_ut',
+            '47.0379,-122.9015': 'olympia_wa',
+            '47.6062,-122.3321': 'seattle_wa'
+        };
+
+        /**
+         * Updates emergency contacts based on selected city
+         */
+        function updateEmergencyContacts(cityKey) {
+            const contacts = EMERGENCY_CONTACTS_DB[cityKey];
+            const container = document.getElementById('emergency-contacts-grid');
+            
+            if (!contacts || !container) {
+                console.warn(`No contacts found for ${cityKey} or container not found`);
+                return;
+            }
+            
+            // Generate contacts grid HTML
+            const contactsHTML = contacts.contacts.map(contact => `
+                <div class="contact-card">
+                    <div class="contact-type">${contact.type}</div>
+                    <div class="contact-name">${contact.name}</div>
+                    <div class="contact-number">${contact.number}</div>
+                    <div class="contact-description">${contact.description}</div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = contactsHTML;
+            
+            // Update page title
+            const titleElement = document.getElementById('emergency-contacts-title');
+            if (titleElement) {
+                titleElement.textContent = `Critical Emergency Contacts - ${contacts.cityName}`;
+            }
+            
+            console.log(`Emergency contacts updated for ${contacts.cityName}`);
+        }
+
+        /**
+         * Gets city key from coordinates (for auto-detected location)
+         */
+        function getCityKeyFromCoordinates(lat, lon) {
+            // Find closest city from our database
+            let closestCity = null;
+            let minDistance = Infinity;
+            
+            Object.entries(CITY_COORDINATES_TO_KEY).forEach(([coords, key]) => {
+                const [cityLat, cityLon] = coords.split(',').map(Number);
+                const distance = Math.sqrt(
+                    Math.pow(lat - cityLat, 2) + Math.pow(lon - cityLon, 2)
+                );
+                
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestCity = key;
+                }
+            });
+            
+            // Only return if within reasonable distance (about 2 degrees)
+            return minDistance < 2 ? closestCity : 'denver_co'; // Default to Denver
+        }
+
+        /**
+         * Updates emergency contacts when city selector changes
+         */
+        function updateContactsFromCitySelector() {
+            const citySelect = document.getElementById('city-select');
+            if (!citySelect || !citySelect.value) return;
+            
+            const cityKey = CITY_COORDINATES_TO_KEY[citySelect.value];
+            if (cityKey) {
+                updateEmergencyContacts(cityKey);
+            }
+        }
+
         // Global variables
         let currentLatitude = 39.7392; // Default to Denver
         let currentLongitude = -104.9903;
@@ -2001,6 +2828,10 @@
         // Initialize everything when page loads
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Wildfire page loaded, starting threat monitoring');
+            
+            // Initialize with default emergency contacts
+            updateEmergencyContacts('denver_co');
+            
             detectUserLocation();
         });
 
@@ -2033,6 +2864,10 @@
                 const locationName = await getCityName(currentLatitude, currentLongitude);
                 currentLocationName = locationName;
                 updateLocationDisplay(locationName);
+                
+                // Update emergency contacts based on detected location
+                const cityKey = getCityKeyFromCoordinates(currentLatitude, currentLongitude);
+                updateEmergencyContacts(cityKey);
                 
                 console.log(`Location detected: ${locationName} (${currentLatitude}, ${currentLongitude})`);
                 initializeMap();
@@ -2587,6 +3422,9 @@
                 currentLocationName = cityName;
                 updateLocationDisplay(cityName);
                 
+                // Update emergency contacts based on selected city
+                updateContactsFromCitySelector();
+                
                 if (fireMap) {
                     fireMap.setView([currentLatitude, currentLongitude], 8);
                     if (userLocationMarker) {
@@ -2614,7 +3452,16 @@
             alert('Generating your personalized wildfire action plan...\n\nThis will include:\n• Property-specific defense strategies\n• Evacuation route planning\n• Equipment recommendations\n• Emergency contact lists\n• Seasonal preparation timeline');
         }
 
-        console.log('Enhanced wildfire page loaded with working live data');
+        // Updated emergency contacts function for backward compatibility
+        function emergencyContacts() {
+            // Scroll to contacts section
+            const contactsSection = document.getElementById('emergency-contacts-grid');
+            if (contactsSection) {
+                contactsSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        console.log('Enhanced wildfire page loaded with emergency contacts system');
     </script>
 </body>
 </html>
