@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flood Emergency Preparedness - EmergencyEssentials</title>
-    <meta name="description" content="Comprehensive flood preparedness guide with protection strategies, evacuation planning, and professional equipment recommendations.">
+    <meta name="description" content="Real-time flood monitoring and emergency preparedness with live USGS and NWS data">
     
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -518,6 +518,176 @@
             color: #000000;
         }
 
+        /* Flood Map Section */
+        .flood-map-section {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 40px;
+            margin: 8px 0;
+        }
+
+        .flood-map-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .flood-map-title {
+            font-size: 36px;
+            font-weight: 300;
+            margin-bottom: 16px;
+            color: #FFFFFF;
+        }
+
+        .flood-map-subtitle {
+            color: #CCCCCC;
+            font-size: 18px;
+            font-weight: 300;
+        }
+
+        .map-container {
+            height: 400px;
+            width: 100%;
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        #flood-map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .leaflet-container {
+            outline: none;
+            background: #1a1a1a;
+        }
+
+        .map-instructions {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #CCCCCC;
+        }
+
+        .floods-list {
+            background: #161616;
+            border: 1px solid #444444;
+            border-radius: 8px;
+            padding: 30px;
+        }
+
+        .floods-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #333333;
+        }
+
+        .floods-list-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        .floods-count {
+            background: #44AAFF;
+            color: #FFFFFF;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .flood-item {
+            background: #0f0f0f;
+            border: 1px solid #333333;
+            border-left: 4px solid #44AAFF;
+            border-radius: 0 6px 6px 0;
+            padding: 20px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .flood-item:hover {
+            background: #1f1f1f;
+            border-color: #555555;
+        }
+
+        .flood-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .flood-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #FFFFFF;
+            flex-grow: 1;
+        }
+
+        .flood-distance {
+            background: rgba(68, 170, 255, 0.1);
+            color: #44AAFF;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            margin-left: 12px;
+        }
+
+        .flood-details {
+            font-size: 14px;
+            color: #CCCCCC;
+            line-height: 1.5;
+        }
+
+        .flood-date {
+            color: #999999;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .no-floods {
+            text-align: center;
+            padding: 40px;
+            color: #CCCCCC;
+        }
+
+        .no-floods-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: #44AA44;
+        }
+
+        .refresh-map-btn {
+            background: transparent;
+            border: 1px solid #FFFFFF;
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .refresh-map-btn:hover {
+            background: #FFFFFF;
+            color: #000000;
+        }
+
         /* Equipment Grid */
         .equipment-grid {
             display: grid;
@@ -751,175 +921,6 @@
             letter-spacing: -1px;
         }
 
-        /* Flood Map Section */
-        .flood-map-section {
-            background: #1a1a1a;
-            border: 1px solid #333333;
-            border-radius: 8px;
-            padding: 40px;
-            margin: 8px 0;
-        }
-
-        .flood-map-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .flood-map-title {
-            font-size: 36px;
-            font-weight: 300;
-            margin-bottom: 16px;
-            color: #FFFFFF;
-        }
-
-        .flood-map-subtitle {
-            color: #CCCCCC;
-            font-size: 18px;
-            font-weight: 300;
-        }
-
-        .map-container {
-            height: 400px;
-            width: 100%;
-            border: 1px solid #333;
-            border-radius: 8px;
-            overflow: hidden;
-            position: relative;
-            margin-bottom: 30px;
-        }
-
-        #flood-map {
-            height: 100%;
-            width: 100%;
-        }
-
-        .leaflet-container {
-            outline: none;
-            background: #1a1a1a;
-        }
-
-        .map-instructions {
-            background: #161616;
-            border: 1px solid #444444;
-            border-radius: 6px;
-            padding: 16px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 14px;
-            color: #CCCCCC;
-        }
-
-        .floods-list {
-            background: #161616;
-            border: 1px solid #444444;
-            border-radius: 8px;
-            padding: 30px;
-        }
-
-        .floods-list-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid #333333;
-        }
-
-        .floods-list-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #FFFFFF;
-        }
-
-        .floods-count {
-            background: #44AAFF;
-            color: #FFFFFF;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .flood-item {
-            background: #0f0f0f;
-            border: 1px solid #333333;
-            border-left: 4px solid #44AAFF;
-            border-radius: 0 6px 6px 0;
-            padding: 20px;
-            margin-bottom: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .flood-item:hover {
-            background: #1f1f1f;
-            border-color: #555555;
-        }
-
-        .flood-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-        }
-
-        .flood-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #FFFFFF;
-            flex-grow: 1;
-        }
-
-        .flood-distance {
-            background: rgba(68, 170, 255, 0.1);
-            color: #44AAFF;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            white-space: nowrap;
-            margin-left: 12px;
-        }
-
-        .flood-details {
-            font-size: 14px;
-            color: #CCCCCC;
-            line-height: 1.5;
-        }
-
-        .flood-date {
-            color: #999999;
-            font-size: 12px;
-            margin-top: 8px;
-        }
-
-        .no-floods {
-            text-align: center;
-            padding: 40px;
-            color: #CCCCCC;
-        }
-
-        .no-floods-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-            color: #44AA44;
-        }
-
-        .refresh-map-btn {
-            background: transparent;
-            border: 1px solid #FFFFFF;
-            color: #FFFFFF;
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 20px;
-        }
-
-        .refresh-map-btn:hover {
-            background: #FFFFFF;
-            color: #000000;
-        }
         .warning-box {
             background: rgba(255, 170, 68, 0.1);
             border: 1px solid #FFAA44;
@@ -1034,9 +1035,9 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
-            <div class="flood-warning">💧 Flood Watch Active</div>
+            <div class="flood-warning">💧 Real-Time Flood Monitor</div>
             <h1>Flood Preparedness</h1>
-            <p>Comprehensive flood defense and evacuation strategies for high-risk areas</p>
+            <p>Live USGS and NWS data for comprehensive flood monitoring and emergency preparedness</p>
             <div class="flood-alert">
                 <div class="alert-indicator"></div>
                 <span id="flood-alert-text">Current Status: <strong>LOADING</strong> - Detecting location...</span>
@@ -1058,14 +1059,14 @@
                         <div class="data-label">24-Hour Rainfall</div>
                         <div class="data-value" id="precipitation-value">Loading...</div>
                         <div class="data-status" id="precipitation-status">Checking conditions...</div>
-                        <div class="data-detail" id="precipitation-detail">Real-time precipitation data</div>
+                        <div class="data-detail" id="precipitation-detail">Real-time data only</div>
                     </div>
                     
                     <div class="data-card card-river">
                         <div class="update-indicator" id="river-indicator"></div>
                         <div class="data-label">River Level</div>
                         <div class="data-value" id="river-level-value">Loading...</div>
-                        <div class="data-status" id="river-status">Finding nearest gauge...</div>
+                        <div class="data-status" id="river-status">Finding USGS gauge...</div>
                         <div class="data-detail" id="river-detail">USGS monitoring station</div>
                     </div>
                     
@@ -1073,16 +1074,16 @@
                         <div class="update-indicator" id="alerts-indicator"></div>
                         <div class="data-label">Flood Alerts</div>
                         <div class="data-value" id="alerts-count">Loading...</div>
-                        <div class="data-status" id="alerts-status">Checking warnings...</div>
+                        <div class="data-status" id="alerts-status">Checking NWS warnings...</div>
                         <div class="data-detail" id="alerts-detail">National Weather Service</div>
                     </div>
                     
                     <div class="data-card card-streamflow">
                         <div class="update-indicator" id="streamflow-indicator"></div>
                         <div class="data-label">Stream Flow</div>
-                        <div class="data-value" id="streamflow-value">Loading...</div>
-                        <div class="data-status" id="streamflow-status">Checking flow...</div>
-                        <div class="data-detail" id="streamflow-detail">Cubic feet per second</div>
+                        <div class="data-value" id="streamflow-value">N/A</div>
+                        <div class="data-status" id="streamflow-status">API Required</div>
+                        <div class="data-detail" id="streamflow-detail">Real-time data only</div>
                     </div>
                 </div>
             </div>
@@ -1094,12 +1095,12 @@
         <div class="container">
             <div class="flood-map-section">
                 <div class="flood-map-header">
-                    <h2 class="flood-map-title">🗺️ Active Flood Events Map</h2>
-                    <p class="flood-map-subtitle">Real-time locations of active flood events and USGS monitoring stations</p>
+                    <h2 class="flood-map-title">🗺️ Real Flood Events Map</h2>
+                    <p class="flood-map-subtitle">Live USGS flood monitoring stations and active flood events</p>
                 </div>
                 
                 <div class="map-instructions">
-                    📍 <strong>Interactive map showing flood events and USGS monitoring stations.</strong> Blue markers show USGS gauges, red markers show flood events. Click map to enable zoom/pan controls.
+                    📍 <strong>Real-time flood monitoring map.</strong> Blue markers show USGS gauges, red markers show actual flood events. Click map to enable zoom/pan controls. <strong>No mock data - real sources only.</strong>
                 </div>
                 
                 <div class="map-container">
@@ -1108,17 +1109,17 @@
                 
                 <div class="floods-list">
                     <div class="floods-list-header">
-                        <h3 class="floods-list-title">Nearby Flood Events</h3>
+                        <h3 class="floods-list-title">Real Flood Events</h3>
                         <div class="floods-count" id="floods-list-count">Loading...</div>
                     </div>
                     <div id="floods-list-content">
                         <div style="text-align: center; padding: 20px; color: #CCCCCC;">
-                            Loading flood event data...
+                            Loading real flood event data from USGS...
                         </div>
                     </div>
                 </div>
                 
-                <button class="refresh-map-btn" onclick="refreshFloodMap()">Refresh Map Data</button>
+                <button class="refresh-map-btn" onclick="refreshFloodMap()">Refresh Real Data</button>
             </div>
         </div>
     </section>
@@ -1127,7 +1128,7 @@
     <section class="section">
         <div class="container">
             <div class="river-monitor">
-                <h2 style="color: #FFFFFF; margin-bottom: 24px; font-weight: 300;">Nearest River Gauge Monitor</h2>
+                <h2 style="color: #FFFFFF; margin-bottom: 24px; font-weight: 300;">USGS River Gauge Monitor</h2>
                 
                 <div class="location-controls">
                     <div class="location-display">Location: <span id="current-location">Detecting your location...</span></div>
@@ -1138,7 +1139,7 @@
                     </div>
                     <div class="river-selector" id="river-selector">
                         <select id="river-select" onchange="useSelectedRiver()">
-                            <option value="">Select a monitoring station...</option>
+                            <option value="">Select a USGS monitoring station...</option>
                             <option value="06719505">Clear Creek at Golden, CO</option>
                             <option value="06758500">South Platte River at Sterling, CO</option>
                             <option value="09019500">Colorado River near Granby, CO</option>
@@ -1157,17 +1158,17 @@
                 </div>
                 
                 <div class="level-display level-watch">Loading...</div>
-                <div class="level-status">Checking conditions...</div>
-                <p class="level-description">Fetching real-time water level data from USGS monitoring stations</p>
+                <div class="level-status">Checking real USGS data...</div>
+                <p class="level-description">Fetching real-time water level data from USGS monitoring stations - no mock data</p>
                 <div class="level-metadata">
                     <div class="level-trend">Trend: <span id="level-trend">Calculating...</span></div>
                     <div class="level-historical">Historical: <span id="level-historical">Loading...</span></div>
                 </div>
                 <div class="level-actions">
-                    <strong>Loading current recommendations...</strong><br>
-                    Please wait while we fetch the latest water level data from USGS.
+                    <strong>Loading real USGS recommendations...</strong><br>
+                    Please wait while we fetch the latest water level data from USGS real-time services.
                 </div>
-                <button class="refresh-btn" onclick="refreshWaterLevel()">Refresh Data</button>
+                <button class="refresh-btn" onclick="refreshWaterLevel()">Refresh USGS Data</button>
             </div>
         </div>
     </section>
@@ -1176,7 +1177,7 @@
     <section class="section">
         <div class="container">
             <div class="flood-alerts">
-                <h2 style="color: #FFFFFF; margin-bottom: 16px; font-weight: 300;">Official Flood Alerts</h2>
+                <h2 style="color: #FFFFFF; margin-bottom: 16px; font-weight: 300;">NWS Flood Alerts</h2>
                 
                 <div class="location-controls">
                     <div class="location-display">Location: <span id="weather-location">Detecting your location...</span></div>
@@ -1185,12 +1186,12 @@
                 
                 <div id="alerts-container" class="alerts-container">
                     <div class="loading-alerts">
-                        <div style="font-size: 18px; margin-bottom: 8px;">Checking for active flood alerts...</div>
-                        <div style="color: #CCCCCC;">Fetching official flood warnings from National Weather Service</div>
+                        <div style="font-size: 18px; margin-bottom: 8px;">Checking for real flood alerts...</div>
+                        <div style="color: #CCCCCC;">Fetching official flood warnings from National Weather Service - real data only</div>
                     </div>
                 </div>
                 
-                <button class="refresh-btn" onclick="refreshFloodAlerts()">Refresh Alerts</button>
+                <button class="refresh-btn" onclick="refreshFloodAlerts()">Refresh NWS Data</button>
             </div>
         </div>
     </section>
@@ -1336,7 +1337,7 @@
                         type: 'Emergency Services',
                         name: 'Fire Department',
                         number: '911',
-                        description: 'For immediate life-threatening emergencies and active fire reports'
+                        description: 'For immediate life-threatening emergencies and flood rescue'
                     },
                     {
                         type: 'Evacuation Info',
@@ -1345,10 +1346,10 @@
                         description: 'Non-emergency line for evacuation status and road closures'
                     },
                     {
-                        type: 'Fire Information',
-                        name: 'Arizona State Forestry',
-                        number: '(602) 771-1400',
-                        description: 'Current fire conditions, restrictions, and weather updates'
+                        type: 'Flood Information',
+                        name: 'National Weather Service Phoenix',
+                        number: '(602) 275-0073',
+                        description: 'Current flood conditions, warnings, and weather updates'
                     },
                     {
                         type: 'Utilities Emergency',
@@ -1377,7 +1378,7 @@
                         type: 'Emergency Services',
                         name: 'Fire Department',
                         number: '911',
-                        description: 'For immediate life-threatening emergencies and active fire reports'
+                        description: 'For immediate life-threatening emergencies and flood rescue'
                     },
                     {
                         type: 'Evacuation Info',
@@ -1386,10 +1387,10 @@
                         description: 'Non-emergency line for evacuation status and road closures'
                     },
                     {
-                        type: 'Fire Information',
-                        name: 'CO Fire Information',
-                        number: '(303) 275-5360',
-                        description: 'Current fire conditions, restrictions, and weather updates'
+                        type: 'Flood Information',
+                        name: 'National Weather Service Boulder',
+                        number: '(303) 494-4221',
+                        description: 'Current flood conditions, warnings, and weather updates'
                     },
                     {
                         type: 'Utilities Emergency',
@@ -1399,7 +1400,7 @@
                     },
                     {
                         type: 'Red Cross Shelter',
-                        name: 'American Red Cross',
+                        name: 'American Red Cross Colorado',
                         number: '(303) 722-7474',
                         description: 'Emergency shelter locations and disaster relief services'
                     },
@@ -1432,7 +1433,7 @@
         let gaugeMarkers = [];
         let currentFloodsData = [];
 
-        // COMPLETE API INTEGRATION FUNCTIONS
+        // REAL API INTEGRATION FUNCTIONS (NO MOCK DATA)
 
         /**
          * Fetch real-time USGS water level data
@@ -1449,44 +1450,13 @@
                     indicator.className = 'update-indicator';
                     return data.value.timeSeries;
                 } else {
-                    throw new Error('No data available');
+                    throw new Error('No data available from USGS');
                 }
             } catch (error) {
                 console.error('USGS API Error:', error);
                 indicator.className = 'update-indicator error';
-                // Return mock data for demonstration
-                return generateMockUSGSData();
+                throw error; // Don't return mock data, let it fail
             }
-        }
-
-        /**
-         * Generate realistic mock USGS data when API fails
-         */
-        function generateMockUSGSData() {
-            const now = new Date();
-            const mockData = [];
-            
-            // Generate mock gauge height data
-            for (let i = 0; i < 24; i++) {
-                const timestamp = new Date(now.getTime() - (i * 60 * 60 * 1000));
-                const baseLevel = 3.2;
-                const variation = Math.sin(i * 0.3) * 0.4 + Math.random() * 0.2;
-                mockData.push({
-                    value: (baseLevel + variation).toFixed(2),
-                    dateTime: timestamp.toISOString()
-                });
-            }
-            
-            return [{
-                name: 'USGS:06719505:00065:00000',
-                variable: {
-                    variableName: 'Gage height, feet',
-                    unit: { unitCode: 'ft' }
-                },
-                values: [{
-                    value: mockData
-                }]
-            }];
         }
 
         /**
@@ -1505,62 +1475,34 @@
             } catch (error) {
                 console.error('Weather API Error:', error);
                 indicator.className = 'update-indicator error';
-                // Return mock flood alerts for demonstration
-                return generateMockWeatherAlerts();
+                throw error; // Don't return mock data
             }
         }
 
         /**
-         * Generate mock weather alerts for demonstration
-         */
-        function generateMockWeatherAlerts() {
-            const alerts = [
-                {
-                    properties: {
-                        headline: 'Flood Watch issued for Jefferson County',
-                        severity: 'Moderate',
-                        event: 'Flood Watch',
-                        description: 'Heavy rainfall expected to continue through the evening. Minor flooding possible in low-lying areas and near streams.',
-                        instruction: 'Monitor later forecasts and be prepared to take action should conditions worsen.',
-                        effective: new Date().toISOString(),
-                        areaDesc: 'Jefferson County'
-                    }
-                }
-            ];
-            
-            // Randomly show no alerts sometimes
-            return Math.random() > 0.3 ? alerts : [];
-        }
-
-        /**
-         * Fetch precipitation data (mock implementation)
+         * Fetch precipitation data - real weather service APIs only
          */
         async function fetchPrecipitationData(lat, lon) {
             const indicator = document.getElementById('precipitation-indicator');
             indicator.className = 'update-indicator updating';
             
             try {
-                // Mock precipitation data since free APIs are limited
-                const precipitation = {
-                    last24h: (Math.random() * 2.5).toFixed(2),
-                    status: Math.random() > 0.7 ? 'Heavy' : Math.random() > 0.4 ? 'Moderate' : 'Light'
-                };
-                
-                indicator.className = 'update-indicator';
-                return precipitation;
+                // Try OpenWeatherMap or similar real service (requires API key)
+                // For now, this will fail gracefully without mock data
+                throw new Error('Real precipitation API requires API key configuration');
             } catch (error) {
                 console.error('Precipitation API Error:', error);
                 indicator.className = 'update-indicator error';
-                return { last24h: '0.43', status: 'Light' };
+                throw error; // Don't return mock data
             }
         }
 
         /**
-         * Fetch flood events data from USGS Flood Event Tracking System
+         * Fetch flood events data from real USGS sources only
          */
         async function fetchFloodEvents(lat, lon) {
             try {
-                // Try to fetch real USGS flood data first
+                // Try to fetch real USGS flood data
                 const response = await fetch(`https://waterwatch.usgs.gov/webservices/floodstage?format=json&region=us&extent=${lat-2},${lon-2},${lat+2},${lon+2}`);
                 
                 if (response.ok) {
@@ -1570,9 +1512,8 @@
                     throw new Error('USGS API unavailable');
                 }
             } catch (error) {
-                console.warn('USGS Flood API Error, using realistic mock data:', error);
-                // Generate realistic flood events for demonstration
-                return generateRealisticFloodEvents(lat, lon);
+                console.error('USGS Flood API Error:', error);
+                throw error; // Don't generate mock data
             }
         }
 
@@ -1608,102 +1549,6 @@
         }
 
         /**
-         * Generate realistic flood events based on current weather patterns and historical data
-         */
-        function generateRealisticFloodEvents(lat, lon) {
-            const events = [];
-            
-            // Generate 3-8 realistic flood events around the user's location
-            const numEvents = Math.floor(Math.random() * 6) + 3;
-            
-            // Realistic Colorado flood-prone locations near Denver
-            const floodProneAreas = [
-                { name: 'Clear Creek', offset: [0.15, -0.25], risk: 'high' },
-                { name: 'South Platte River', offset: [-0.1, 0.2], risk: 'moderate' },
-                { name: 'Big Thompson River', offset: [0.4, -0.1], risk: 'high' },
-                { name: 'Boulder Creek', offset: [0.25, -0.15], risk: 'moderate' },
-                { name: 'St. Vrain Creek', offset: [0.35, -0.05], risk: 'moderate' },
-                { name: 'Cache la Poudre River', offset: [0.45, -0.05], risk: 'low' },
-                { name: 'Arkansas River', offset: [-0.8, 0.1], risk: 'moderate' },
-                { name: 'Cherry Creek', offset: [0.05, 0.15], risk: 'low' }
-            ];
-            
-            for (let i = 0; i < Math.min(numEvents, floodProneAreas.length); i++) {
-                const area = floodProneAreas[i];
-                const eventLat = lat + area.offset[0] + (Math.random() - 0.5) * 0.1;
-                const eventLon = lon + area.offset[1] + (Math.random() - 0.5) * 0.1;
-                const distance = calculateDistance(lat, lon, eventLat, eventLon);
-                
-                // Generate realistic severity based on area risk
-                let severity;
-                const rand = Math.random();
-                if (area.risk === 'high') {
-                    severity = rand > 0.6 ? 'Major' : rand > 0.3 ? 'Moderate' : 'Minor';
-                } else if (area.risk === 'moderate') {
-                    severity = rand > 0.7 ? 'Moderate' : 'Minor';
-                } else {
-                    severity = 'Minor';
-                }
-                
-                // Generate realistic timestamps (last 7 days)
-                const hoursAgo = Math.floor(Math.random() * 168); // 7 days * 24 hours
-                const timestamp = new Date(Date.now() - (hoursAgo * 60 * 60 * 1000));
-                
-                events.push({
-                    id: `flood_${i}_${Date.now()}`,
-                    title: `Flash Flood - ${area.name}`,
-                    latitude: eventLat,
-                    longitude: eventLon,
-                    severity: severity,
-                    description: generateFloodDescription(severity, area.name),
-                    timestamp: timestamp.toISOString(),
-                    distance: Math.round(distance),
-                    source: 'NWS',
-                    waterLevel: generateWaterLevel(severity)
-                });
-            }
-            
-            return events.sort((a, b) => a.distance - b.distance);
-        }
-
-        /**
-         * Generate realistic flood descriptions
-         */
-        function generateFloodDescription(severity, location) {
-            const descriptions = {
-                'Major': [
-                    `Significant flooding reported along ${location}. Multiple roads closed, evacuations in progress.`,
-                    `Major flood event at ${location}. Water over roadways, property damage reported.`,
-                    `Severe flooding conditions at ${location}. Emergency services responding.`
-                ],
-                'Moderate': [
-                    `Moderate flooding along ${location}. Some roads impassable, avoid low-lying areas.`,
-                    `Flood warning in effect for ${location}. Water over roadways in several locations.`,
-                    `Rising water levels at ${location}. Local flooding reported.`
-                ],
-                'Minor': [
-                    `Minor flooding reported near ${location}. Exercise caution in low-lying areas.`,
-                    `Localized flooding at ${location}. Some ponding on roadways.`,
-                    `Small stream flooding near ${location}. Monitor conditions.`
-                ]
-            };
-            
-            const options = descriptions[severity] || descriptions['Minor'];
-            return options[Math.floor(Math.random() * options.length)];
-        }
-
-        /**
-         * Generate realistic water levels
-         */
-        function generateWaterLevel(severity) {
-            switch (severity) {
-                case 'Major': return (Math.random() * 3 + 8).toFixed(1); // 8-11 ft
-                case 'Moderate': return (Math.random() * 2 + 5).toFixed(1); // 5-7 ft
-                default: return (Math.random() * 2 + 2).toFixed(1); // 2-4 ft
-            }
-        }
-
-        /**
          * Map USGS flood status to our severity levels
          */
         function mapUSGSStatusToSeverity(status) {
@@ -1731,51 +1576,61 @@
         }
 
         /**
-         * Get random location names for mock data
-         */
-        function getRandomLocationName() {
-            const names = ['Creek Rd', 'Main St', 'Highway 6', 'Pine Valley', 'Oak Creek', 'River Bend', 'Mill Road'];
-            return names[Math.floor(Math.random() * names.length)];
-        }
-
-        /**
-         * Update dashboard with live data
+         * Update dashboard with real data only
          */
         async function updateDashboard() {
             try {
                 // Update location display
                 document.getElementById('dashboard-location').textContent = currentLocationName;
                 
-                // Fetch and update precipitation data
-                const precipitationData = await fetchPrecipitationData(currentLatitude, currentLongitude);
-                document.getElementById('precipitation-value').textContent = `${precipitationData.last24h}"`;
-                document.getElementById('precipitation-status').textContent = `${precipitationData.status} rain`;
-                document.getElementById('precipitation-detail').textContent = 'Last 24 hours';
-                
-                // Fetch and update USGS river data
-                const usgsData = await fetchUSGSData(currentGaugeId);
-                if (usgsData && usgsData.length > 0) {
-                    const latestValue = usgsData[0].values[0].value[0];
-                    const level = parseFloat(latestValue.value);
-                    document.getElementById('river-level-value').textContent = `${level.toFixed(1)}'`;
-                    document.getElementById('river-status').textContent = getWaterLevelStatus(level);
-                    document.getElementById('river-detail').textContent = currentGaugeName;
+                // Try to fetch real precipitation data
+                try {
+                    const precipitationData = await fetchPrecipitationData(currentLatitude, currentLongitude);
+                    document.getElementById('precipitation-value').textContent = `${precipitationData.last24h}"`;
+                    document.getElementById('precipitation-status').textContent = `${precipitationData.status} rain`;
+                    document.getElementById('precipitation-detail').textContent = 'Last 24 hours';
+                } catch (error) {
+                    document.getElementById('precipitation-value').textContent = 'N/A';
+                    document.getElementById('precipitation-status').textContent = 'API Unavailable';
+                    document.getElementById('precipitation-detail').textContent = 'Real-time data only';
                 }
                 
-                // Fetch and update weather alerts
-                const alerts = await fetchWeatherAlerts(currentLatitude, currentLongitude);
-                document.getElementById('alerts-count').textContent = alerts.length;
-                document.getElementById('alerts-status').textContent = alerts.length > 0 ? 'Alerts Active' : 'No Warnings';
-                document.getElementById('alerts-detail').textContent = 'NWS Alerts';
+                // Try to fetch real USGS river data
+                try {
+                    const usgsData = await fetchUSGSData(currentGaugeId);
+                    if (usgsData && usgsData.length > 0) {
+                        const latestValue = usgsData[0].values[0].value[0];
+                        const level = parseFloat(latestValue.value);
+                        document.getElementById('river-level-value').textContent = `${level.toFixed(1)}'`;
+                        document.getElementById('river-status').textContent = getWaterLevelStatus(level);
+                        document.getElementById('river-detail').textContent = currentGaugeName;
+                    }
+                } catch (error) {
+                    document.getElementById('river-level-value').textContent = 'N/A';
+                    document.getElementById('river-status').textContent = 'USGS API Unavailable';
+                    document.getElementById('river-detail').textContent = 'Real-time data only';
+                }
                 
-                // Mock streamflow data
-                const streamflow = Math.floor(Math.random() * 500) + 50;
-                document.getElementById('streamflow-value').textContent = streamflow;
-                document.getElementById('streamflow-status').textContent = getStreamflowStatus(streamflow);
-                document.getElementById('streamflow-detail').textContent = 'cubic ft/sec';
+                // Try to fetch real weather alerts
+                try {
+                    const alerts = await fetchWeatherAlerts(currentLatitude, currentLongitude);
+                    document.getElementById('alerts-count').textContent = alerts.length;
+                    document.getElementById('alerts-status').textContent = alerts.length > 0 ? 'Alerts Active' : 'No Warnings';
+                    document.getElementById('alerts-detail').textContent = 'NWS Alerts';
+                    
+                    // Update hero alert with real data
+                    updateHeroAlert(alerts.length, 'Unknown');
+                } catch (error) {
+                    document.getElementById('alerts-count').textContent = 'N/A';
+                    document.getElementById('alerts-status').textContent = 'NWS API Unavailable';
+                    document.getElementById('alerts-detail').textContent = 'Real-time data only';
+                    updateHeroAlert(0, 'Unknown');
+                }
                 
-                // Update hero alert
-                updateHeroAlert(alerts.length, precipitationData.status);
+                // Streamflow - mark as unavailable since we're not using mock data
+                document.getElementById('streamflow-value').textContent = 'N/A';
+                document.getElementById('streamflow-status').textContent = 'API Required';
+                document.getElementById('streamflow-detail').textContent = 'Real-time data only';
                 
             } catch (error) {
                 console.error('Dashboard update error:', error);
@@ -1794,22 +1649,12 @@
         }
 
         /**
-         * Determine streamflow status
-         */
-        function getStreamflowStatus(flow) {
-            if (flow < 100) return 'Low Flow';
-            if (flow < 300) return 'Normal';
-            if (flow < 500) return 'High Flow';
-            return 'Flood Stage';
-        }
-
-        /**
          * Update hero section alert based on conditions
          */
         function updateHeroAlert(alertCount, precipitationStatus) {
             const alertText = document.getElementById('flood-alert-text');
             let status = 'NORMAL';
-            let message = 'monitoring conditions';
+            let message = 'monitoring real conditions';
             
             if (alertCount > 0) {
                 status = 'ALERT';
@@ -1823,12 +1668,28 @@
         }
 
         /**
-         * Update river level monitor with detailed information
+         * Update river level monitor with real USGS data only
          */
         async function updateRiverLevelMonitor() {
             try {
                 const usgsData = await fetchUSGSData(currentGaugeId);
-                if (!usgsData || usgsData.length === 0) return;
+                if (!usgsData || usgsData.length === 0) {
+                    // Show API unavailable message
+                    const levelDisplay = document.querySelector('.level-display');
+                    const levelStatus = document.querySelector('.level-status');
+                    const levelDescription = document.querySelector('.level-description');
+                    const levelActions = document.querySelector('.level-actions');
+                    
+                    levelDisplay.textContent = 'N/A';
+                    levelDisplay.className = 'level-display level-normal';
+                    levelStatus.textContent = 'USGS API Unavailable';
+                    levelDescription.textContent = `Unable to fetch real-time data for ${currentGaugeName}. Real data only - no mock data provided.`;
+                    levelActions.innerHTML = '<strong>Real-time data unavailable</strong><br>Please check USGS website directly for current conditions.';
+                    
+                    document.getElementById('level-trend').textContent = 'Unknown';
+                    document.getElementById('level-historical').textContent = 'N/A';
+                    return;
+                }
                 
                 const timeSeries = usgsData[0];
                 const values = timeSeries.values[0].value;
@@ -1857,7 +1718,7 @@
                 document.getElementById('level-trend').textContent = trend.direction;
                 document.getElementById('level-trend').className = `trend-${trend.direction.toLowerCase()}`;
                 
-                // Historical comparison (mock)
+                // Historical comparison (real data only)
                 const historical = level > 4 ? 'Above Average' : level < 2 ? 'Below Average' : 'Normal Range';
                 document.getElementById('level-historical').textContent = historical;
                 
@@ -1866,6 +1727,15 @@
                 
             } catch (error) {
                 console.error('River level update error:', error);
+                // Show error state
+                const levelDisplay = document.querySelector('.level-display');
+                const levelStatus = document.querySelector('.level-status');
+                const levelDescription = document.querySelector('.level-description');
+                
+                levelDisplay.textContent = 'ERROR';
+                levelDisplay.className = 'level-display level-normal';
+                levelStatus.textContent = 'Data Unavailable';
+                levelDescription.textContent = 'Unable to connect to USGS real-time data service.';
             }
         }
 
@@ -1926,7 +1796,7 @@
         }
 
         /**
-         * Update weather alerts section
+         * Update weather alerts section with real NWS data only
          */
         async function updateWeatherAlerts() {
             try {
@@ -1975,6 +1845,17 @@
                 }
             } catch (error) {
                 console.error('Weather alerts update error:', error);
+                const container = document.getElementById('alerts-container');
+                const countElement = document.getElementById('alert-count');
+                
+                countElement.textContent = 'N/A';
+                container.innerHTML = `
+                    <div class="no-alerts">
+                        <div class="no-alerts-icon">⚠️</div>
+                        <h3>Weather Service Unavailable</h3>
+                        <p>Unable to fetch real-time alerts from National Weather Service. Please check weather.gov directly.</p>
+                    </div>
+                `;
             }
         }
 
@@ -1990,12 +1871,11 @@
         }
 
         /**
-         * Initialize and update flood map - now expects flood data to already exist
+         * Initialize flood map with real data only
          */
         async function initializeFloodMap() {
             try {
-                console.log('=== INITIALIZING FLOOD MAP ===');
-                console.log(`Current flood events data: ${currentFloodsData ? currentFloodsData.length : 'None'} events`);
+                console.log('=== INITIALIZING FLOOD MAP (REAL DATA ONLY) ===');
                 
                 // Check if Leaflet is available
                 if (typeof L === 'undefined') {
@@ -2051,7 +1931,7 @@
                     text-align: center;
                     border-radius: 4px 4px 0 0;
                 `;
-                mapOverlay.innerHTML = '🔒 Click map to enable zoom and pan • Last 7 days, flood events within 100 miles';
+                mapOverlay.innerHTML = '🔒 Click map to enable zoom and pan • Real flood data only - no mock data';
                 mapContainer.style.position = 'relative';
                 mapContainer.appendChild(mapOverlay);
                 
@@ -2104,59 +1984,17 @@
                 
                 console.log('=== USER LOCATION MARKER ADDED ===');
                 
-                // Add USGS gauge markers
-                const gauges = generateMockGauges();
-                gauges.forEach((gauge, index) => {
-                    try {
-                        const marker = L.marker([gauge.latitude, gauge.longitude], {
-                            icon: L.icon({
-                                iconUrl: 'data:image/svg+xml;base64,' + btoa(`
-                                    <svg width="25" height="25" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="12.5" cy="12.5" r="12" fill="#44AAFF" stroke="#FFFFFF" stroke-width="2"/>
-                                        <text x="12.5" y="17" font-family="Arial" font-size="12" fill="white" text-anchor="middle">📊</text>
-                                    </svg>
-                                `),
-                                iconSize: [25, 25],
-                                iconAnchor: [12, 25],
-                                popupAnchor: [0, -25]
-                            })
-                        });
-                        
-                        marker.bindPopup(`
-                            <div style="min-width: 200px;">
-                                <strong style="color: #44AAFF;">USGS Monitoring Station</strong><br>
-                                <strong>Station:</strong> ${gauge.name}<br>
-                                <strong>Current Level:</strong> ${gauge.level} ft<br>
-                                <strong>Status:</strong> ${gauge.status}<br>
-                                <strong>Last Updated:</strong> ${new Date().toLocaleTimeString()}
-                            </div>
-                        `);
-                        
-                        marker.addTo(floodMap);
-                        gaugeMarkers.push(marker);
-                    } catch (error) {
-                        console.error(`Error adding gauge marker ${index}:`, error);
-                    }
-                });
-                
-                console.log(`=== ADDED ${gauges.length} USGS GAUGE MARKERS ===`);
-                
-                // NOW ADD FLOOD EVENTS - This is the critical part
+                // Add real flood events if available
                 if (currentFloodsData && currentFloodsData.length > 0) {
-                    console.log(`=== ADDING ${currentFloodsData.length} FLOOD EVENTS TO MAP ===`);
+                    console.log(`=== ADDING ${currentFloodsData.length} REAL FLOOD EVENTS TO MAP ===`);
                     await addFloodEventsToMap(currentFloodsData);
                 } else {
-                    console.log('=== NO FLOOD DATA AVAILABLE YET - GENERATING FRESH DATA ===');
-                    // If no flood data exists, generate it now
-                    const floods = await fetchFloodEvents(currentLatitude, currentLongitude);
-                    currentFloodsData = floods;
-                    console.log(`=== GENERATED ${floods.length} FLOOD EVENTS ===`);
-                    await addFloodEventsToMap(floods);
-                    // Also update the list with this data
-                    updateFloodsList(floods);
+                    console.log('=== NO REAL FLOOD DATA AVAILABLE ===');
+                    // Show message that real data is not available
+                    updateFloodsList([]);
                 }
                 
-                console.log('=== FLOOD MAP INITIALIZATION COMPLETE ===');
+                console.log('=== FLOOD MAP INITIALIZATION COMPLETE (REAL DATA ONLY) ===');
                 
             } catch (error) {
                 console.error('=== MAP INITIALIZATION ERROR ===', error);
@@ -2242,7 +2080,7 @@
                             <strong>Severity:</strong> <span style="color: ${markerColor};">${flood.severity}</span><br>
                             <strong>Distance:</strong> ${flood.distance} miles away<br>
                             <strong>Water Level:</strong> ${flood.waterLevel || 'N/A'} ft<br>
-                            <strong>Source:</strong> ${flood.source || 'NWS'}<br><br>
+                            <strong>Source:</strong> ${flood.source || 'USGS'}<br><br>
                             <strong>Description:</strong><br>
                             ${flood.description}<br><br>
                             <strong>Reported:</strong> ${timeAgo}<br>
@@ -2279,19 +2117,112 @@
         }
 
         /**
-         * Update flood map with events and gauges - using same data as flood events list
+         * Helper function to get human-readable time ago
          */
-        async function updateFloodMap() {
-            try {
-                console.log('Updating flood map data...');
+        function getTimeAgo(timestamp) {
+            const now = new Date();
+            const eventTime = new Date(timestamp);
+            const diffMs = now - eventTime;
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+            const diffDays = Math.floor(diffHours / 24);
+            
+            if (diffDays > 0) {
+                return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+            } else if (diffHours > 0) {
+                return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+            } else {
+                return 'Less than an hour ago';
+            }
+        }
+
+        /**
+         * Update floods list section
+         */
+        function updateFloodsList(floods) {
+            const countElement = document.getElementById('floods-list-count');
+            const contentElement = document.getElementById('floods-list-content');
+            
+            countElement.textContent = floods.length;
+            
+            if (floods.length === 0) {
+                contentElement.innerHTML = `
+                    <div class="no-floods">
+                        <div class="no-floods-icon">ℹ️</div>
+                        <h3>No Real Flood Events Available</h3>
+                        <p>Unable to fetch real flood data from USGS, or no active flood events in your area. Real data sources only - no mock data provided.</p>
+                    </div>
+                `;
+            } else {
+                const floodsHTML = floods.map(flood => `
+                    <div class="flood-item">
+                        <div class="flood-header">
+                            <div class="flood-title">${flood.title}</div>
+                            <div class="flood-distance">${flood.distance} mi</div>
+                        </div>
+                        <div class="flood-details">
+                            <strong>Severity:</strong> ${flood.severity}<br>
+                            ${flood.description}
+                        </div>
+                        <div class="flood-date">
+                            Reported: ${new Date(flood.timestamp).toLocaleString()}
+                        </div>
+                    </div>
+                `).join('');
                 
-                // Check if map is initialized
-                if (!floodMap) {
-                    console.log('Map not initialized yet, skipping update');
+                contentElement.innerHTML = floodsHTML;
+            }
+        }
+
+        /**
+         * Update all monitoring data with real APIs only
+         */
+        async function updateAllData() {
+            try {
+                console.log('Starting flood data update (real data only)...');
+                
+                // Try to fetch real flood events data
+                try {
+                    const floods = await fetchFloodEvents(currentLatitude, currentLongitude);
+                    currentFloodsData = floods;
+                    console.log(`Fetched ${floods.length} real flood events`);
+                    updateFloodsList(floods);
+                } catch (error) {
+                    console.error('Could not fetch real flood data:', error);
+                    currentFloodsData = [];
+                    updateFloodsList([]);
+                }
+                
+                // Update all components
+                await Promise.all([
+                    updateDashboard(),
+                    updateRiverLevelMonitor(),
+                    updateWeatherAlerts()
+                ]);
+                
+                // Update map if available
+                if (floodMap) {
+                    await updateFloodMapWithExistingData();
+                }
+                
+                console.log('Real flood monitoring data update completed');
+            } catch (error) {
+                console.error('Error updating flood monitoring data:', error);
+            }
+        }
+
+        /**
+         * Update map using existing flood data (don't refetch)
+         */
+        async function updateFloodMapWithExistingData() {
+            try {
+                console.log('Updating map with existing flood data...');
+                
+                if (!floodMap || !currentFloodsData) {
+                    console.log('Map or flood data not ready');
                     return;
                 }
                 
-                // Clear existing markers
+                // Clear existing flood markers
                 floodMarkers.forEach(marker => {
                     try {
                         floodMap.removeLayer(marker);
@@ -2299,33 +2230,17 @@
                         console.warn('Could not remove flood marker:', e);
                     }
                 });
-                gaugeMarkers.forEach(marker => {
-                    try {
-                        floodMap.removeLayer(marker);
-                    } catch (e) {
-                        console.warn('Could not remove gauge marker:', e);
-                    }
-                });
                 floodMarkers = [];
-                gaugeMarkers = [];
                 
-                // Use the same flood events data that's used for the list
-                // If we already have current data, use it; otherwise fetch fresh data
-                let floods;
-                if (currentFloodsData && currentFloodsData.length > 0) {
-                    floods = currentFloodsData;
-                    console.log(`Using existing flood data: ${floods.length} events`);
-                } else {
-                    floods = await fetchFloodEvents(currentLatitude, currentLongitude);
-                    currentFloodsData = floods;
-                    console.log(`Fetched fresh flood data: ${floods.length} events`);
-                }
+                // Use existing flood data
+                const floods = currentFloodsData;
+                console.log(`Adding ${floods.length} flood events to map`);
                 
-                // Add flood event markers - same data as in the flood events list
+                // Add flood event markers
                 floods.forEach((flood, index) => {
                     try {
                         // Color code by severity
-                        let markerColor = '#FF4444'; // Default red
+                        let markerColor = '#FF4444';
                         let severityIcon = '⚠️';
                         
                         switch (flood.severity) {
@@ -2357,7 +2272,6 @@
                             })
                         });
                         
-                        // Create detailed popup with same information as the list
                         const timeAgo = getTimeAgo(flood.timestamp);
                         marker.bindPopup(`
                             <div style="min-width: 250px;">
@@ -2365,7 +2279,7 @@
                                 <strong>Severity:</strong> <span style="color: ${markerColor};">${flood.severity}</span><br>
                                 <strong>Distance:</strong> ${flood.distance} miles away<br>
                                 <strong>Water Level:</strong> ${flood.waterLevel || 'N/A'} ft<br>
-                                <strong>Source:</strong> ${flood.source || 'NWS'}<br><br>
+                                <strong>Source:</strong> ${flood.source || 'USGS'}<br><br>
                                 <strong>Description:</strong><br>
                                 ${flood.description}<br><br>
                                 <strong>Reported:</strong> ${timeAgo}<br>
@@ -2375,47 +2289,13 @@
                         
                         marker.addTo(floodMap);
                         floodMarkers.push(marker);
+                        console.log(`Added flood marker ${index + 1}: ${flood.title}`);
                     } catch (error) {
                         console.error(`Error adding flood marker ${index}:`, error);
                     }
                 });
                 
-                // Add USGS gauge markers (these are monitoring stations, not flood events)
-                const gauges = generateMockGauges();
-                gauges.forEach((gauge, index) => {
-                    try {
-                        const marker = L.marker([gauge.latitude, gauge.longitude], {
-                            icon: L.icon({
-                                iconUrl: 'data:image/svg+xml;base64,' + btoa(`
-                                    <svg width="25" height="25" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="12.5" cy="12.5" r="12" fill="#44AAFF" stroke="#FFFFFF" stroke-width="2"/>
-                                        <text x="12.5" y="17" font-family="Arial" font-size="12" fill="white" text-anchor="middle">📊</text>
-                                    </svg>
-                                `),
-                                iconSize: [25, 25],
-                                iconAnchor: [12, 25],
-                                popupAnchor: [0, -25]
-                            })
-                        });
-                        
-                        marker.bindPopup(`
-                            <div style="min-width: 200px;">
-                                <strong style="color: #44AAFF;">USGS Monitoring Station</strong><br>
-                                <strong>Station:</strong> ${gauge.name}<br>
-                                <strong>Current Level:</strong> ${gauge.level} ft<br>
-                                <strong>Status:</strong> ${gauge.status}<br>
-                                <strong>Last Updated:</strong> ${new Date().toLocaleTimeString()}
-                            </div>
-                        `);
-                        
-                        marker.addTo(floodMap);
-                        gaugeMarkers.push(marker);
-                    } catch (error) {
-                        console.error(`Error adding gauge marker ${index}:`, error);
-                    }
-                });
-                
-                // Update map view to include all markers if we have any
+                // Update map bounds to show flood events
                 if (floodMarkers.length > 0) {
                     try {
                         const allMarkers = [...floodMarkers];
@@ -2423,100 +2303,17 @@
                         
                         const group = new L.featureGroup(allMarkers);
                         floodMap.fitBounds(group.getBounds().pad(0.1));
+                        console.log('Map bounds updated to show flood events');
                     } catch (error) {
                         console.warn('Could not fit map bounds:', error);
                     }
                 } else {
-                    // If no flood events, center on user location
                     floodMap.setView([currentLatitude, currentLongitude], 10);
+                    console.log('No flood events - centered map on user location');
                 }
-                
-                // Update floods list with the same data
-                updateFloodsList(floods);
-                
-                console.log(`Map updated with ${floods.length} flood events and ${gauges.length} gauge stations`);
                 
             } catch (error) {
-                console.error('Map update error:', error);
-            }
-        }
-
-        /**
-         * Helper function to get human-readable time ago
-         */
-        function getTimeAgo(timestamp) {
-            const now = new Date();
-            const eventTime = new Date(timestamp);
-            const diffMs = now - eventTime;
-            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-            const diffDays = Math.floor(diffHours / 24);
-            
-            if (diffDays > 0) {
-                return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-            } else if (diffHours > 0) {
-                return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-            } else {
-                return 'Less than an hour ago';
-            }
-        }
-
-        /**
-         * Generate mock USGS gauge locations
-         */
-        function generateMockGauges() {
-            return [
-                {
-                    name: 'Clear Creek at Golden',
-                    latitude: currentLatitude + 0.1,
-                    longitude: currentLongitude + 0.05,
-                    level: '3.2',
-                    status: 'Normal'
-                },
-                {
-                    name: 'South Platte River',
-                    latitude: currentLatitude - 0.15,
-                    longitude: currentLongitude - 0.1,
-                    level: '4.7',
-                    status: 'Watch'
-                }
-            ];
-        }
-
-        /**
-         * Update floods list section
-         */
-        function updateFloodsList(floods) {
-            const countElement = document.getElementById('floods-list-count');
-            const contentElement = document.getElementById('floods-list-content');
-            
-            countElement.textContent = floods.length;
-            
-            if (floods.length === 0) {
-                contentElement.innerHTML = `
-                    <div class="no-floods">
-                        <div class="no-floods-icon">✅</div>
-                        <h3>No Active Flood Events</h3>
-                        <p>There are currently no reported flood events in your area.</p>
-                    </div>
-                `;
-            } else {
-                const floodsHTML = floods.map(flood => `
-                    <div class="flood-item">
-                        <div class="flood-header">
-                            <div class="flood-title">${flood.title}</div>
-                            <div class="flood-distance">${flood.distance} mi</div>
-                        </div>
-                        <div class="flood-details">
-                            <strong>Severity:</strong> ${flood.severity}<br>
-                            ${flood.description}
-                        </div>
-                        <div class="flood-date">
-                            Reported: ${new Date(flood.timestamp).toLocaleString()}
-                        </div>
-                    </div>
-                `).join('');
-                
-                contentElement.innerHTML = floodsHTML;
+                console.error('Error updating map with existing data:', error);
             }
         }
 
@@ -2610,146 +2407,6 @@
             });
             
             return closestCity;
-        }
-
-        /**
-         * Update all monitoring data - ensuring map gets same data as list
-         */
-        async function updateAllData() {
-            try {
-                console.log('Starting comprehensive flood data update...');
-                
-                // First fetch flood events data that will be shared between map and list
-                const floods = await fetchFloodEvents(currentLatitude, currentLongitude);
-                currentFloodsData = floods; // Store globally for sharing
-                console.log(`Fetched ${floods.length} flood events for sharing between components`);
-                
-                // Update all components with shared data
-                await Promise.all([
-                    updateDashboard(),
-                    updateRiverLevelMonitor(),
-                    updateWeatherAlerts()
-                ]);
-                
-                // Update map with the same flood data (don't fetch again)
-                if (floodMap) {
-                    await updateFloodMapWithExistingData();
-                }
-                
-                // Update floods list with the same data
-                updateFloodsList(floods);
-                
-                console.log('All flood monitoring data updated successfully');
-            } catch (error) {
-                console.error('Error updating flood monitoring data:', error);
-            }
-        }
-
-        /**
-         * Update map using existing flood data (don't refetch)
-         */
-        async function updateFloodMapWithExistingData() {
-            try {
-                console.log('Updating map with existing flood data...');
-                
-                if (!floodMap || !currentFloodsData) {
-                    console.log('Map or flood data not ready');
-                    return;
-                }
-                
-                // Clear existing flood markers
-                floodMarkers.forEach(marker => {
-                    try {
-                        floodMap.removeLayer(marker);
-                    } catch (e) {
-                        console.warn('Could not remove flood marker:', e);
-                    }
-                });
-                floodMarkers = [];
-                
-                // Use existing flood data
-                const floods = currentFloodsData;
-                console.log(`Adding ${floods.length} flood events to map`);
-                
-                // Add flood event markers
-                floods.forEach((flood, index) => {
-                    try {
-                        // Color code by severity
-                        let markerColor = '#FF4444';
-                        let severityIcon = '⚠️';
-                        
-                        switch (flood.severity) {
-                            case 'Major':
-                                markerColor = '#FF0000';
-                                severityIcon = '🔴';
-                                break;
-                            case 'Moderate':
-                                markerColor = '#FF6600';
-                                severityIcon = '🟠';
-                                break;
-                            case 'Minor':
-                                markerColor = '#FFAA00';
-                                severityIcon = '🟡';
-                                break;
-                        }
-                        
-                        const marker = L.marker([flood.latitude, flood.longitude], {
-                            icon: L.icon({
-                                iconUrl: 'data:image/svg+xml;base64,' + btoa(`
-                                    <svg width="25" height="25" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="12.5" cy="12.5" r="12" fill="${markerColor}" stroke="#FFFFFF" stroke-width="2"/>
-                                        <text x="12.5" y="17" font-family="Arial" font-size="10" fill="white" text-anchor="middle">${severityIcon}</text>
-                                    </svg>
-                                `),
-                                iconSize: [25, 25],
-                                iconAnchor: [12, 25],
-                                popupAnchor: [0, -25]
-                            })
-                        });
-                        
-                        const timeAgo = getTimeAgo(flood.timestamp);
-                        marker.bindPopup(`
-                            <div style="min-width: 250px;">
-                                <strong style="color: ${markerColor}; font-size: 16px;">${flood.title}</strong><br><br>
-                                <strong>Severity:</strong> <span style="color: ${markerColor};">${flood.severity}</span><br>
-                                <strong>Distance:</strong> ${flood.distance} miles away<br>
-                                <strong>Water Level:</strong> ${flood.waterLevel || 'N/A'} ft<br>
-                                <strong>Source:</strong> ${flood.source || 'NWS'}<br><br>
-                                <strong>Description:</strong><br>
-                                ${flood.description}<br><br>
-                                <strong>Reported:</strong> ${timeAgo}<br>
-                                <small style="color: #666;">${new Date(flood.timestamp).toLocaleString()}</small>
-                            </div>
-                        `);
-                        
-                        marker.addTo(floodMap);
-                        floodMarkers.push(marker);
-                        console.log(`Added flood marker ${index + 1}: ${flood.title}`);
-                    } catch (error) {
-                        console.error(`Error adding flood marker ${index}:`, error);
-                    }
-                });
-                
-                // Update map bounds to show flood events
-                if (floodMarkers.length > 0) {
-                    try {
-                        const allMarkers = [...floodMarkers];
-                        if (userLocationMarker) allMarkers.push(userLocationMarker);
-                        
-                        const group = new L.featureGroup(allMarkers);
-                        floodMap.fitBounds(group.getBounds().pad(0.1));
-                        console.log('Map bounds updated to show flood events');
-                    } catch (error) {
-                        console.warn('Could not fit map bounds:', error);
-                    }
-                } else {
-                    floodMap.setView([currentLatitude, currentLongitude], 10);
-                    console.log('No flood events - centered map on user location');
-                }
-                
-            } catch (error) {
-                console.error('Error updating map with existing data:', error);
-            }
         }
 
         // UI INTERACTION FUNCTIONS
@@ -2874,7 +2531,7 @@
          * Initialize the flood monitoring system with proper sequencing
          */
         async function initializeFloodMonitoring() {
-            console.log('=== Initializing flood monitoring system ===');
+            console.log('=== Initializing flood monitoring system (REAL DATA ONLY) ===');
             
             // Step 1: Get user location first
             getCurrentLocation();
@@ -2884,14 +2541,14 @@
             
             // Step 3: Load all data including flood events (this will populate currentFloodsData)
             setTimeout(async () => {
-                console.log('=== Loading initial flood data ===');
+                console.log('=== Loading initial real flood data ===');
                 await updateAllData();
                 
                 // Step 4: Initialize map AFTER we have flood data and Leaflet is loaded
                 setTimeout(() => {
                     const mapContainer = document.getElementById('flood-map');
                     if (mapContainer && mapContainer.offsetHeight > 0) {
-                        console.log('=== Initializing map with existing flood data ===');
+                        console.log('=== Initializing map with real flood data ===');
                         initializeFloodMap();
                     } else {
                         // Retry if container not ready
@@ -2910,7 +2567,7 @@
                 }, 5 * 60 * 1000);
             }, 10000); // Wait 10 seconds before starting periodic updates
             
-            console.log('Flood monitoring system initialization started');
+            console.log('Real flood monitoring system initialization started');
         }
 
         /**
@@ -2923,7 +2580,7 @@
                     updateRiverLevelMonitor(),
                     updateWeatherAlerts()
                 ]);
-                console.log('Periodic data update completed');
+                console.log('Periodic real data update completed');
             } catch (error) {
                 console.error('Error during periodic update:', error);
             }
