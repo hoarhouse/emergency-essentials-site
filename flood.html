@@ -1990,11 +1990,19 @@
         }
 
         /**
-         * Initialize and update flood map
+         * Initialize and update flood map - now expects flood data to already exist
          */
         async function initializeFloodMap() {
             try {
-                console.log('Initializing flood map...');
+                console.log('=== INITIALIZING FLOOD MAP ===');
+                console.log(`Current flood events data: ${currentFloodsData ? currentFloodsData.length : 'None'} events`);
+                
+                // Check if Leaflet is available
+                if (typeof L === 'undefined') {
+                    console.error('=== LEAFLET LIBRARY NOT AVAILABLE ===');
+                    showMapError('Leaflet mapping library failed to load. Please refresh the page.');
+                    return;
+                }
                 
                 // Wait for map container to be ready
                 const mapContainer = document.getElementById('flood-map');
@@ -2070,7 +2078,9 @@
                 
                 // Force map to render properly
                 setTimeout(() => {
-                    floodMap.invalidateSize();
+                    if (floodMap) {
+                        floodMap.invalidateSize();
+                    }
                 }, 100);
                 
                 // Add user location marker
@@ -2091,6 +2101,8 @@
                 .addTo(floodMap)
                 .bindPopup('<strong>Your Current Location</strong><br>Emergency services will be contacted for this area')
                 .openPopup();
+                
+                console.log('=== USER LOCATION MARKER ADDED ===');
                 
                 // Add USGS gauge markers
                 const gauges = generateMockGauges();
@@ -2127,29 +2139,142 @@
                     }
                 });
                 
-                console.log('Flood map initialized successfully');
+                console.log(`=== ADDED ${gauges.length} USGS GAUGE MARKERS ===`);
                 
-                // Load flood events if we already have them, otherwise they'll be loaded by updateAllData
+                // NOW ADD FLOOD EVENTS - This is the critical part
                 if (currentFloodsData && currentFloodsData.length > 0) {
-                    console.log('Loading existing flood data into map');
-                    await updateFloodMapWithExistingData();
+                    console.log(`=== ADDING ${currentFloodsData.length} FLOOD EVENTS TO MAP ===`);
+                    await addFloodEventsToMap(currentFloodsData);
                 } else {
-                    console.log('Map initialized, flood data will be loaded by updateAllData');
+                    console.log('=== NO FLOOD DATA AVAILABLE YET - GENERATING FRESH DATA ===');
+                    // If no flood data exists, generate it now
+                    const floods = await fetchFloodEvents(currentLatitude, currentLongitude);
+                    currentFloodsData = floods;
+                    console.log(`=== GENERATED ${floods.length} FLOOD EVENTS ===`);
+                    await addFloodEventsToMap(floods);
+                    // Also update the list with this data
+                    updateFloodsList(floods);
                 }
+                
+                console.log('=== FLOOD MAP INITIALIZATION COMPLETE ===');
                 
             } catch (error) {
-                console.error('Map initialization error:', error);
-                // Show error message in map container
-                const mapContainer = document.getElementById('flood-map');
-                if (mapContainer) {
-                    mapContainer.innerHTML = `
-                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #CCCCCC; text-align: center; flex-direction: column;">
-                            <div style="font-size: 48px; margin-bottom: 16px;">🗺️</div>
-                            <div style="font-size: 18px; margin-bottom: 8px;">Map Temporarily Unavailable</div>
-                            <div style="font-size: 14px;">Flood data is still being loaded below</div>
-                        </div>
-                    `;
+                console.error('=== MAP INITIALIZATION ERROR ===', error);
+                showMapError(`Map initialization failed: ${error.message}`);
+            }
+        }
+
+        /**
+         * Show error message in map container
+         */
+        function showMapError(message) {
+            const mapContainer = document.getElementById('flood-map');
+            if (mapContainer) {
+                mapContainer.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #CCCCCC; text-align: center; flex-direction: column; padding: 20px;">
+                        <div style="font-size: 48px; margin-bottom: 16px;">🗺️</div>
+                        <div style="font-size: 18px; margin-bottom: 8px;">Map Temporarily Unavailable</div>
+                        <div style="font-size: 14px; margin-bottom: 16px;">${message}</div>
+                        <button onclick="window.location.reload()" style="background: #44AAFF; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Refresh Page</button>
+                    </div>
+                `;
+            }
+        }
+
+        /**
+         * Add flood events to map (separate function for clarity)
+         */
+        async function addFloodEventsToMap(floods) {
+            console.log(`=== ADDING FLOOD EVENTS TO MAP: ${floods.length} events ===`);
+            
+            // Clear existing flood markers first
+            floodMarkers.forEach(marker => {
+                try {
+                    floodMap.removeLayer(marker);
+                } catch (e) {
+                    console.warn('Could not remove flood marker:', e);
                 }
+            });
+            floodMarkers = [];
+            
+            // Add each flood event as a marker
+            floods.forEach((flood, index) => {
+                try {
+                    console.log(`Adding flood event ${index + 1}: ${flood.title} at ${flood.latitude}, ${flood.longitude}`);
+                    
+                    // Color code by severity
+                    let markerColor = '#FF4444';
+                    let severityIcon = '⚠️';
+                    
+                    switch (flood.severity) {
+                        case 'Major':
+                            markerColor = '#FF0000';
+                            severityIcon = '🔴';
+                            break;
+                        case 'Moderate':
+                            markerColor = '#FF6600';
+                            severityIcon = '🟠';
+                            break;
+                        case 'Minor':
+                            markerColor = '#FFAA00';
+                            severityIcon = '🟡';
+                            break;
+                    }
+                    
+                    const marker = L.marker([flood.latitude, flood.longitude], {
+                        icon: L.icon({
+                            iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+                                <svg width="25" height="25" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12.5" cy="12.5" r="12" fill="${markerColor}" stroke="#FFFFFF" stroke-width="2"/>
+                                    <text x="12.5" y="17" font-family="Arial" font-size="10" fill="white" text-anchor="middle">${severityIcon}</text>
+                                </svg>
+                            `),
+                            iconSize: [25, 25],
+                            iconAnchor: [12, 25],
+                            popupAnchor: [0, -25]
+                        })
+                    });
+                    
+                    const timeAgo = getTimeAgo(flood.timestamp);
+                    marker.bindPopup(`
+                        <div style="min-width: 250px;">
+                            <strong style="color: ${markerColor}; font-size: 16px;">${flood.title}</strong><br><br>
+                            <strong>Severity:</strong> <span style="color: ${markerColor};">${flood.severity}</span><br>
+                            <strong>Distance:</strong> ${flood.distance} miles away<br>
+                            <strong>Water Level:</strong> ${flood.waterLevel || 'N/A'} ft<br>
+                            <strong>Source:</strong> ${flood.source || 'NWS'}<br><br>
+                            <strong>Description:</strong><br>
+                            ${flood.description}<br><br>
+                            <strong>Reported:</strong> ${timeAgo}<br>
+                            <small style="color: #666;">${new Date(flood.timestamp).toLocaleString()}</small>
+                        </div>
+                    `);
+                    
+                    marker.addTo(floodMap);
+                    floodMarkers.push(marker);
+                    console.log(`✓ Successfully added flood marker ${index + 1}: ${flood.title}`);
+                } catch (error) {
+                    console.error(`✗ Error adding flood marker ${index}:`, error);
+                }
+            });
+            
+            console.log(`=== FLOOD MARKERS ADDED: ${floodMarkers.length} total markers on map ===`);
+            
+            // Update map bounds to show all markers
+            if (floodMarkers.length > 0) {
+                try {
+                    const allMarkers = [...floodMarkers];
+                    if (userLocationMarker) allMarkers.push(userLocationMarker);
+                    
+                    const group = new L.featureGroup(allMarkers);
+                    floodMap.fitBounds(group.getBounds().pad(0.1));
+                    console.log('=== MAP BOUNDS FITTED TO SHOW FLOOD EVENTS ===');
+                } catch (error) {
+                    console.warn('Could not fit map bounds:', error);
+                }
+            } else {
+                floodMap.setView([currentLatitude, currentLongitude], 10);
+                console.log('=== NO FLOOD EVENTS - CENTERED ON USER LOCATION ===');
             }
         }
 
@@ -2396,7 +2521,7 @@
         }
 
         /**
-         * Get user's current location
+         * Get user's current location and trigger initial data load
          */
         function getCurrentLocation() {
             if (navigator.geolocation) {
@@ -2406,6 +2531,8 @@
                         currentLongitude = position.coords.longitude;
                         currentLocationName = `${currentLatitude.toFixed(4)}, ${currentLongitude.toFixed(4)}`;
                         
+                        console.log(`=== Location detected: ${currentLocationName} ===`);
+                        
                         // Update location displays
                         document.getElementById('current-location').textContent = currentLocationName;
                         document.getElementById('weather-location').textContent = currentLocationName;
@@ -2414,20 +2541,28 @@
                         const cityKey = getCityKeyFromCoordinates(currentLatitude, currentLongitude);
                         updateEmergencyContacts(cityKey);
                         
-                        // Update all data with new location
-                        updateAllData();
+                        console.log('=== Location setup complete, ready for data loading ===');
                     },
                     error => {
                         console.error('Geolocation error:', error);
+                        console.log('=== Using default Denver location ===');
                         // Use default Denver location
+                        currentLatitude = 39.7392;
+                        currentLongitude = -104.9903;
+                        currentLocationName = 'Denver, CO (Default)';
+                        
+                        document.getElementById('current-location').textContent = currentLocationName;
+                        document.getElementById('weather-location').textContent = currentLocationName;
                         updateEmergencyContacts('denver_co');
-                        updateAllData();
                     }
                 );
             } else {
                 console.error('Geolocation not supported');
+                console.log('=== Using default Denver location ===');
+                currentLatitude = 39.7392;
+                currentLongitude = -104.9903;
+                currentLocationName = 'Denver, CO (Default)';
                 updateEmergencyContacts('denver_co');
-                updateAllData();
             }
         }
 
@@ -2708,33 +2843,74 @@
         // INITIALIZATION
 
         /**
-         * Initialize the flood monitoring system
+         * Wait for Leaflet library to load
          */
-        function initializeFloodMonitoring() {
-            console.log('Initializing flood monitoring system...');
+        function waitForLeaflet() {
+            return new Promise((resolve) => {
+                if (typeof L !== 'undefined') {
+                    console.log('=== Leaflet library already loaded ===');
+                    resolve();
+                } else {
+                    console.log('=== Waiting for Leaflet library to load ===');
+                    const checkLeaflet = setInterval(() => {
+                        if (typeof L !== 'undefined') {
+                            console.log('=== Leaflet library loaded successfully ===');
+                            clearInterval(checkLeaflet);
+                            resolve();
+                        }
+                    }, 100);
+                    
+                    // Timeout after 10 seconds
+                    setTimeout(() => {
+                        clearInterval(checkLeaflet);
+                        console.error('=== Leaflet library failed to load after 10 seconds ===');
+                        resolve(); // Continue anyway, will show error message
+                    }, 10000);
+                }
+            });
+        }
+
+        /**
+         * Initialize the flood monitoring system with proper sequencing
+         */
+        async function initializeFloodMonitoring() {
+            console.log('=== Initializing flood monitoring system ===');
             
-            // Get user location and load initial data
+            // Step 1: Get user location first
             getCurrentLocation();
             
-            // Initialize map after DOM is fully ready and elements are visible
-            setTimeout(() => {
-                const mapContainer = document.getElementById('flood-map');
-                if (mapContainer && mapContainer.offsetHeight > 0) {
-                    initializeFloodMap();
-                } else {
-                    // Retry after another delay if container not ready
-                    setTimeout(() => {
+            // Step 2: Wait for Leaflet to load, then load data
+            await waitForLeaflet();
+            
+            // Step 3: Load all data including flood events (this will populate currentFloodsData)
+            setTimeout(async () => {
+                console.log('=== Loading initial flood data ===');
+                await updateAllData();
+                
+                // Step 4: Initialize map AFTER we have flood data and Leaflet is loaded
+                setTimeout(() => {
+                    const mapContainer = document.getElementById('flood-map');
+                    if (mapContainer && mapContainer.offsetHeight > 0) {
+                        console.log('=== Initializing map with existing flood data ===');
                         initializeFloodMap();
-                    }, 2000);
-                }
+                    } else {
+                        // Retry if container not ready
+                        setTimeout(() => {
+                            console.log('=== Retrying map initialization ===');
+                            initializeFloodMap();
+                        }, 2000);
+                    }
+                }, 1000);
             }, 500);
             
-            // Set up periodic updates every 5 minutes
-            setInterval(() => {
-                updateAllDataExceptMap();
-            }, 5 * 60 * 1000);
+            // Step 5: Set up periodic updates (but not immediately)
+            setTimeout(() => {
+                setInterval(() => {
+                    updateAllDataExceptMap();
+                }, 5 * 60 * 1000);
+            }, 10000); // Wait 10 seconds before starting periodic updates
             
-            console.log('Flood monitoring system initialized');
+            console.log('Flood monitoring system initialization started');
         }
 
         /**
