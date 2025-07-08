@@ -1064,7 +1064,7 @@
                     
                     <div class="data-card card-river">
                         <div class="update-indicator" id="river-indicator"></div>
-                        <div class="data-label">River Level</div>
+                        <div class="data-label">Water Level</div>
                         <div class="data-value" id="river-level-value">Loading...</div>
                         <div class="data-status" id="river-status">Finding USGS gauge...</div>
                         <div class="data-detail" id="river-detail">USGS monitoring station</div>
@@ -1081,9 +1081,9 @@
                     <div class="data-card card-streamflow">
                         <div class="update-indicator" id="streamflow-indicator"></div>
                         <div class="data-label">Stream Flow</div>
-                        <div class="data-value" id="streamflow-value">N/A</div>
-                        <div class="data-status" id="streamflow-status">API Required</div>
-                        <div class="data-detail" id="streamflow-detail">Real-time data only</div>
+                        <div class="data-value" id="streamflow-value">Loading...</div>
+                        <div class="data-status" id="streamflow-status">Finding data...</div>
+                        <div class="data-detail" id="streamflow-detail">Cubic feet per second</div>
                     </div>
                 </div>
             </div>
@@ -1162,7 +1162,7 @@
                 <p class="level-description">Fetching real-time water level data from USGS monitoring stations - no mock data</p>
                 <div class="level-metadata">
                     <div class="level-trend">Trend: <span id="level-trend">Calculating...</span></div>
-                    <div class="level-historical">Historical: <span id="level-historical">Loading...</span></div>
+                    <div class="level-historical">Type: <span id="level-type">Water Level</span></div>
                 </div>
                 <div class="level-actions">
                     <strong>Loading real USGS recommendations...</strong><br>
@@ -1432,48 +1432,91 @@
         let floodMarkers = [];
         let gaugeMarkers = [];
         let currentFloodsData = [];
+        let latestUSGSData = null;
 
         // REAL API INTEGRATION FUNCTIONS (NO MOCK DATA)
 
         /**
-         * Fetch real-time USGS water level data
+         * Fetch real-time USGS water level data with proper parameter handling
          */
         async function fetchUSGSData(gaugeId) {
             const indicator = document.getElementById('river-indicator');
             indicator.className = 'update-indicator updating';
             
             try {
+                // Request both gauge height (00065) and discharge (00060) parameters
                 const response = await fetch(`https://waterservices.usgs.gov/nwis/iv/?format=json&sites=${gaugeId}&parameterCd=00065,00060&siteStatus=active`);
+                
+                if (!response.ok) {
+                    throw new Error(`USGS API returned status: ${response.status}`);
+                }
+                
                 const data = await response.json();
                 
                 if (data.value && data.value.timeSeries && data.value.timeSeries.length > 0) {
                     indicator.className = 'update-indicator';
-                    
-                    // Find the gauge height data (parameter 00065), not discharge (00060)
-                    let gaugeHeightSeries = null;
-                    for (let series of data.value.timeSeries) {
-                        const paramCode = series.variable.variableCode[0].value;
-                        if (paramCode === '00065') { // Gauge height in feet
-                            gaugeHeightSeries = series;
-                            break;
-                        }
-                    }
-                    
-                    if (gaugeHeightSeries) {
-                        return [gaugeHeightSeries];
-                    } else {
-                        // If no gauge height, use the first series available
-                        console.warn('No gauge height data found, using first available series');
-                        return [data.value.timeSeries[0]];
-                    }
+                    latestUSGSData = data.value.timeSeries;
+                    return data.value.timeSeries;
                 } else {
-                    throw new Error('No data available from USGS');
+                    throw new Error('No data available from USGS for this gauge');
                 }
             } catch (error) {
                 console.error('USGS API Error:', error);
                 indicator.className = 'update-indicator error';
-                throw error; // Don't return mock data, let it fail
+                throw error;
             }
+        }
+
+        /**
+         * Parse and display USGS data correctly based on parameter type
+         */
+        function parseUSGSData(timeSeries) {
+            let gaugeHeightData = null;
+            let dischargeData = null;
+            
+            // Separate gauge height and discharge data
+            timeSeries.forEach(series => {
+                const paramCode = series.variable.variableCode[0].value;
+                if (paramCode === '00065') {
+                    gaugeHeightData = series;
+                } else if (paramCode === '00060') {
+                    dischargeData = series;
+                }
+            });
+            
+            // Prefer gauge height for water level display
+            if (gaugeHeightData && gaugeHeightData.values[0].value.length > 0) {
+                const level = parseFloat(gaugeHeightData.values[0].value[0].value);
+                const paramName = gaugeHeightData.variable.variableName;
+                const unit = gaugeHeightData.variable.unit.unitCode;
+                
+                return {
+                    type: 'gauge_height',
+                    value: level,
+                    unit: unit,
+                    parameterName: paramName,
+                    data: gaugeHeightData,
+                    isReasonable: level >= 0 && level <= 50 // Reasonable gauge height range
+                };
+            }
+            
+            // Fallback to discharge data if available
+            if (dischargeData && dischargeData.values[0].value.length > 0) {
+                const discharge = parseFloat(dischargeData.values[0].value[0].value);
+                const paramName = dischargeData.variable.variableName;
+                const unit = dischargeData.variable.unit.unitCode;
+                
+                return {
+                    type: 'discharge',
+                    value: discharge,
+                    unit: unit,
+                    parameterName: paramName,
+                    data: dischargeData,
+                    isReasonable: discharge >= 0 && discharge <= 100000 // Reasonable discharge range
+                };
+            }
+            
+            throw new Error('No valid water data found in USGS response');
         }
 
         /**
@@ -1485,6 +1528,11 @@
             
             try {
                 const response = await fetch(`https://api.weather.gov/alerts/active?point=${lat},${lon}`);
+                
+                if (!response.ok) {
+                    throw new Error(`Weather API returned status: ${response.status}`);
+                }
+                
                 const data = await response.json();
                 
                 indicator.className = 'update-indicator';
@@ -1492,25 +1540,25 @@
             } catch (error) {
                 console.error('Weather API Error:', error);
                 indicator.className = 'update-indicator error';
-                throw error; // Don't return mock data
+                throw error;
             }
         }
 
         /**
-         * Fetch precipitation data - real weather service APIs only
+         * Fetch precipitation data - shows API unavailable message
          */
         async function fetchPrecipitationData(lat, lon) {
             const indicator = document.getElementById('precipitation-indicator');
             indicator.className = 'update-indicator updating';
             
             try {
-                // Try OpenWeatherMap or similar real service (requires API key)
-                // For now, this will fail gracefully without mock data
-                throw new Error('Real precipitation API requires API key configuration');
+                // This would require a real weather API key
+                // For now, we'll show that the API is not configured
+                throw new Error('Precipitation API requires configuration');
             } catch (error) {
                 console.error('Precipitation API Error:', error);
                 indicator.className = 'update-indicator error';
-                throw error; // Don't return mock data
+                throw error;
             }
         }
 
@@ -1519,28 +1567,19 @@
          */
         async function fetchFloodEvents(lat, lon) {
             try {
-                // Try USGS Water Watch API for flood stage data
                 console.log(`Fetching flood events for ${lat}, ${lon}`);
                 
-                // Try the flood stage API first
-                let response = await fetch(`https://waterwatch.usgs.gov/webservices/floodstage?format=json&region=us`);
-                
-                if (!response.ok) {
-                    // Try alternative USGS instantaneous values API for sites in flood stage
-                    console.log('Trying alternative USGS sites API...');
-                    response = await fetch(`https://waterservices.usgs.gov/nwis/iv/?format=json&stateCd=co&parameterCd=00065&siteStatus=active`);
-                }
+                // Get nearby USGS sites with current data
+                const response = await fetch(`https://waterservices.usgs.gov/nwis/iv/?format=json&bBox=${lon-1},${lat-1},${lon+1},${lat+1}&parameterCd=00065,00060&siteStatus=active`);
                 
                 if (response.ok) {
                     const data = await response.json();
-                    console.log('USGS API response:', data);
+                    console.log('USGS flood API response:', data);
                     
-                    if (data.sites) {
-                        return processUSGSFloodData(data, lat, lon);
-                    } else if (data.value && data.value.timeSeries) {
+                    if (data.value && data.value.timeSeries) {
                         return processUSGSTimeSeriesData(data, lat, lon);
                     } else {
-                        console.log('No suitable flood data in USGS response');
+                        console.log('No time series data in USGS response');
                         return [];
                     }
                 } else {
@@ -1549,20 +1588,34 @@
             } catch (error) {
                 console.error('USGS Flood API Error:', error);
                 console.log('No real flood events available from USGS APIs');
-                return []; // Return empty array instead of throwing
+                return [];
             }
         }
 
         /**
-         * Process real USGS time series data for flood events
+         * Process real USGS time series data for potential flood events
          */
         function processUSGSTimeSeriesData(data, userLat, userLon) {
             const events = [];
             
             if (data.value && data.value.timeSeries) {
+                // Group by site
+                const siteData = {};
                 data.value.timeSeries.forEach(series => {
+                    const siteCode = series.sourceInfo.siteCode[0].value;
+                    if (!siteData[siteCode]) {
+                        siteData[siteCode] = {
+                            info: series.sourceInfo,
+                            series: []
+                        };
+                    }
+                    siteData[siteCode].series.push(series);
+                });
+                
+                // Check each site for potential flood conditions
+                Object.values(siteData).forEach(site => {
                     try {
-                        const siteInfo = series.sourceInfo;
+                        const siteInfo = site.info;
                         const siteLat = parseFloat(siteInfo.geoLocation.geogLocation.latitude);
                         const siteLon = parseFloat(siteInfo.geoLocation.geogLocation.longitude);
                         
@@ -1570,20 +1623,24 @@
                         const distance = calculateDistance(userLat, userLon, siteLat, siteLon);
                         if (distance > 100) return;
                         
-                        const values = series.values[0].value;
-                        if (values && values.length > 0) {
-                            const latestValue = parseFloat(values[0].value);
+                        // Look for gauge height data first
+                        let gaugeHeightSeries = site.series.find(s => 
+                            s.variable.variableCode[0].value === '00065'
+                        );
+                        
+                        if (gaugeHeightSeries && gaugeHeightSeries.values[0].value.length > 0) {
+                            const latestValue = parseFloat(gaugeHeightSeries.values[0].value[0].value);
                             
-                            // Consider it a flood event if water level is unusually high (over 10 feet)
-                            if (latestValue > 10) {
+                            // Consider it notable if water level is elevated (over 8 feet)
+                            if (latestValue > 8) {
                                 events.push({
                                     id: siteInfo.siteCode[0].value,
-                                    title: `High Water - ${siteInfo.siteName}`,
+                                    title: `Elevated Water - ${siteInfo.siteName}`,
                                     latitude: siteLat,
                                     longitude: siteLon,
-                                    severity: latestValue > 20 ? 'Major' : latestValue > 15 ? 'Moderate' : 'Minor',
-                                    description: `Elevated water level: ${latestValue.toFixed(1)} ft at ${siteInfo.siteName}`,
-                                    timestamp: values[0].dateTime,
+                                    severity: latestValue > 15 ? 'Major' : latestValue > 12 ? 'Moderate' : 'Minor',
+                                    description: `Water level: ${latestValue.toFixed(1)} ft at ${siteInfo.siteName}`,
+                                    timestamp: gaugeHeightSeries.values[0].value[0].dateTime,
                                     distance: Math.round(distance),
                                     source: 'USGS',
                                     stationId: siteInfo.siteCode[0].value,
@@ -1598,50 +1655,6 @@
             }
             
             return events.sort((a, b) => a.distance - b.distance).slice(0, 5);
-        }
-
-        /**
-         * Process real USGS flood data
-         */
-        function processUSGSFloodData(data, userLat, userLon) {
-            const events = [];
-            
-            if (data && data.sites) {
-                data.sites.forEach(site => {
-                    if (site.flood_stage_status && site.flood_stage_status !== 'normal') {
-                        const distance = calculateDistance(userLat, userLon, site.dec_lat_va, site.dec_long_va);
-                        
-                        events.push({
-                            id: site.site_no,
-                            title: `Flood Event - ${site.station_nm}`,
-                            latitude: parseFloat(site.dec_lat_va),
-                            longitude: parseFloat(site.dec_long_va),
-                            severity: mapUSGSStatusToSeverity(site.flood_stage_status),
-                            description: `Water level: ${site.stage_va} ft (${site.flood_stage_status})`,
-                            timestamp: new Date().toISOString(),
-                            distance: Math.round(distance),
-                            source: 'USGS',
-                            stationId: site.site_no,
-                            waterLevel: site.stage_va
-                        });
-                    }
-                });
-            }
-            
-            return events.sort((a, b) => a.distance - b.distance).slice(0, 10);
-        }
-
-        /**
-         * Map USGS flood status to our severity levels
-         */
-        function mapUSGSStatusToSeverity(status) {
-            switch (status.toLowerCase()) {
-                case 'major_flood': return 'Major';
-                case 'moderate_flood': return 'Moderate';
-                case 'minor_flood': return 'Minor';
-                case 'action_stage': return 'Minor';
-                default: return 'Minor';
-            }
         }
 
         /**
@@ -1668,30 +1681,40 @@
                 
                 // Try to fetch real precipitation data
                 try {
-                    const precipitationData = await fetchPrecipitationData(currentLatitude, currentLongitude);
-                    document.getElementById('precipitation-value').textContent = `${precipitationData.last24h}"`;
-                    document.getElementById('precipitation-status').textContent = `${precipitationData.status} rain`;
-                    document.getElementById('precipitation-detail').textContent = 'Last 24 hours';
+                    await fetchPrecipitationData(currentLatitude, currentLongitude);
                 } catch (error) {
                     document.getElementById('precipitation-value').textContent = 'N/A';
-                    document.getElementById('precipitation-status').textContent = 'API Unavailable';
-                    document.getElementById('precipitation-detail').textContent = 'Real-time data only';
+                    document.getElementById('precipitation-status').textContent = 'API Not Configured';
+                    document.getElementById('precipitation-detail').textContent = 'Requires weather API key';
                 }
                 
                 // Try to fetch real USGS river data
                 try {
                     const usgsData = await fetchUSGSData(currentGaugeId);
-                    if (usgsData && usgsData.length > 0) {
-                        const latestValue = usgsData[0].values[0].value[0];
-                        const level = parseFloat(latestValue.value);
-                        document.getElementById('river-level-value').textContent = `${level.toFixed(1)}'`;
-                        document.getElementById('river-status').textContent = getWaterLevelStatus(level);
+                    const parsedData = parseUSGSData(usgsData);
+                    
+                    if (parsedData.type === 'gauge_height') {
+                        document.getElementById('river-level-value').textContent = `${parsedData.value.toFixed(1)} ft`;
+                        document.getElementById('river-status').textContent = getWaterLevelStatus(parsedData.value);
                         document.getElementById('river-detail').textContent = currentGaugeName;
+                    } else if (parsedData.type === 'discharge') {
+                        document.getElementById('river-level-value').textContent = `${parsedData.value.toFixed(0)} cfs`;
+                        document.getElementById('river-status').textContent = getDischargeStatus(parsedData.value);
+                        document.getElementById('river-detail').textContent = currentGaugeName;
+                        
+                        // Update streamflow card too
+                        document.getElementById('streamflow-value').textContent = `${parsedData.value.toFixed(0)} cfs`;
+                        document.getElementById('streamflow-status').textContent = getDischargeStatus(parsedData.value);
+                        document.getElementById('streamflow-detail').textContent = 'Cubic feet per second';
                     }
                 } catch (error) {
                     document.getElementById('river-level-value').textContent = 'N/A';
-                    document.getElementById('river-status').textContent = 'USGS API Unavailable';
-                    document.getElementById('river-detail').textContent = 'Real-time data only';
+                    document.getElementById('river-status').textContent = 'USGS API Error';
+                    document.getElementById('river-detail').textContent = error.message;
+                    
+                    document.getElementById('streamflow-value').textContent = 'N/A';
+                    document.getElementById('streamflow-status').textContent = 'USGS API Error';
+                    document.getElementById('streamflow-detail').textContent = 'Same as water level';
                 }
                 
                 // Try to fetch real weather alerts
@@ -1702,18 +1725,13 @@
                     document.getElementById('alerts-detail').textContent = 'NWS Alerts';
                     
                     // Update hero alert with real data
-                    updateHeroAlert(alerts.length, 'Unknown');
+                    updateHeroAlert(alerts.length);
                 } catch (error) {
                     document.getElementById('alerts-count').textContent = 'N/A';
-                    document.getElementById('alerts-status').textContent = 'NWS API Unavailable';
-                    document.getElementById('alerts-detail').textContent = 'Real-time data only';
-                    updateHeroAlert(0, 'Unknown');
+                    document.getElementById('alerts-status').textContent = 'NWS API Error';
+                    document.getElementById('alerts-detail').textContent = error.message;
+                    updateHeroAlert(0);
                 }
-                
-                // Streamflow - mark as unavailable since we're not using mock data
-                document.getElementById('streamflow-value').textContent = 'N/A';
-                document.getElementById('streamflow-status').textContent = 'API Required';
-                document.getElementById('streamflow-detail').textContent = 'Real-time data only';
                 
             } catch (error) {
                 console.error('Dashboard update error:', error);
@@ -1726,15 +1744,28 @@
         function getWaterLevelStatus(level) {
             if (level < 2) return 'Low';
             if (level < 4) return 'Normal';
-            if (level < 6) return 'Watch';
-            if (level < 8) return 'Warning';
-            return 'Emergency';
+            if (level < 6) return 'Elevated';
+            if (level < 8) return 'High';
+            if (level < 12) return 'Very High';
+            return 'Extreme';
+        }
+
+        /**
+         * Determine discharge status based on flow rate
+         */
+        function getDischargeStatus(discharge) {
+            if (discharge < 50) return 'Low Flow';
+            if (discharge < 200) return 'Normal Flow';
+            if (discharge < 500) return 'Elevated Flow';
+            if (discharge < 1000) return 'High Flow';
+            if (discharge < 2000) return 'Very High Flow';
+            return 'Extreme Flow';
         }
 
         /**
          * Update hero section alert based on conditions
          */
-        function updateHeroAlert(alertCount, precipitationStatus) {
+        function updateHeroAlert(alertCount) {
             const alertText = document.getElementById('flood-alert-text');
             let status = 'NORMAL';
             let message = 'monitoring real conditions';
@@ -1742,9 +1773,6 @@
             if (alertCount > 0) {
                 status = 'ALERT';
                 message = `${alertCount} active flood warning${alertCount > 1 ? 's' : ''}`;
-            } else if (precipitationStatus === 'Heavy') {
-                status = 'WATCH';
-                message = 'heavy rainfall detected';
             }
             
             alertText.innerHTML = `Current Status: <strong>${status}</strong> - ${message}`;
@@ -1757,53 +1785,11 @@
             try {
                 const usgsData = await fetchUSGSData(currentGaugeId);
                 if (!usgsData || usgsData.length === 0) {
-                    // Show API unavailable message
-                    const levelDisplay = document.querySelector('.level-display');
-                    const levelStatus = document.querySelector('.level-status');
-                    const levelDescription = document.querySelector('.level-description');
-                    const levelActions = document.querySelector('.level-actions');
-                    
-                    levelDisplay.textContent = 'N/A';
-                    levelDisplay.className = 'level-display level-normal';
-                    levelStatus.textContent = 'USGS API Unavailable';
-                    levelDescription.textContent = `Unable to fetch real-time data for ${currentGaugeName}. Real data only - no mock data provided.`;
-                    levelActions.innerHTML = '<strong>Real-time data unavailable</strong><br>Please check USGS website directly for current conditions.';
-                    
-                    document.getElementById('level-trend').textContent = 'Unknown';
-                    document.getElementById('level-historical').textContent = 'N/A';
+                    showRiverError('No data available from USGS for this gauge');
                     return;
                 }
                 
-                const timeSeries = usgsData[0];
-                const values = timeSeries.values[0].value;
-                const latestValue = values[0];
-                let level = parseFloat(latestValue.value);
-                
-                // Debug: Check what parameter we're getting
-                const paramCode = timeSeries.variable.variableCode[0].value;
-                const paramName = timeSeries.variable.variableName;
-                console.log(`USGS Parameter: ${paramCode} - ${paramName}, Value: ${level}`);
-                
-                // If this looks like discharge (CFS) instead of gauge height, try to convert or skip
-                if (paramCode === '00060' || level > 100) {
-                    console.warn('Got discharge data instead of gauge height, or value seems too high');
-                    
-                    // If discharge is very high, it might indicate flooding
-                    if (level > 1000) {
-                        level = level / 1000; // Convert to a more reasonable scale for display
-                        console.log(`Converted discharge to approximated level: ${level}`);
-                    } else {
-                        throw new Error('Only discharge data available, no gauge height');
-                    }
-                }
-                
-                // Validate that the level makes sense (should be between 0-50 feet typically)
-                if (level > 50 || level < 0) {
-                    console.warn(`Unusual water level reading: ${level} ft`);
-                    if (level > 100) {
-                        throw new Error(`Water level reading too high: ${level} ft (possible data error)`);
-                    }
-                }
+                const parsedData = parseUSGSData(usgsData);
                 
                 // Update display elements
                 const levelDisplay = document.querySelector('.level-display');
@@ -1811,54 +1797,78 @@
                 const levelDescription = document.querySelector('.level-description');
                 const levelActions = document.querySelector('.level-actions');
                 
-                // Set level and color
-                levelDisplay.textContent = `${level.toFixed(1)} ft`;
-                levelDisplay.className = `level-display level-${getWaterLevelClass(level)}`;
-                
-                const status = getWaterLevelStatus(level);
-                levelStatus.textContent = `${status} Level`;
-                levelStatus.className = `level-status status-${getWaterLevelClass(level)}`;
+                // Display value with correct units and type
+                if (parsedData.type === 'gauge_height') {
+                    levelDisplay.textContent = `${parsedData.value.toFixed(1)} ft`;
+                    levelDisplay.className = `level-display level-${getWaterLevelClass(parsedData.value)}`;
+                    
+                    const status = getWaterLevelStatus(parsedData.value);
+                    levelStatus.textContent = `${status} Water Level`;
+                    
+                    document.getElementById('level-type').textContent = 'Gauge Height';
+                    levelActions.innerHTML = getFloodRecommendations(parsedData.value, status);
+                } else if (parsedData.type === 'discharge') {
+                    levelDisplay.textContent = `${parsedData.value.toFixed(0)} cfs`;
+                    levelDisplay.className = `level-display level-${getDischargeClass(parsedData.value)}`;
+                    
+                    const status = getDischargeStatus(parsedData.value);
+                    levelStatus.textContent = `${status}`;
+                    
+                    document.getElementById('level-type').textContent = 'Stream Flow';
+                    levelActions.innerHTML = getDischargeRecommendations(parsedData.value, status);
+                }
                 
                 // Update description
-                const lastUpdated = new Date(latestValue.dateTime).toLocaleTimeString();
-                levelDescription.textContent = `${paramName} at ${currentGaugeName}. Last updated: ${lastUpdated}`;
+                const lastUpdated = new Date(parsedData.data.values[0].value[0].dateTime).toLocaleTimeString();
+                levelDescription.textContent = `${parsedData.parameterName} at ${currentGaugeName}. Last updated: ${lastUpdated}`;
                 
                 // Calculate trend
-                const trend = calculateTrend(values.slice(0, 6));
+                const trend = calculateTrend(parsedData.data.values[0].value.slice(0, 6));
                 document.getElementById('level-trend').textContent = trend.direction;
                 document.getElementById('level-trend').className = `trend-${trend.direction.toLowerCase()}`;
                 
-                // Historical comparison (real data only)
-                const historical = level > 4 ? 'Above Average' : level < 2 ? 'Below Average' : 'Normal Range';
-                document.getElementById('level-historical').textContent = historical;
-                
-                // Update recommendations
-                levelActions.innerHTML = getFloodRecommendations(level, status);
-                
             } catch (error) {
                 console.error('River level update error:', error);
-                // Show error state
-                const levelDisplay = document.querySelector('.level-display');
-                const levelStatus = document.querySelector('.level-status');
-                const levelDescription = document.querySelector('.level-description');
-                const levelActions = document.querySelector('.level-actions');
-                
-                levelDisplay.textContent = 'ERROR';
-                levelDisplay.className = 'level-display level-normal';
-                levelStatus.textContent = 'Data Error';
-                levelDescription.textContent = `Error: ${error.message}. Unable to parse USGS data for ${currentGaugeName}.`;
-                levelActions.innerHTML = '<strong>Data parsing error</strong><br>The USGS data format may have changed or contains unexpected values.';
+                showRiverError(error.message);
             }
+        }
+
+        /**
+         * Show error state for river monitor
+         */
+        function showRiverError(message) {
+            const levelDisplay = document.querySelector('.level-display');
+            const levelStatus = document.querySelector('.level-status');
+            const levelDescription = document.querySelector('.level-description');
+            const levelActions = document.querySelector('.level-actions');
+            
+            levelDisplay.textContent = 'ERROR';
+            levelDisplay.className = 'level-display level-normal';
+            levelStatus.textContent = 'Data Error';
+            levelDescription.textContent = `Error: ${message}`;
+            levelActions.innerHTML = '<strong>Unable to fetch USGS data</strong><br>Please try refreshing or select a different monitoring station.';
+            
+            document.getElementById('level-trend').textContent = 'Unknown';
+            document.getElementById('level-type').textContent = 'N/A';
         }
 
         /**
          * Get CSS class for water level
          */
         function getWaterLevelClass(level) {
-            if (level < 2) return 'normal';
             if (level < 4) return 'normal';
             if (level < 6) return 'watch';
             if (level < 8) return 'warning';
+            return 'emergency';
+        }
+
+        /**
+         * Get CSS class for discharge
+         */
+        function getDischargeClass(discharge) {
+            if (discharge < 200) return 'normal';
+            if (discharge < 500) return 'watch';
+            if (discharge < 1000) return 'warning';
             return 'emergency';
         }
 
@@ -1880,30 +1890,73 @@
          * Get flood recommendations based on water level
          */
         function getFloodRecommendations(level, status) {
-            if (level >= 8) {
-                return `<strong>EMERGENCY - Immediate Action Required</strong><br>
-                        • Evacuate low-lying areas immediately<br>
-                        • Do not drive through flooded roads<br>
-                        • Move to higher ground<br>
-                        • Monitor emergency communications`;
-            } else if (level >= 6) {
-                return `<strong>WARNING - Prepare for Flooding</strong><br>
-                        • Prepare evacuation supplies<br>
+            if (level >= 12) {
+                return `<strong>EXTREME LEVEL - Emergency Action</strong><br>
+                        • Evacuate immediately if in flood-prone areas<br>
+                        • Avoid all travel near waterways<br>
+                        • Monitor emergency communications<br>
+                        • Water level is extremely high`;
+            } else if (level >= 8) {
+                return `<strong>VERY HIGH LEVEL - High Alert</strong><br>
+                        • Prepare for potential flooding<br>
                         • Move vehicles to higher ground<br>
-                        • Secure outdoor items<br>
-                        • Stay alert for evacuation orders`;
-            } else if (level >= 4) {
-                return `<strong>WATCH - Monitor Conditions</strong><br>
-                        • Stay informed about weather conditions<br>
-                        • Prepare emergency supplies<br>
                         • Avoid low-lying areas<br>
+                        • Stay alert for evacuation orders`;
+            } else if (level >= 6) {
+                return `<strong>HIGH LEVEL - Monitor Closely</strong><br>
+                        • Stay informed about conditions<br>
+                        • Prepare emergency supplies<br>
+                        • Avoid areas near the river<br>
                         • Check on neighbors and family`;
-            } else {
-                return `<strong>NORMAL - Continue Monitoring</strong><br>
-                        • Conditions are currently normal<br>
-                        • Maintain awareness of weather forecasts<br>
+            } else if (level >= 4) {
+                return `<strong>ELEVATED LEVEL - Stay Aware</strong><br>
+                        • Monitor weather conditions<br>
+                        • Be aware of changing conditions<br>
                         • Keep emergency supplies ready<br>
-                        • Review your evacuation plan`;
+                        • Review evacuation routes`;
+            } else {
+                return `<strong>NORMAL LEVEL - Continue Monitoring</strong><br>
+                        • Water level is currently normal<br>
+                        • Maintain weather awareness<br>
+                        • Keep emergency plans updated<br>
+                        • Check conditions regularly`;
+            }
+        }
+
+        /**
+         * Get recommendations based on discharge
+         */
+        function getDischargeRecommendations(discharge, status) {
+            if (discharge >= 2000) {
+                return `<strong>EXTREME FLOW - Emergency Conditions</strong><br>
+                        • Very dangerous water conditions<br>
+                        • Stay away from all waterways<br>
+                        • Flooding likely in low areas<br>
+                        • Flow rate: ${discharge.toFixed(0)} cubic feet per second`;
+            } else if (discharge >= 1000) {
+                return `<strong>VERY HIGH FLOW - Dangerous Conditions</strong><br>
+                        • Fast-moving, dangerous water<br>
+                        • Avoid recreational water activities<br>
+                        • Potential for rapid water rise<br>
+                        • Flow rate: ${discharge.toFixed(0)} cubic feet per second`;
+            } else if (discharge >= 500) {
+                return `<strong>HIGH FLOW - Exercise Caution</strong><br>
+                        • Higher than normal water flow<br>
+                        • Use extreme caution near water<br>
+                        • Monitor for changing conditions<br>
+                        • Flow rate: ${discharge.toFixed(0)} cubic feet per second`;
+            } else if (discharge >= 200) {
+                return `<strong>ELEVATED FLOW - Stay Alert</strong><br>
+                        • Flow higher than typical<br>
+                        • Be cautious around waterways<br>
+                        • Watch for weather changes<br>
+                        • Flow rate: ${discharge.toFixed(0)} cubic feet per second`;
+            } else {
+                return `<strong>NORMAL FLOW - Conditions Stable</strong><br>
+                        • Water flow is within normal range<br>
+                        • Continue routine monitoring<br>
+                        • Maintain emergency preparedness<br>
+                        • Flow rate: ${discharge.toFixed(0)} cubic feet per second`;
             }
         }
 
@@ -1965,7 +2018,7 @@
                     <div class="no-alerts">
                         <div class="no-alerts-icon">⚠️</div>
                         <h3>Weather Service Unavailable</h3>
-                        <p>Unable to fetch real-time alerts from National Weather Service. Please check weather.gov directly.</p>
+                        <p>Unable to fetch real-time alerts from National Weather Service: ${error.message}</p>
                     </div>
                 `;
             }
@@ -2102,7 +2155,6 @@
                     await addFloodEventsToMap(currentFloodsData);
                 } else {
                     console.log('=== NO REAL FLOOD DATA AVAILABLE ===');
-                    // Show message that real data is not available
                     updateFloodsList([]);
                 }
                 
@@ -2354,81 +2406,7 @@
                 const floods = currentFloodsData;
                 console.log(`Adding ${floods.length} flood events to map`);
                 
-                // Add flood event markers
-                floods.forEach((flood, index) => {
-                    try {
-                        // Color code by severity
-                        let markerColor = '#FF4444';
-                        let severityIcon = '⚠️';
-                        
-                        switch (flood.severity) {
-                            case 'Major':
-                                markerColor = '#FF0000';
-                                severityIcon = '🔴';
-                                break;
-                            case 'Moderate':
-                                markerColor = '#FF6600';
-                                severityIcon = '🟠';
-                                break;
-                            case 'Minor':
-                                markerColor = '#FFAA00';
-                                severityIcon = '🟡';
-                                break;
-                        }
-                        
-                        const marker = L.marker([flood.latitude, flood.longitude], {
-                            icon: L.icon({
-                                iconUrl: 'data:image/svg+xml;base64,' + btoa(`
-                                    <svg width="25" height="25" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="12.5" cy="12.5" r="12" fill="${markerColor}" stroke="#FFFFFF" stroke-width="2"/>
-                                        <text x="12.5" y="17" font-family="Arial" font-size="10" fill="white" text-anchor="middle">${severityIcon}</text>
-                                    </svg>
-                                `),
-                                iconSize: [25, 25],
-                                iconAnchor: [12, 25],
-                                popupAnchor: [0, -25]
-                            })
-                        });
-                        
-                        const timeAgo = getTimeAgo(flood.timestamp);
-                        marker.bindPopup(`
-                            <div style="min-width: 250px;">
-                                <strong style="color: ${markerColor}; font-size: 16px;">${flood.title}</strong><br><br>
-                                <strong>Severity:</strong> <span style="color: ${markerColor};">${flood.severity}</span><br>
-                                <strong>Distance:</strong> ${flood.distance} miles away<br>
-                                <strong>Water Level:</strong> ${flood.waterLevel || 'N/A'} ft<br>
-                                <strong>Source:</strong> ${flood.source || 'USGS'}<br><br>
-                                <strong>Description:</strong><br>
-                                ${flood.description}<br><br>
-                                <strong>Reported:</strong> ${timeAgo}<br>
-                                <small style="color: #666;">${new Date(flood.timestamp).toLocaleString()}</small>
-                            </div>
-                        `);
-                        
-                        marker.addTo(floodMap);
-                        floodMarkers.push(marker);
-                        console.log(`Added flood marker ${index + 1}: ${flood.title}`);
-                    } catch (error) {
-                        console.error(`Error adding flood marker ${index}:`, error);
-                    }
-                });
-                
-                // Update map bounds to show flood events
-                if (floodMarkers.length > 0) {
-                    try {
-                        const allMarkers = [...floodMarkers];
-                        if (userLocationMarker) allMarkers.push(userLocationMarker);
-                        
-                        const group = new L.featureGroup(allMarkers);
-                        floodMap.fitBounds(group.getBounds().pad(0.1));
-                        console.log('Map bounds updated to show flood events');
-                    } catch (error) {
-                        console.warn('Could not fit map bounds:', error);
-                    }
-                } else {
-                    floodMap.setView([currentLatitude, currentLongitude], 10);
-                    console.log('No flood events - centered map on user location');
-                }
+                await addFloodEventsToMap(floods);
                 
             } catch (error) {
                 console.error('Error updating map with existing data:', error);
@@ -2596,7 +2574,6 @@
          */
         function refreshFloodMap() {
             console.log('Refreshing flood map data...');
-            // Refresh all data which will update both map and list
             updateAllData();
         }
 
