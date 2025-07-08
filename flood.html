@@ -2092,10 +2092,50 @@
                 .bindPopup('<strong>Your Current Location</strong><br>Emergency services will be contacted for this area')
                 .openPopup();
                 
-                // Fetch and display flood events
-                await updateFloodMap();
+                // Add USGS gauge markers
+                const gauges = generateMockGauges();
+                gauges.forEach((gauge, index) => {
+                    try {
+                        const marker = L.marker([gauge.latitude, gauge.longitude], {
+                            icon: L.icon({
+                                iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+                                    <svg width="25" height="25" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="12.5" cy="12.5" r="12" fill="#44AAFF" stroke="#FFFFFF" stroke-width="2"/>
+                                        <text x="12.5" y="17" font-family="Arial" font-size="12" fill="white" text-anchor="middle">📊</text>
+                                    </svg>
+                                `),
+                                iconSize: [25, 25],
+                                iconAnchor: [12, 25],
+                                popupAnchor: [0, -25]
+                            })
+                        });
+                        
+                        marker.bindPopup(`
+                            <div style="min-width: 200px;">
+                                <strong style="color: #44AAFF;">USGS Monitoring Station</strong><br>
+                                <strong>Station:</strong> ${gauge.name}<br>
+                                <strong>Current Level:</strong> ${gauge.level} ft<br>
+                                <strong>Status:</strong> ${gauge.status}<br>
+                                <strong>Last Updated:</strong> ${new Date().toLocaleTimeString()}
+                            </div>
+                        `);
+                        
+                        marker.addTo(floodMap);
+                        gaugeMarkers.push(marker);
+                    } catch (error) {
+                        console.error(`Error adding gauge marker ${index}:`, error);
+                    }
+                });
                 
                 console.log('Flood map initialized successfully');
+                
+                // Load flood events if we already have them, otherwise they'll be loaded by updateAllData
+                if (currentFloodsData && currentFloodsData.length > 0) {
+                    console.log('Loading existing flood data into map');
+                    await updateFloodMapWithExistingData();
+                } else {
+                    console.log('Map initialized, flood data will be loaded by updateAllData');
+                }
                 
             } catch (error) {
                 console.error('Map initialization error:', error);
@@ -2438,19 +2478,142 @@
         }
 
         /**
-         * Update all monitoring data
+         * Update all monitoring data - ensuring map gets same data as list
          */
         async function updateAllData() {
             try {
+                console.log('Starting comprehensive flood data update...');
+                
+                // First fetch flood events data that will be shared between map and list
+                const floods = await fetchFloodEvents(currentLatitude, currentLongitude);
+                currentFloodsData = floods; // Store globally for sharing
+                console.log(`Fetched ${floods.length} flood events for sharing between components`);
+                
+                // Update all components with shared data
                 await Promise.all([
                     updateDashboard(),
                     updateRiverLevelMonitor(),
-                    updateWeatherAlerts(),
-                    updateFloodMap()
+                    updateWeatherAlerts()
                 ]);
+                
+                // Update map with the same flood data (don't fetch again)
+                if (floodMap) {
+                    await updateFloodMapWithExistingData();
+                }
+                
+                // Update floods list with the same data
+                updateFloodsList(floods);
+                
                 console.log('All flood monitoring data updated successfully');
             } catch (error) {
                 console.error('Error updating flood monitoring data:', error);
+            }
+        }
+
+        /**
+         * Update map using existing flood data (don't refetch)
+         */
+        async function updateFloodMapWithExistingData() {
+            try {
+                console.log('Updating map with existing flood data...');
+                
+                if (!floodMap || !currentFloodsData) {
+                    console.log('Map or flood data not ready');
+                    return;
+                }
+                
+                // Clear existing flood markers
+                floodMarkers.forEach(marker => {
+                    try {
+                        floodMap.removeLayer(marker);
+                    } catch (e) {
+                        console.warn('Could not remove flood marker:', e);
+                    }
+                });
+                floodMarkers = [];
+                
+                // Use existing flood data
+                const floods = currentFloodsData;
+                console.log(`Adding ${floods.length} flood events to map`);
+                
+                // Add flood event markers
+                floods.forEach((flood, index) => {
+                    try {
+                        // Color code by severity
+                        let markerColor = '#FF4444';
+                        let severityIcon = '⚠️';
+                        
+                        switch (flood.severity) {
+                            case 'Major':
+                                markerColor = '#FF0000';
+                                severityIcon = '🔴';
+                                break;
+                            case 'Moderate':
+                                markerColor = '#FF6600';
+                                severityIcon = '🟠';
+                                break;
+                            case 'Minor':
+                                markerColor = '#FFAA00';
+                                severityIcon = '🟡';
+                                break;
+                        }
+                        
+                        const marker = L.marker([flood.latitude, flood.longitude], {
+                            icon: L.icon({
+                                iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+                                    <svg width="25" height="25" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="12.5" cy="12.5" r="12" fill="${markerColor}" stroke="#FFFFFF" stroke-width="2"/>
+                                        <text x="12.5" y="17" font-family="Arial" font-size="10" fill="white" text-anchor="middle">${severityIcon}</text>
+                                    </svg>
+                                `),
+                                iconSize: [25, 25],
+                                iconAnchor: [12, 25],
+                                popupAnchor: [0, -25]
+                            })
+                        });
+                        
+                        const timeAgo = getTimeAgo(flood.timestamp);
+                        marker.bindPopup(`
+                            <div style="min-width: 250px;">
+                                <strong style="color: ${markerColor}; font-size: 16px;">${flood.title}</strong><br><br>
+                                <strong>Severity:</strong> <span style="color: ${markerColor};">${flood.severity}</span><br>
+                                <strong>Distance:</strong> ${flood.distance} miles away<br>
+                                <strong>Water Level:</strong> ${flood.waterLevel || 'N/A'} ft<br>
+                                <strong>Source:</strong> ${flood.source || 'NWS'}<br><br>
+                                <strong>Description:</strong><br>
+                                ${flood.description}<br><br>
+                                <strong>Reported:</strong> ${timeAgo}<br>
+                                <small style="color: #666;">${new Date(flood.timestamp).toLocaleString()}</small>
+                            </div>
+                        `);
+                        
+                        marker.addTo(floodMap);
+                        floodMarkers.push(marker);
+                        console.log(`Added flood marker ${index + 1}: ${flood.title}`);
+                    } catch (error) {
+                        console.error(`Error adding flood marker ${index}:`, error);
+                    }
+                });
+                
+                // Update map bounds to show flood events
+                if (floodMarkers.length > 0) {
+                    try {
+                        const allMarkers = [...floodMarkers];
+                        if (userLocationMarker) allMarkers.push(userLocationMarker);
+                        
+                        const group = new L.featureGroup(allMarkers);
+                        floodMap.fitBounds(group.getBounds().pad(0.1));
+                        console.log('Map bounds updated to show flood events');
+                    } catch (error) {
+                        console.warn('Could not fit map bounds:', error);
+                    }
+                } else {
+                    floodMap.setView([currentLatitude, currentLongitude], 10);
+                    console.log('No flood events - centered map on user location');
+                }
+                
+            } catch (error) {
+                console.error('Error updating map with existing data:', error);
             }
         }
 
@@ -2522,7 +2685,9 @@
          * Refresh flood map data
          */
         function refreshFloodMap() {
-            updateFloodMap();
+            console.log('Refreshing flood map data...');
+            // Refresh all data which will update both map and list
+            updateAllData();
         }
 
         /**
