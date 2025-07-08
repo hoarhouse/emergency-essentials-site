@@ -2110,7 +2110,7 @@
             if (cityKey) {
                 updateEmergencyContacts(cityKey);
                 
-                // Also update the location for earthquake data
+                // Update the location for earthquake data
                 const [lat, lon] = citySelect.value.split(',').map(Number);
                 currentLatitude = lat;
                 currentLongitude = lon;
@@ -2120,9 +2120,54 @@
                 if (contacts) {
                     currentLocationName = contacts.cityName;
                     updateLocationDisplay(currentLocationName);
+                    
+                    // Update map location and reset interactions
+                    updateMapLocation(lat, lon);
+                    
+                    // Update all data
                     updateAllData();
                 }
             }
+        }
+
+        /**
+         * Updates map center and user location when city changes
+         */
+        function updateMapLocation(lat, lon) {
+            if (!earthquakeMap) {
+                console.log('[MAP] Map not initialized, will update when created');
+                return;
+            }
+
+            console.log(`[MAP] Updating map location to: ${lat}, ${lon}`);
+            
+            // Reset map interactions
+            mapClickEnabled = false;
+            earthquakeMap.scrollWheelZoom.disable();
+            earthquakeMap.doubleClickZoom.disable();
+            earthquakeMap.dragging.disable();
+            earthquakeMap.touchZoom.disable();
+            earthquakeMap.boxZoom.disable();
+            earthquakeMap.keyboard.disable();
+
+            // Update map center with smooth animation
+            earthquakeMap.setView([lat, lon], 7, {
+                animate: true,
+                duration: 1
+            });
+
+            // Update user location marker
+            addUserLocationMarker();
+
+            // Reset overlay message
+            const overlay = document.getElementById('map-overlay');
+            if (overlay) {
+                overlay.innerHTML = '🗺️ Click map to enable zoom and pan • Showing earthquakes within 500 miles';
+                overlay.style.background = 'rgba(0, 0, 0, 0.8)';
+                overlay.style.display = 'block';
+            }
+
+            console.log('[MAP] Map location updated successfully');
         }
 
         // =========================
