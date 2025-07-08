@@ -967,6 +967,16 @@
         <div class="container">
             <h2 class="section-title" id="emergency-contacts-title">Critical Emergency Contacts</h2>
             <div class="emergency-contacts">
+                <!-- DEBUG: Test button to manually trigger contacts update -->
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <button onclick="testContactsUpdate()" style="background: #FF4444; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
+                        🔧 TEST: Load Denver Contacts
+                    </button>
+                    <button onclick="testContactsUpdate('los_angeles_ca')" style="background: #44AA44; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">
+                        🔧 TEST: Load LA Contacts
+                    </button>
+                </div>
+                
                 <div id="emergency-contacts-grid" class="contacts-grid">
                     <!-- Default contacts will be loaded here immediately -->
                     <div class="contact-card">
