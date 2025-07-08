@@ -453,6 +453,22 @@
             margin-bottom: 8px;
         }
 
+        .city-selector {
+            background: #1a1a1a;
+            border: 1px solid #444444;
+            color: #FFFFFF;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 16px;
+            margin: 16px 8px;
+            min-width: 200px;
+        }
+
+        .city-selector:focus {
+            outline: none;
+            border-color: #FFFFFF;
+        }
+
         .refresh-btn {
             background: transparent;
             border: 1px solid #FFFFFF;
@@ -1012,9 +1028,36 @@
     <!-- Emergency Contacts -->
     <section class="section">
         <div class="container">
-            <h2 class="section-title">Critical Cybersecurity Contacts</h2>
+            <h2 class="section-title" id="emergency-contacts-title">Critical Cybersecurity Contacts</h2>
             <div class="emergency-contacts">
-                <div class="contacts-grid">
+                <div class="location-controls">
+                    <div class="location-display">Select your location for relevant emergency contacts:</div>
+                    <select id="city-select" class="city-selector" onchange="updateContactsFromCitySelector()">
+                        <option value="">Choose your city...</option>
+                        <option value="33.4484,-112.0740">Phoenix, AZ</option>
+                        <option value="34.0522,-118.2437">Los Angeles, CA</option>
+                        <option value="37.7749,-122.4194">San Francisco, CA</option>
+                        <option value="38.5816,-121.4944">Sacramento, CA</option>
+                        <option value="39.7392,-104.9903">Denver, CO</option>
+                        <option value="41.2033,-77.1945">Pennsylvania (State-wide)</option>
+                        <option value="43.6532,-116.3113">Boise, ID</option>
+                        <option value="41.8781,-87.6298">Chicago, IL</option>
+                        <option value="39.7817,-86.1478">Indianapolis, IN</option>
+                        <option value="38.2904,-92.6390">Missouri (State-wide)</option>
+                        <option value="46.8772,-96.7898">Fargo, ND</option>
+                        <option value="36.1627,-86.7816">Nashville, TN</option>
+                        <option value="30.2672,-97.7431">Austin, TX</option>
+                        <option value="32.7767,-96.7970">Dallas, TX</option>
+                        <option value="29.7604,-95.3698">Houston, TX</option>
+                        <option value="40.7608,-111.8910">Salt Lake City, UT</option>
+                        <option value="47.0379,-122.9015">Olympia, WA</option>
+                        <option value="47.6062,-122.3321">Seattle, WA</option>
+                    </select>
+                    <button class="refresh-btn" onclick="autoDetectLocation()">Auto-Detect Location</button>
+                </div>
+                
+                <div id="emergency-contacts-grid" class="contacts-grid">
+                    <!-- Default cybersecurity contacts -->
                     <div class="contact-card">
                         <div class="contact-type">Cyber Emergency</div>
                         <div class="contact-name">FBI Cyber Division</div>
@@ -1077,848 +1120,911 @@
     </section>
 
     <script>
-        // Global variables for cybersecurity threat monitoring
-        let currentThreatLevel = 'Medium';
-        let exploitsCount = 0;
-        let malwareCount = 0;
-        let urlsCount = 0;
-        let currentExploitsData = [];
-        let currentMalwareData = [];
-        let currentURLsData = [];
-
-        // Note: For demo purposes, we'll simulate API calls since getting auth keys requires registration
-        // In production, you'd need to register for free auth keys at https://auth.abuse.ch/
-
-        // Initialize everything when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Cyberattacks page loaded, starting threat monitoring');
-            updateAllThreatData();
-        });
-
-        // Update all threat intelligence data
-        function updateAllThreatData() {
-            console.log('Starting cybersecurity threat data updates...');
-            updateCISAExploits();
-            updateThreatIntelligence();
-            updateMaliciousURLs();
-            updateThreatLevelDisplay();
-            updatePersonalRiskAssessment();
-        }
-
-        // Update CISA Known Exploited Vulnerabilities
-        async function updateCISAExploits() {
-            const indicator = document.getElementById('exploits-indicator');
-            indicator.className = 'update-indicator updating';
-            
-            // Multiple CORS proxy options to try
-            const proxies = [
-                'https://corsproxy.io/?',
-                'https://api.allorigins.win/get?url=',
-                'https://api.codetabs.com/v1/proxy?quest='
-            ];
-            
-            const cisaUrl = 'https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json';
-            
-            for (let i = 0; i < proxies.length; i++) {
-                try {
-                    console.log(`Trying CISA proxy ${i + 1}/${proxies.length}: ${proxies[i]}`);
-                    
-                    let response, data;
-                    
-                    if (proxies[i].includes('allorigins')) {
-                        // AllOrigins format
-                        response = await fetch(proxies[i] + encodeURIComponent(cisaUrl));
-                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                        const proxyData = await response.json();
-                        data = JSON.parse(proxyData.contents);
-                    } else {
-                        // Direct proxy format
-                        response = await fetch(proxies[i] + encodeURIComponent(cisaUrl));
-                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                        data = await response.json();
-                    }
-                    const vulnerabilities = data.vulnerabilities || [];
-                    
-                    // Filter recent vulnerabilities (added in last 30 days)
-                    const thirtyDaysAgo = new Date();
-                    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-                    
-                    const recentExploits = vulnerabilities.filter(vuln => {
-                        const dateAdded = new Date(vuln.dateAdded);
-                        return dateAdded >= thirtyDaysAgo;
-                    });
-                    
-                    exploitsCount = recentExploits.length;
-                    
-                    // Update display
-                    document.getElementById('exploits-count').textContent = exploitsCount;
-                    
-                    if (exploitsCount === 0) {
-                        document.getElementById('exploits-status').textContent = 'No New Exploits';
-                        document.getElementById('exploits-status').className = 'data-status status-normal';
-                        document.getElementById('exploits-detail').textContent = 'No new exploits in 30 days';
-                    } else if (exploitsCount <= 5) {
-                        document.getElementById('exploits-status').textContent = 'Low Activity';
-                        document.getElementById('exploits-status').className = 'data-status status-watch';
-                        document.getElementById('exploits-detail').textContent = `${exploitsCount} new exploit${exploitsCount > 1 ? 's' : ''} this month`;
-                    } else if (exploitsCount <= 15) {
-                        document.getElementById('exploits-status').textContent = 'Elevated Activity';
-                        document.getElementById('exploits-status').className = 'data-status status-warning';
-                        document.getElementById('exploits-detail').textContent = `${exploitsCount} active exploits detected`;
-                    } else {
-                        document.getElementById('exploits-status').textContent = 'High Activity';
-                        document.getElementById('exploits-status').className = 'data-status status-critical';
-                        document.getElementById('exploits-detail').textContent = `${exploitsCount} critical exploits active`;
-                    }
-                    
-                    // Update CISA alerts list
-                    updateCISAAlertsList(vulnerabilities.slice(0, 10));
-                    
-                    // Store data for details view
-                    currentExploitsData = vulnerabilities.slice(0, 20);
-                    
-                    indicator.className = 'update-indicator';
-                    console.log(`CISA exploits updated: ${exploitsCount} recent exploits (proxy ${i + 1})`);
-                    return; // Success, exit function
-                    
-                } catch (error) {
-                    console.error(`CISA proxy ${i + 1} failed:`, error);
-                    
-                    // If this is the last proxy, fall back to simulated data
-                    if (i === proxies.length - 1) {
-                        console.log('All CISA proxies failed, using simulated data');
-                        
-                        // Use simulated CISA data as fallback
-                        const simulatedCISAData = [
-                            {
-                                cveID: 'CVE-2024-0001',
-                                vendorProject: 'Microsoft',
-                                product: 'Windows',
-                                vulnerabilityName: 'Windows Kernel Elevation of Privilege Vulnerability',
-                                dateAdded: new Date(Date.now() - 86400000 * 5).toISOString().split('T')[0], // 5 days ago
-                                shortDescription: 'An elevation of privilege vulnerability exists when the Windows kernel fails to properly handle objects in memory.',
-                                dueDate: new Date(Date.now() + 86400000 * 16).toISOString().split('T')[0] // 16 days from now
-                            },
-                            {
-                                cveID: 'CVE-2024-0002',
-                                vendorProject: 'Adobe',
-                                product: 'Acrobat Reader',
-                                vulnerabilityName: 'Adobe Acrobat Reader Remote Code Execution Vulnerability',
-                                dateAdded: new Date(Date.now() - 86400000 * 3).toISOString().split('T')[0], // 3 days ago
-                                shortDescription: 'A critical vulnerability that could allow arbitrary code execution when processing malicious PDF files.',
-                                dueDate: new Date(Date.now() + 86400000 * 18).toISOString().split('T')[0]
-                            },
-                            {
-                                cveID: 'CVE-2024-0003',
-                                vendorProject: 'Cisco',
-                                product: 'IOS XE',
-                                vulnerabilityName: 'Cisco IOS XE Web Management Command Injection',
-                                dateAdded: new Date(Date.now() - 86400000 * 7).toISOString().split('T')[0], // 7 days ago
-                                shortDescription: 'A command injection vulnerability in the web-based management interface could allow authenticated remote code execution.',
-                                dueDate: new Date(Date.now() + 86400000 * 14).toISOString().split('T')[0]
-                            }
-                        ];
-                        
-                        exploitsCount = simulatedCISAData.length;
-                        
-                        // Update display with simulated data
-                        document.getElementById('exploits-count').textContent = exploitsCount + '*';
-                        document.getElementById('exploits-status').textContent = 'Simulated Data';
-                        document.getElementById('exploits-status').className = 'data-status status-watch';
-                        document.getElementById('exploits-detail').textContent = 'Using cached threat data';
-                        
-                        // Update CISA alerts list with simulated data
-                        updateCISAAlertsList(simulatedCISAData);
-                        
-                        // Store simulated data for details view
-                        currentExploitsData = simulatedCISAData;
-                        
-                        indicator.className = 'update-indicator';
-                        console.log('CISA simulated data loaded successfully');
-                        return;
-                    }
-                    // Continue to next proxy
-                }
-            }
-        }
-
-        // Update threat intelligence (simulated - would use ThreatFox API with auth key)
-        async function updateThreatIntelligence() {
-            const indicator = document.getElementById('malware-indicator');
-            indicator.className = 'update-indicator updating';
-            
-            try {
-                // Simulate ThreatFox API data (in production, use actual API with auth key)
-                const simulatedIOCs = [
+        // Emergency Contacts Database - Reusable across all emergency pages
+        const EMERGENCY_CONTACTS_DB = {
+            // Arizona
+            'phoenix_az': {
+                cityName: 'Phoenix, AZ',
+                contacts: [
                     {
-                        id: 'T001',
-                        ioc: '192.168.1.100:8080',
-                        ioc_type: 'ip:port',
-                        threat_type: 'botnet_cc',
-                        malware: 'win.qakbot',
-                        malware_printable: 'QakBot',
-                        confidence_level: 85,
-                        first_seen: new Date(Date.now() - 3600000).toISOString(),
-                        tags: ['banking', 'trojan']
+                        type: 'Cyber Emergency',
+                        name: 'FBI Cyber Division',
+                        number: '(855) 292-3937',
+                        description: 'Report cybercrimes and receive immediate assistance'
                     },
                     {
-                        id: 'T002',
-                        ioc: 'malicious-domain.example',
-                        ioc_type: 'domain',
-                        threat_type: 'payload_delivery',
-                        malware: 'win.emotet',
-                        malware_printable: 'Emotet',
-                        confidence_level: 90,
-                        first_seen: new Date(Date.now() - 7200000).toISOString(),
-                        tags: ['email', 'downloader']
+                        type: 'Government Cyber',
+                        name: 'CISA',
+                        number: '(888) 282-0870',
+                        description: 'Cybersecurity and Infrastructure Security Agency hotline'
                     },
                     {
-                        id: 'T003',
-                        ioc: 'a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456',
-                        ioc_type: 'sha256_hash',
-                        threat_type: 'payload',
-                        malware: 'win.cobalt_strike',
-                        malware_printable: 'Cobalt Strike',
-                        confidence_level: 95,
-                        first_seen: new Date(Date.now() - 1800000).toISOString(),
-                        tags: ['apt', 'beacon']
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
                     },
                     {
-                        id: 'T004',
-                        ioc: '203.0.113.42',
-                        ioc_type: 'ip',
-                        threat_type: 'c2_server',
-                        malware: 'win.redline',
-                        malware_printable: 'RedLine Stealer',
-                        confidence_level: 88,
-                        first_seen: new Date(Date.now() - 5400000).toISOString(),
-                        tags: ['stealer', 'infostealer']
+                        type: 'Evacuation Info',
+                        name: 'Maricopa County Emergency Management',
+                        number: '(602) 273-1411',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'APS Emergency Line',
+                        number: '(855) 688-2437',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Local IT Support',
+                        name: 'Phoenix IT Emergency',
+                        number: '(602) 495-2999',
+                        description: 'Local cybersecurity incident response team'
                     }
-                ];
-                
-                malwareCount = simulatedIOCs.length;
-                
-                // Store data for details view
-                currentMalwareData = simulatedIOCs;
-                
-                // Update display
-                document.getElementById('malware-count').textContent = malwareCount;
-                document.getElementById('malware-status').textContent = 'Active Threats';
-                document.getElementById('malware-status').className = 'data-status status-warning';
-                document.getElementById('malware-detail').textContent = `${malwareCount} recent IOCs detected`;
-                
-                // Update threat intelligence list
-                updateThreatIntelligenceList(simulatedIOCs);
-                
-                indicator.className = 'update-indicator';
-                console.log(`Threat intelligence updated: ${malwareCount} IOCs`);
-                
-            } catch (error) {
-                console.error('Error updating threat intelligence:', error);
-                
-                document.getElementById('malware-count').textContent = 'Error';
-                document.getElementById('malware-status').textContent = 'Data Unavailable';
-                document.getElementById('malware-status').className = 'data-status';
-                document.getElementById('malware-detail').textContent = 'ThreatFox API unavailable';
-                indicator.className = 'update-indicator error';
-            }
-        }
+                ]
+            },
 
-        // Update malicious URLs (simulated - would use URLhaus API with auth key)
-        async function updateMaliciousURLs() {
-            const indicator = document.getElementById('urls-indicator');
-            indicator.className = 'update-indicator updating';
-            
-            try {
-                // Simulate URLhaus API data
-                const simulatedURLs = [
+            // California
+            'los_angeles_ca': {
+                cityName: 'Los Angeles, CA',
+                contacts: [
                     {
-                        id: 'U001',
-                        url: 'https://malicious-site.example/payload.exe',
-                        url_status: 'online',
-                        threat: 'malware_download',
-                        malware: 'win.asyncrat',
-                        confidence: 92,
-                        first_seen: new Date(Date.now() - 1800000).toISOString(),
-                        tags: ['trojan', 'rat']
+                        type: 'Cyber Emergency',
+                        name: 'FBI Cyber Division',
+                        number: '(855) 292-3937',
+                        description: 'Report cybercrimes and receive immediate assistance'
                     },
                     {
-                        id: 'U002',
-                        url: 'https://phishing.example/login',
-                        url_status: 'online',
-                        threat: 'phishing',
-                        malware: 'credential_theft',
-                        confidence: 95,
-                        first_seen: new Date(Date.now() - 3600000).toISOString(),
-                        tags: ['phishing', 'banking']
+                        type: 'Government Cyber',
+                        name: 'CISA',
+                        number: '(888) 282-0870',
+                        description: 'Cybersecurity and Infrastructure Security Agency hotline'
                     },
                     {
-                        id: 'U003',
-                        url: 'https://compromised-site.example/gate.php',
-                        url_status: 'online',
-                        threat: 'exploit_kit',
-                        malware: 'win.rig_ek',
-                        confidence: 88,
-                        first_seen: new Date(Date.now() - 7200000).toISOString(),
-                        tags: ['exploit', 'kit']
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'LA County Emergency Management',
+                        number: '(323) 881-2300',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'LADWP Emergency',
+                        number: '(800) 342-5397',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Local IT Support',
+                        name: 'LA Cyber Response',
+                        number: '(213) 978-1028',
+                        description: 'Los Angeles cybersecurity emergency response'
                     }
-                ];
-                
-                urlsCount = simulatedURLs.length + Math.floor(Math.random() * 15) + 5; // 8-23 total
-                
-                // Store data for details view
-                currentURLsData = simulatedURLs;
-                
-                document.getElementById('urls-count').textContent = urlsCount;
-                
-                if (urlsCount <= 10) {
-                    document.getElementById('urls-status').textContent = 'Normal Activity';
-                    document.getElementById('urls-status').className = 'data-status status-normal';
-                    document.getElementById('urls-detail').textContent = `${urlsCount} active malware URLs`;
-                } else if (urlsCount <= 20) {
-                    document.getElementById('urls-status').textContent = 'Elevated Activity';
-                    document.getElementById('urls-status').className = 'data-status status-warning';
-                    document.getElementById('urls-detail').textContent = `${urlsCount} distribution sites active`;
-                } else {
-                    document.getElementById('urls-status').textContent = 'High Activity';
-                    document.getElementById('urls-status').className = 'data-status status-critical';
-                    document.getElementById('urls-detail').textContent = `${urlsCount} malware campaigns active`;
-                }
-                
-                indicator.className = 'update-indicator';
-                console.log(`Malicious URLs updated: ${urlsCount} active`);
-                
-            } catch (error) {
-                console.error('Error updating malicious URLs:', error);
-                
-                document.getElementById('urls-count').textContent = 'Error';
-                document.getElementById('urls-status').textContent = 'Data Unavailable';
-                document.getElementById('urls-status').className = 'data-status';
-                document.getElementById('urls-detail').textContent = 'URLhaus API unavailable';
-                indicator.className = 'update-indicator error';
+                ]
+            },
+
+            'san_francisco_ca': {
+                cityName: 'San Francisco, CA',
+                contacts: [
+                    {
+                        type: 'Cyber Emergency',
+                        name: 'FBI Cyber Division',
+                        number: '(855) 292-3937',
+                        description: 'Report cybercrimes and receive immediate assistance'
+                    },
+                    {
+                        type: 'Government Cyber',
+                        name: 'CISA',
+                        number: '(888) 282-0870',
+                        description: 'Cybersecurity and Infrastructure Security Agency hotline'
+                    },
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'SF Emergency Management',
+                        number: '(415) 558-2700',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'PG&E Emergency Line',
+                        number: '(800) 743-5000',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Local IT Support',
+                        name: 'SF Cyber Security',
+                        number: '(415) 558-2700',
+                        description: 'San Francisco cybersecurity incident response'
+                    }
+                ]
+            },
+
+            'sacramento_ca': {
+                cityName: 'Sacramento, CA',
+                contacts: [
+                    {
+                        type: 'Cyber Emergency',
+                        name: 'FBI Cyber Division',
+                        number: '(855) 292-3937',
+                        description: 'Report cybercrimes and receive immediate assistance'
+                    },
+                    {
+                        type: 'Government Cyber',
+                        name: 'CISA',
+                        number: '(888) 282-0870',
+                        description: 'Cybersecurity and Infrastructure Security Agency hotline'
+                    },
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Sacramento County Emergency Services',
+                        number: '(916) 874-6851',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'SMUD Emergency Line',
+                        number: '(888) 456-7683',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Local IT Support',
+                        name: 'Sacramento IT Emergency',
+                        number: '(916) 808-5471',
+                        description: 'Sacramento area cybersecurity support'
+                    }
+                ]
+            },
+
+            // Colorado
+            'denver_co': {
+                cityName: 'Denver, CO',
+                contacts: [
+                    {
+                        type: 'Cyber Emergency',
+                        name: 'FBI Cyber Division',
+                        number: '(855) 292-3937',
+                        description: 'Report cybercrimes and receive immediate assistance'
+                    },
+                    {
+                        type: 'Government Cyber',
+                        name: 'CISA',
+                        number: '(888) 282-0870',
+                        description: 'Cybersecurity and Infrastructure Security Agency hotline'
+                    },
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Jefferson County Sheriff',
+                        number: '(303) 277-0211',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Xcel Energy',
+                        number: '(800) 895-1999',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Local IT Support',
+                        name: 'Denver Cyber Response',
+                        number: '(720) 913-1311',
+                        description: 'Denver area cybersecurity emergency support'
+                    }
+                ]
+            },
+
+            // Pennsylvania (State-wide)
+            'pennsylvania': {
+                cityName: 'Pennsylvania',
+                contacts: [
+                    {
+                        type: 'Cyber Emergency',
+                        name: 'FBI Cyber Division',
+                        number: '(855) 292-3937',
+                        description: 'Report cybercrimes and receive immediate assistance'
+                    },
+                    {
+                        type: 'Government Cyber',
+                        name: 'CISA',
+                        number: '(888) 282-0870',
+                        description: 'Cybersecurity and Infrastructure Security Agency hotline'
+                    },
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'PA Emergency Management',
+                        number: '(717) 651-2001',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'PPL Electric Emergency',
+                        number: '(800) 342-5775',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Local IT Support',
+                        name: 'PA Cyber Alliance',
+                        number: '(717) 787-8997',
+                        description: 'Pennsylvania cybersecurity alliance'
+                    }
+                ]
+            },
+
+            // Idaho
+            'boise_id': {
+                cityName: 'Boise, ID',
+                contacts: [
+                    {
+                        type: 'Cyber Emergency',
+                        name: 'FBI Cyber Division',
+                        number: '(855) 292-3937',
+                        description: 'Report cybercrimes and receive immediate assistance'
+                    },
+                    {
+                        type: 'Government Cyber',
+                        name: 'CISA',
+                        number: '(888) 282-0870',
+                        description: 'Cybersecurity and Infrastructure Security Agency hotline'
+                    },
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Ada County Emergency Management',
+                        number: '(208) 577-4750',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Idaho Power Emergency',
+                        number: '(208) 388-2323',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Local IT Support',
+                        name: 'Boise IT Emergency',
+                        number: '(208) 384-3904',
+                        description: 'Boise area IT emergency support'
+                    }
+                ]
+            },
+
+            // Illinois
+            'chicago_il': {
+                cityName: 'Chicago, IL',
+                contacts: [
+                    {
+                        type: 'Cyber Emergency',
+                        name: 'FBI Cyber Division',
+                        number: '(855) 292-3937',
+                        description: 'Report cybercrimes and receive immediate assistance'
+                    },
+                    {
+                        type: 'Government Cyber',
+                        name: 'CISA',
+                        number: '(888) 282-0870',
+                        description: 'Cybersecurity and Infrastructure Security Agency hotline'
+                    },
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Chicago Emergency Management',
+                        number: '(312) 746-5100',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'ComEd Emergency Line',
+                        number: '(800) 334-7661',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Local IT Support',
+                        name: 'Chicago Cyber Security',
+                        number: '(312) 744-5000',
+                        description: 'Chicago cybersecurity support services'
+                    }
+                ]
+            },
+
+            // Indiana
+            'indianapolis_in': {
+                cityName: 'Indianapolis, IN',
+                contacts: [
+                    {
+                        type: 'Cyber Emergency',
+                        name: 'FBI Cyber Division',
+                        number: '(855) 292-3937',
+                        description: 'Report cybercrimes and receive immediate assistance'
+                    },
+                    {
+                        type: 'Government Cyber',
+                        name: 'CISA',
+                        number: '(888) 282-0870',
+                        description: 'Cybersecurity and Infrastructure Security Agency hotline'
+                    },
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Marion County Emergency Management',
+                        number: '(317) 327-3722',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Indianapolis Power & Light',
+                        number: '(317) 261-8111',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Local IT Support',
+                        name: 'Indianapolis IT Services',
+                        number: '(317) 327-4622',
+                        description: 'Indianapolis IT emergency support'
+                    }
+                ]
+            },
+
+            // Missouri (State-wide)
+            'missouri': {
+                cityName: 'Missouri',
+                contacts: [
+                    {
+                        type: 'Cyber Emergency',
+                        name: 'FBI Cyber Division',
+                        number: '(855) 292-3937',
+                        description: 'Report cybercrimes and receive immediate assistance'
+                    },
+                    {
+                        type: 'Government Cyber',
+                        name: 'CISA',
+                        number: '(888) 282-0870',
+                        description: 'Cybersecurity and Infrastructure Security Agency hotline'
+                    },
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'MO Emergency Management',
+                        number: '(573) 526-9100',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Ameren Missouri Emergency',
+                        number: '(800) 552-7583',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Local IT Support',
+                        name: 'Missouri Cyber Alliance',
+                        number: '(573) 751-4905',
+                        description: 'Missouri cybersecurity coordination'
+                    }
+                ]
+            },
+
+            // North Dakota
+            'fargo_nd': {
+                cityName: 'Fargo, ND',
+                contacts: [
+                    {
+                        type: 'Cyber Emergency',
+                        name: 'FBI Cyber Division',
+                        number: '(855) 292-3937',
+                        description: 'Report cybercrimes and receive immediate assistance'
+                    },
+                    {
+                        type: 'Government Cyber',
+                        name: 'CISA',
+                        number: '(888) 282-0870',
+                        description: 'Cybersecurity and Infrastructure Security Agency hotline'
+                    },
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Cass County Emergency Management',
+                        number: '(701) 241-5555',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Xcel Energy North Dakota',
+                        number: '(800) 895-1999',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Local IT Support',
+                        name: 'Fargo IT Emergency',
+                        number: '(701) 241-1310',
+                        description: 'Fargo area IT emergency support'
+                    }
+                ]
+            },
+
+            // Tennessee
+            'nashville_tn': {
+                cityName: 'Nashville, TN',
+                contacts: [
+                    {
+                        type: 'Cyber Emergency',
+                        name: 'FBI Cyber Division',
+                        number: '(855) 292-3937',
+                        description: 'Report cybercrimes and receive immediate assistance'
+                    },
+                    {
+                        type: 'Government Cyber',
+                        name: 'CISA',
+                        number: '(888) 282-0870',
+                        description: 'Cybersecurity and Infrastructure Security Agency hotline'
+                    },
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Davidson County Emergency Management',
+                        number: '(615) 862-8740',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Nashville Electric Service',
+                        number: '(615) 736-6900',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Local IT Support',
+                        name: 'Nashville IT Services',
+                        number: '(615) 862-6666',
+                        description: 'Nashville cybersecurity support'
+                    }
+                ]
+            },
+
+            // Texas
+            'austin_tx': {
+                cityName: 'Austin, TX',
+                contacts: [
+                    {
+                        type: 'Cyber Emergency',
+                        name: 'FBI Cyber Division',
+                        number: '(855) 292-3937',
+                        description: 'Report cybercrimes and receive immediate assistance'
+                    },
+                    {
+                        type: 'Government Cyber',
+                        name: 'CISA',
+                        number: '(888) 282-0870',
+                        description: 'Cybersecurity and Infrastructure Security Agency hotline'
+                    },
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Travis County Emergency Services',
+                        number: '(512) 854-4050',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Austin Energy Emergency',
+                        number: '(512) 322-9100',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Local IT Support',
+                        name: 'Austin Cyber Security',
+                        number: '(512) 974-2000',
+                        description: 'Austin area cybersecurity support'
+                    }
+                ]
+            },
+
+            'dallas_tx': {
+                cityName: 'Dallas, TX',
+                contacts: [
+                    {
+                        type: 'Cyber Emergency',
+                        name: 'FBI Cyber Division',
+                        number: '(855) 292-3937',
+                        description: 'Report cybercrimes and receive immediate assistance'
+                    },
+                    {
+                        type: 'Government Cyber',
+                        name: 'CISA',
+                        number: '(888) 282-0870',
+                        description: 'Cybersecurity and Infrastructure Security Agency hotline'
+                    },
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Dallas County Emergency Management',
+                        number: '(214) 819-6300',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Oncor Emergency Line',
+                        number: '(888) 313-4747',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Local IT Support',
+                        name: 'Dallas IT Emergency',
+                        number: '(214) 670-4357',
+                        description: 'Dallas area IT emergency support'
+                    }
+                ]
+            },
+
+            'houston_tx': {
+                cityName: 'Houston, TX',
+                contacts: [
+                    {
+                        type: 'Cyber Emergency',
+                        name: 'FBI Cyber Division',
+                        number: '(855) 292-3937',
+                        description: 'Report cybercrimes and receive immediate assistance'
+                    },
+                    {
+                        type: 'Government Cyber',
+                        name: 'CISA',
+                        number: '(888) 282-0870',
+                        description: 'Cybersecurity and Infrastructure Security Agency hotline'
+                    },
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Harris County Emergency Management',
+                        number: '(713) 881-3100',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'CenterPoint Energy Emergency',
+                        number: '(713) 207-2222',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Local IT Support',
+                        name: 'Houston Cyber Response',
+                        number: '(713) 884-3131',
+                        description: 'Houston area cybersecurity emergency support'
+                    }
+                ]
+            },
+
+            // Utah
+            'salt_lake_city_ut': {
+                cityName: 'Salt Lake City, UT',
+                contacts: [
+                    {
+                        type: 'Cyber Emergency',
+                        name: 'FBI Cyber Division',
+                        number: '(855) 292-3937',
+                        description: 'Report cybercrimes and receive immediate assistance'
+                    },
+                    {
+                        type: 'Government Cyber',
+                        name: 'CISA',
+                        number: '(888) 282-0870',
+                        description: 'Cybersecurity and Infrastructure Security Agency hotline'
+                    },
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Salt Lake County Emergency Management',
+                        number: '(385) 468-6700',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Rocky Mountain Power Emergency',
+                        number: '(888) 221-7070',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Local IT Support',
+                        name: 'Salt Lake Cyber Services',
+                        number: '(801) 799-3000',
+                        description: 'Salt Lake area cybersecurity support'
+                    }
+                ]
+            },
+
+            // Washington
+            'olympia_wa': {
+                cityName: 'Olympia, WA',
+                contacts: [
+                    {
+                        type: 'Cyber Emergency',
+                        name: 'FBI Cyber Division',
+                        number: '(855) 292-3937',
+                        description: 'Report cybercrimes and receive immediate assistance'
+                    },
+                    {
+                        type: 'Government Cyber',
+                        name: 'CISA',
+                        number: '(888) 282-0870',
+                        description: 'Cybersecurity and Infrastructure Security Agency hotline'
+                    },
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'Thurston County Emergency Management',
+                        number: '(360) 754-2933',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Puget Sound Energy Emergency',
+                        number: '(888) 225-5773',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Local IT Support',
+                        name: 'Olympia IT Services',
+                        number: '(360) 753-8447',
+                        description: 'Olympia area IT emergency support'
+                    }
+                ]
+            },
+
+            'seattle_wa': {
+                cityName: 'Seattle, WA',
+                contacts: [
+                    {
+                        type: 'Cyber Emergency',
+                        name: 'FBI Cyber Division',
+                        number: '(855) 292-3937',
+                        description: 'Report cybercrimes and receive immediate assistance'
+                    },
+                    {
+                        type: 'Government Cyber',
+                        name: 'CISA',
+                        number: '(888) 282-0870',
+                        description: 'Cybersecurity and Infrastructure Security Agency hotline'
+                    },
+                    {
+                        type: 'Emergency Services',
+                        name: 'Fire Department',
+                        number: '911',
+                        description: 'For immediate life-threatening emergencies and active fire reports'
+                    },
+                    {
+                        type: 'Evacuation Info',
+                        name: 'King County Emergency Management',
+                        number: '(206) 296-3830',
+                        description: 'Non-emergency line for evacuation status and road closures'
+                    },
+                    {
+                        type: 'Utilities Emergency',
+                        name: 'Seattle City Light Emergency',
+                        number: '(206) 684-3000',
+                        description: 'Report power lines down or request emergency shutoffs'
+                    },
+                    {
+                        type: 'Local IT Support',
+                        name: 'Seattle IT Department',
+                        number: '(206) 684-0464',
+                        description: 'Seattle area cybersecurity support'
+                    }
+                ]
             }
-        }
-
-        // Update overall threat level display
-        function updateThreatLevelDisplay() {
-            const indicator = document.getElementById('threat-indicator');
-            indicator.className = 'update-indicator updating';
-            
-            // Calculate overall threat level based on data
-            let threatScore = 0;
-            
-            // CISA exploits factor
-            if (exploitsCount > 15) threatScore += 40;
-            else if (exploitsCount > 5) threatScore += 25;
-            else if (exploitsCount > 0) threatScore += 15;
-            
-            // Malware activity factor
-            if (malwareCount > 10) threatScore += 30;
-            else if (malwareCount > 5) threatScore += 20;
-            else if (malwareCount > 0) threatScore += 10;
-            
-            // URL activity factor
-            if (urlsCount > 20) threatScore += 20;
-            else if (urlsCount > 10) threatScore += 15;
-            else if (urlsCount > 5) threatScore += 10;
-            
-            // Base threat level (always some baseline risk)
-            threatScore += 10;
-            
-            // Determine threat level and color
-            let threatLevel, threatColor, threatStatus, threatDetail;
-            
-            if (threatScore >= 70) {
-                threatLevel = 'Critical';
-                threatColor = '#FF4444';
-                threatStatus = 'CRITICAL CYBER THREAT';
-                threatDetail = 'Multiple active campaigns';
-            } else if (threatScore >= 50) {
-                threatLevel = 'High';
-                threatColor = '#FFAA44';
-                threatStatus = 'HIGH CYBER THREAT';
-                threatDetail = 'Elevated attack activity';
-            } else if (threatScore >= 30) {
-                threatLevel = 'Medium';
-                threatColor = '#FFDD44';
-                threatStatus = 'MODERATE CYBER THREAT';
-                threatDetail = 'Normal threat landscape';
-            } else {
-                threatLevel = 'Low';
-                threatColor = '#44AA44';
-                threatStatus = 'LOW CYBER THREAT';
-                threatDetail = 'Minimal active threats';
-            }
-            
-            // Update display elements
-            document.getElementById('threat-level').textContent = threatLevel;
-            document.getElementById('threat-status').textContent = threatStatus;
-            document.getElementById('threat-detail').textContent = threatDetail;
-            
-            // Update hero threat level
-            const threatText = document.getElementById('threat-level-text');
-            threatText.innerHTML = `Current Status: <strong>${threatStatus}</strong> - Global Monitoring`;
-            
-            // Update threat indicator color
-            const heroIndicator = document.querySelector('.threat-indicator');
-            if (heroIndicator) {
-                heroIndicator.style.background = threatColor;
-            }
-            
-            // Set card value color
-            const cardValue = document.getElementById('threat-level');
-            cardValue.className = `risk-${threatLevel.toLowerCase()}`;
-            
-            indicator.className = 'update-indicator';
-            currentThreatLevel = threatLevel;
-            
-            console.log(`Threat level updated: ${threatLevel} (Score: ${threatScore})`);
-        }
-
-        // Update personal risk assessment
-        function updatePersonalRiskAssessment() {
-            // Update based on current threat data
-            const ransomwareElement = document.getElementById('ransomware-risk');
-            const malwareElement = document.getElementById('malware-risk');
-            const ransomwareDesc = document.getElementById('ransomware-desc');
-            const malwareDesc = document.getElementById('malware-desc');
-            
-            // Ransomware risk based on exploit count
-            if (exploitsCount > 10) {
-                ransomwareElement.textContent = 'Critical';
-                ransomwareElement.className = 'risk-value risk-critical';
-                ransomwareDesc.textContent = 'High exploit activity detected';
-            } else if (exploitsCount > 5) {
-                ransomwareElement.textContent = 'High';
-                ransomwareElement.className = 'risk-value risk-high';
-                ransomwareDesc.textContent = 'Active exploits present';
-            } else {
-                ransomwareElement.textContent = 'Moderate';
-                ransomwareElement.className = 'risk-value risk-moderate';
-                ransomwareDesc.textContent = 'Standard precautions needed';
-            }
-            
-            // Malware risk based on IOC count
-            if (malwareCount > 8) {
-                malwareElement.textContent = 'High';
-                malwareElement.className = 'risk-value risk-high';
-                malwareDesc.textContent = 'Multiple active campaigns';
-            } else if (malwareCount > 3) {
-                malwareElement.textContent = 'Moderate';
-                malwareElement.className = 'risk-value risk-moderate';
-                malwareDesc.textContent = 'Some active threats';
-            } else {
-                malwareElement.textContent = 'Low';
-                malwareElement.className = 'risk-value risk-low';
-                malwareDesc.textContent = 'Minimal threat activity';
-            }
-        }
-
-        // Update CISA alerts list
-        function updateCISAAlertsList(vulnerabilities) {
-            const listContainer = document.getElementById('cisa-list');
-            document.getElementById('cisa-count').textContent = vulnerabilities.length;
-            
-            if (vulnerabilities.length === 0) {
-                listContainer.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #CCCCCC;">
-                        <div style="font-size: 18px; margin-bottom: 8px; color: #44AA44;">No Critical Vulnerabilities</div>
-                        <div>No known exploited vulnerabilities reported recently.</div>
-                    </div>
-                `;
-                return;
-            }
-            
-            // Take top 5 most recent
-            const recentVulns = vulnerabilities.slice(0, 5);
-            
-            let alertsHTML = '';
-            
-            recentVulns.forEach(vuln => {
-                const dateAdded = new Date(vuln.dateAdded).toLocaleDateString();
-                const dueDate = vuln.dueDate ? new Date(vuln.dueDate).toLocaleDateString() : 'Not specified';
-                
-                alertsHTML += `
-                    <div class="alert-item">
-                        <div class="alert-title">${vuln.vulnerabilityName || 'Unknown Vulnerability'}</div>
-                        <div class="alert-meta">
-                            <strong>CVE:</strong> ${vuln.cveID}<br>
-                            <strong>Vendor:</strong> ${vuln.vendorProject}<br>
-                            <strong>Product:</strong> ${vuln.product}<br>
-                            <strong>Added:</strong> ${dateAdded} | <strong>Patch Due:</strong> ${dueDate}
-                        </div>
-                        <div class="alert-description">
-                            ${vuln.shortDescription || 'No description available'}
-                        </div>
-                    </div>
-                `;
-            });
-            
-            listContainer.innerHTML = alertsHTML;
-        }
-
-        // Update threat intelligence list
-        function updateThreatIntelligenceList(iocs) {
-            const listContainer = document.getElementById('threats-list');
-            document.getElementById('threat-updated').textContent = new Date().toLocaleString();
-            
-            if (iocs.length === 0) {
-                listContainer.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #CCCCCC;">
-                        <div style="font-size: 18px; margin-bottom: 8px; color: #44AA44;">No Recent Threats</div>
-                        <div>No new IOCs detected in recent monitoring.</div>
-                    </div>
-                `;
-                return;
-            }
-            
-            let threatsHTML = '';
-            
-            iocs.forEach(ioc => {
-                const confidence = ioc.confidence_level;
-                let severityClass = 'low';
-                
-                if (confidence >= 90) severityClass = 'critical';
-                else if (confidence >= 75) severityClass = 'high';
-                else if (confidence >= 50) severityClass = 'medium';
-                
-                const timeAgo = getTimeAgo(new Date(ioc.first_seen));
-                
-                threatsHTML += `
-                    <div class="threat-item">
-                        <div class="threat-header">
-                            <div class="threat-type">${ioc.malware_printable} - ${ioc.threat_type.replace('_', ' ').toUpperCase()}</div>
-                            <div class="threat-severity ${severityClass}">${confidence}% Confidence</div>
-                        </div>
-                        <div class="threat-details">
-                            <strong>IOC:</strong> ${truncateIOC(ioc.ioc)}<br>
-                            <strong>Type:</strong> ${ioc.ioc_type.replace('_', ' ')}<br>
-                            <strong>Tags:</strong> ${ioc.tags.join(', ')}
-                        </div>
-                        <div class="threat-meta">
-                            <strong>First Seen:</strong> ${timeAgo} | <strong>ID:</strong> ${ioc.id}
-                        </div>
-                    </div>
-                `;
-            });
-            
-            listContainer.innerHTML = threatsHTML;
-        }
-
-        // Click handlers for data cards
-        function showExploitsDetail() {
-            if (currentExploitsData.length === 0) {
-                alert('No exploit data available. Please wait for data to load or try refreshing.');
-                return;
-            }
-            
-            let detailsHTML = `
-                <div style="background: #111111; color: #FFFFFF; padding: 20px; border-radius: 8px; max-width: 800px; max-height: 600px; overflow-y: auto;">
-                    <h2 style="margin-bottom: 20px; color: #FF4444;">🚨 Active Exploits Detail</h2>
-                    <p style="margin-bottom: 20px; color: #CCCCCC;">Latest ${currentExploitsData.length} known exploited vulnerabilities from CISA:</p>
-            `;
-            
-            currentExploitsData.forEach((vuln, index) => {
-                const dateAdded = new Date(vuln.dateAdded).toLocaleDateString();
-                detailsHTML += `
-                    <div style="background: #1a1a1a; border: 1px solid #444444; border-radius: 6px; padding: 16px; margin-bottom: 12px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <strong style="color: #FFFFFF; font-size: 16px;">${vuln.vulnerabilityName || 'Vulnerability #' + (index + 1)}</strong>
-                            <span style="color: #FF4444; font-size: 12px;">${vuln.cveID}</span>
-                        </div>
-                        <div style="color: #CCCCCC; font-size: 14px; margin-bottom: 8px;">
-                            <strong>Vendor:</strong> ${vuln.vendorProject}<br>
-                            <strong>Product:</strong> ${vuln.product}<br>
-                            <strong>Added:</strong> ${dateAdded}
-                        </div>
-                        <div style="color: #CCCCCC; font-size: 13px; line-height: 1.4;">
-                            ${vuln.shortDescription || 'No description available'}
-                        </div>
-                    </div>
-                `;
-            });
-            
-            detailsHTML += `
-                    <button onclick="this.parentElement.parentElement.remove()" style="background: #FF4444; color: #FFFFFF; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-top: 16px;">Close</button>
-                </div>
-            `;
-            
-            showModal(detailsHTML);
-        }
-
-        function showMalwareDetail() {
-            if (currentMalwareData.length === 0) {
-                alert('No malware data available. Please wait for data to load or try refreshing.');
-                return;
-            }
-            
-            let detailsHTML = `
-                <div style="background: #111111; color: #FFFFFF; padding: 20px; border-radius: 8px; max-width: 800px; max-height: 600px; overflow-y: auto;">
-                    <h2 style="margin-bottom: 20px; color: #FFAA44;">🦠 Malware Threats Detail</h2>
-                    <p style="margin-bottom: 20px; color: #CCCCCC;">Latest ${currentMalwareData.length} indicators of compromise (IOCs):</p>
-            `;
-            
-            currentMalwareData.forEach((ioc, index) => {
-                const timeAgo = getTimeAgo(new Date(ioc.first_seen));
-                const confidence = ioc.confidence_level;
-                let confidenceColor = '#44AA44';
-                if (confidence >= 90) confidenceColor = '#FF4444';
-                else if (confidence >= 75) confidenceColor = '#FFAA44';
-                else if (confidence >= 50) confidenceColor = '#FFDD44';
-                
-                detailsHTML += `
-                    <div style="background: #1a1a1a; border: 1px solid #444444; border-radius: 6px; padding: 16px; margin-bottom: 12px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <strong style="color: #FFFFFF; font-size: 16px;">${ioc.malware_printable}</strong>
-                            <span style="color: ${confidenceColor}; font-size: 12px;">${confidence}% Confidence</span>
-                        </div>
-                        <div style="color: #CCCCCC; font-size: 14px; margin-bottom: 8px;">
-                            <strong>IOC:</strong> ${truncateIOC(ioc.ioc)}<br>
-                            <strong>Type:</strong> ${ioc.ioc_type.replace('_', ' ')}<br>
-                            <strong>Threat Type:</strong> ${ioc.threat_type.replace('_', ' ').toUpperCase()}<br>
-                            <strong>First Seen:</strong> ${timeAgo}
-                        </div>
-                        <div style="color: #CCCCCC; font-size: 13px;">
-                            <strong>Tags:</strong> ${ioc.tags.join(', ')}
-                        </div>
-                    </div>
-                `;
-            });
-            
-            detailsHTML += `
-                    <button onclick="this.parentElement.parentElement.remove()" style="background: #FFAA44; color: #000000; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-top: 16px;">Close</button>
-                </div>
-            `;
-            
-            showModal(detailsHTML);
-        }
-
-        function showURLsDetail() {
-            if (currentURLsData.length === 0) {
-                alert('No URL data available. Please wait for data to load or try refreshing.');
-                return;
-            }
-            
-            let detailsHTML = `
-                <div style="background: #111111; color: #FFFFFF; padding: 20px; border-radius: 8px; max-width: 800px; max-height: 600px; overflow-y: auto;">
-                    <h2 style="margin-bottom: 20px; color: #44AAFF;">🌐 Malicious URLs Detail</h2>
-                    <p style="margin-bottom: 20px; color: #CCCCCC;">Latest ${currentURLsData.length} malicious URLs (total active: ${urlsCount}):</p>
-            `;
-            
-            currentURLsData.forEach((url, index) => {
-                const timeAgo = getTimeAgo(new Date(url.first_seen));
-                const confidence = url.confidence;
-                let confidenceColor = '#44AA44';
-                if (confidence >= 90) confidenceColor = '#FF4444';
-                else if (confidence >= 75) confidenceColor = '#FFAA44';
-                else if (confidence >= 50) confidenceColor = '#FFDD44';
-                
-                let statusColor = url.url_status === 'online' ? '#FF4444' : '#44AA44';
-                
-                detailsHTML += `
-                    <div style="background: #1a1a1a; border: 1px solid #444444; border-radius: 6px; padding: 16px; margin-bottom: 12px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <strong style="color: #FFFFFF; font-size: 16px;">${url.threat.replace('_', ' ').toUpperCase()}</strong>
-                            <span style="color: ${statusColor}; font-size: 12px;">${url.url_status.toUpperCase()}</span>
-                        </div>
-                        <div style="color: #CCCCCC; font-size: 14px; margin-bottom: 8px;">
-                            <strong>URL:</strong> ${url.url}<br>
-                            <strong>Threat:</strong> ${url.malware}<br>
-                            <strong>Confidence:</strong> <span style="color: ${confidenceColor};">${confidence}%</span><br>
-                            <strong>First Seen:</strong> ${timeAgo}
-                        </div>
-                        <div style="color: #CCCCCC; font-size: 13px;">
-                            <strong>Tags:</strong> ${url.tags.join(', ')}
-                        </div>
-                    </div>
-                `;
-            });
-            
-            detailsHTML += `
-                    <button onclick="this.parentElement.parentElement.remove()" style="background: #44AAFF; color: #000000; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-top: 16px;">Close</button>
-                </div>
-            `;
-            
-            showModal(detailsHTML);
-        }
-
-        function showModal(htmlContent) {
-            // Create modal overlay
-            const modalOverlay = document.createElement('div');
-            modalOverlay.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.8);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 1000;
-                backdrop-filter: blur(5px);
-            `;
-            
-            modalOverlay.innerHTML = htmlContent;
-            
-            // Close modal when clicking overlay
-            modalOverlay.addEventListener('click', function(e) {
-                if (e.target === modalOverlay) {
-                    modalOverlay.remove();
-                }
-            });
-            
-            // Close modal with Escape key
-            const escapeHandler = function(e) {
-                if (e.key === 'Escape') {
-                    modalOverlay.remove();
-                    document.removeEventListener('keydown', escapeHandler);
-                }
-            };
-            document.addEventListener('keydown', escapeHandler);
-            
-            document.body.appendChild(modalOverlay);
-        }
-
-        // Helper functions
-        function getTimeAgo(date) {
-            const now = new Date();
-            const diffMs = now - date;
-            const diffMins = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMs / 3600000);
-            
-            if (diffMins < 60) {
-                return `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`;
-            } else if (diffHours < 24) {
-                return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
-            } else {
-                const diffDays = Math.floor(diffMs / 86400000);
-                return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
-            }
-        }
-
-        function truncateIOC(ioc) {
-            if (ioc.length > 50) {
-                return ioc.substring(0, 47) + '...';
-            }
-            return ioc;
-        }
-
-        // Manual refresh functions
-        function refreshThreatFeed() {
-            document.getElementById('malware-count').textContent = 'Loading...';
-            document.getElementById('threats-list').innerHTML = `
-                <div style="text-align: center; padding: 40px; color: #CCCCCC;">
-                    <div style="font-size: 18px; margin-bottom: 8px;">Refreshing threat intelligence...</div>
-                    <div style="color: #CCCCCC;">Fetching latest IOCs from threat feeds</div>
-                </div>
-            `;
-            updateThreatIntelligence();
-        }
-
-        function refreshCISAAlerts() {
-            document.getElementById('exploits-count').textContent = 'Loading...';
-            document.getElementById('cisa-list').innerHTML = `
-                <div style="text-align: center; padding: 40px; color: #CCCCCC;">
-                    <div style="font-size: 18px; margin-bottom: 8px;">Refreshing CISA alerts...</div>
-                    <div style="color: #CCCCCC;">Fetching known exploited vulnerabilities</div>
-                </div>
-            `;
-            updateCISAExploits();
-        }
-
-        function refreshRiskAssessment() {
-            updatePersonalRiskAssessment();
-        }
-
-        // Affiliate tracking function
-        function trackAffiliate(productId, retailer) {
-            console.log(`Affiliate click tracked: ${productId} -> ${retailer}`);
-            alert(`Redirecting to ${retailer} for ${productId}...\n\nIn production, this would:\n• Track the affiliate click\n• Redirect to the actual product page\n• Earn commission if purchase is made`);
-            return false;
-        }
-
-        // Generate cyber plan functionality
-        function generateCyberPlan() {
-            alert('Generating your personalized cybersecurity action plan...\n\nThis will include:\n• Current threat landscape assessment\n• Personal risk evaluation\n• Security tool recommendations\n• Incident response procedures\n• Regular security maintenance schedule');
-        }
-
-        // Update data every 15 minutes (900000 milliseconds)
-        setInterval(updateAllThreatData, 900000);
-
-        // Smooth scrolling for navigation
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-
-        // Animate elements on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
         };
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-in');
+        // City coordinate to database key mapping
+        const CITY_COORDINATES_TO_KEY = {
+            '33.4484,-112.0740': 'phoenix_az',
+            '34.0522,-118.2437': 'los_angeles_ca',
+            '37.7749,-122.4194': 'san_francisco_ca',
+            '38.5816,-121.4944': 'sacramento_ca',
+            '39.7392,-104.9903': 'denver_co',
+            '41.2033,-77.1945': 'pennsylvania',
+            '43.6532,-116.3113': 'boise_id',
+            '41.8781,-87.6298': 'chicago_il',
+            '39.7817,-86.1478': 'indianapolis_in',
+            '38.2904,-92.6390': 'missouri',
+            '46.8772,-96.7898': 'fargo_nd',
+            '36.1627,-86.7816': 'nashville_tn',
+            '30.2672,-97.7431': 'austin_tx',
+            '32.7767,-96.7970': 'dallas_tx',
+            '29.7604,-95.3698': 'houston_tx',
+            '40.7608,-111.8910': 'salt_lake_city_ut',
+            '47.0379,-122.9015': 'olympia_wa',
+            '47.6062,-122.3321': 'seattle_wa'
+        };
+
+        /**
+         * Updates emergency contacts based on selected city
+         * @param {string} cityKey - The database key for the city
+         * @param {string} containerId - The ID of the container to update (default: 'emergency-contacts-grid')
+         */
+        function updateEmergencyContacts(cityKey, containerId = 'emergency-contacts-grid') {
+            const contacts = EMERGENCY_CONTACTS_DB[cityKey];
+            const container = document.getElementById(containerId);
+            
+            if (!contacts || !container) {
+                console.warn(`No contacts found for ${cityKey} or container ${containerId} not found`);
+                return;
+            }
+            
+            // Generate contacts grid HTML
+            const contactsHTML = contacts.contacts.map(contact => `
+                <div class="contact-card">
+                    <div class="contact-type">${contact.type}</div>
+                    <div class="contact-name">${contact.name}</div>
+                    <div class="contact-number">${contact.number}</div>
+                    <div class="contact-description">${contact.description}</div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = contactsHTML;
+            
+            // Update page title if element exists
+            const titleElement = document.getElementById('emergency-contacts-title');
+            if (titleElement) {
+                titleElement.textContent = `Critical Cybersecurity Contacts - ${contacts.cityName}`;
+            }
+            
+            console.log(`Emergency contacts updated for ${contacts.cityName}`);
+        }
+
+        /**
+         * Updates emergency contacts when city selector changes
+         * Call this function in your city selector's onchange event
+         */
+        function updateContactsFromCitySelector() {
+            const citySelect = document.getElementById('city-select');
+            if (!citySelect || !citySelect.value) return;
+            
+            const cityKey = CITY_COORDINATES_TO_KEY[citySelect.value];
+            if (cityKey) {
+                updateEmergencyContacts(cityKey);
+            }
+        }
+
+        /**
+         * Gets city key from coordinates (for auto-detected location)
+         * @param {number} lat - Latitude
+         * @param {number} lon - Longitude
+         * @returns {string|null} City key or null if not found
+         */
+        function getCityKeyFromCoordinates(lat, lon) {
+            // Find closest city from our database
+            let closestCity = null;
+            let minDistance = Infinity;
+            
+            Object.entries(CITY_COORDINATES_TO_KEY).forEach(([coords, key]) => {
+                const [cityLat, cityLon] = coords.split(',').map(Number);
+                const distance = Math.sqrt(
+                    Math.pow(lat - cityLat, 2) + Math.pow(lon - cityLon, 2)
+                );
+                
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestCity = key;
                 }
             });
-        }, observerOptions);
+            
+            // Only return if within reasonable distance (about 2 degrees)
+            return minDistance < 2 ? closestCity : 'denver_co'; // Default to Denver
+        }
 
-        document.querySelectorAll('.equipment-card, .contact-card, .threat-item, .alert-item').forEach(el => {
-            observer.observe(el);
-        });
+        /**
+         * Auto-detect user location and update contacts
+         */
+        function autoDetectLocation() {
+            if (!navigator.geolocation) {
+                alert('Geolocation is not supported by this browser.');
+                return;
+            }
 
-        // Emergency contact click to call (on mobile)
-        document.querySelectorAll('.contact-number').forEach(number => {
-            number.addEventListener('click', function() {
-                if (/Mobi|Android/i.test(navigator.userAgent)) {
-                    const phoneNumber = this.textContent.replace(/\D/g, '');
-                    if (phoneNumber.length >= 10) {
-                        window.location.href = 'tel:' + phoneNumber;
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    
+                    const cityKey = getCityKeyFromCoordinates(lat, lon);
+                    if (cityKey) {
+                        updateEmergencyContacts(cityKey);
+                        
+                        // Update the dropdown to reflect the detected location
+                        const citySelect = document.getElementById('city-select');
+                        const matchingOption = Array.from(citySelect.options).find(option => 
+                            CITY_COORDINATES_TO_KEY[option.value] === cityKey
+                        );
+                        if (matchingOption) {
+                            citySelect.value = matchingOption.value;
+                        }
+                        
+                        console.log(`Location auto-detected: ${lat}, ${lon} -> ${cityKey}`);
+                    } else {
+                        alert('Could not find emergency contacts for your location. Please select your city manually.');
                     }
+                },
+                function(error) {
+                    console.error('Geolocation error:', error);
+                    alert('Could not detect your location. Please select your city manually.');
                 }
-            });
-        });
-
-        // Additional cybersecurity education tooltips (optional enhancement)
-        function showTooltip(element, text) {
-            // Future enhancement: show educational tooltips on hover
-            console.log(`Tooltip: ${text}`);
+            );
         }
-
-        // Simulate real-time threat updates (for demo purposes)
-        function simulateRealTimeUpdates() {
-            // Occasionally update threat counts to show "live" monitoring
-            setInterval(() => {
-                if (Math.random() > 0.95) { // 5% chance every interval
-                    const randomIncrease = Math.floor(Math.random() * 3) + 1;
-                    malwareCount += randomIncrease;
-                    
-                    // Update display
-                    document.getElementById('malware-count').textContent = malwareCount;
-                    document.getElementById('malware-detail').textContent = `${malwareCount} recent IOCs detected`;
-                    
-                    console.log(`Real-time update: +${randomIncrease} new IOCs detected`);
-                    
-                    // Recalculate threat level
-                    updateThreatLevelDisplay();
-                }
-            }, 30000); // Check every 30 seconds
-        }
-
-        // Start real-time simulation
-        simulateRealTimeUpdates();
-
-        console.log('Cybersecurity threat monitoring system initialized');
-    </script>
-</body>
-</html>
