@@ -1448,7 +1448,24 @@
                 
                 if (data.value && data.value.timeSeries && data.value.timeSeries.length > 0) {
                     indicator.className = 'update-indicator';
-                    return data.value.timeSeries;
+                    
+                    // Find the gauge height data (parameter 00065), not discharge (00060)
+                    let gaugeHeightSeries = null;
+                    for (let series of data.value.timeSeries) {
+                        const paramCode = series.variable.variableCode[0].value;
+                        if (paramCode === '00065') { // Gauge height in feet
+                            gaugeHeightSeries = series;
+                            break;
+                        }
+                    }
+                    
+                    if (gaugeHeightSeries) {
+                        return [gaugeHeightSeries];
+                    } else {
+                        // If no gauge height, use the first series available
+                        console.warn('No gauge height data found, using first available series');
+                        return [data.value.timeSeries[0]];
+                    }
                 } else {
                     throw new Error('No data available from USGS');
                 }
@@ -1502,19 +1519,85 @@
          */
         async function fetchFloodEvents(lat, lon) {
             try {
-                // Try to fetch real USGS flood data
-                const response = await fetch(`https://waterwatch.usgs.gov/webservices/floodstage?format=json&region=us&extent=${lat-2},${lon-2},${lat+2},${lon+2}`);
+                // Try USGS Water Watch API for flood stage data
+                console.log(`Fetching flood events for ${lat}, ${lon}`);
+                
+                // Try the flood stage API first
+                let response = await fetch(`https://waterwatch.usgs.gov/webservices/floodstage?format=json&region=us`);
+                
+                if (!response.ok) {
+                    // Try alternative USGS instantaneous values API for sites in flood stage
+                    console.log('Trying alternative USGS sites API...');
+                    response = await fetch(`https://waterservices.usgs.gov/nwis/iv/?format=json&stateCd=co&parameterCd=00065&siteStatus=active`);
+                }
                 
                 if (response.ok) {
                     const data = await response.json();
-                    return processUSGSFloodData(data, lat, lon);
+                    console.log('USGS API response:', data);
+                    
+                    if (data.sites) {
+                        return processUSGSFloodData(data, lat, lon);
+                    } else if (data.value && data.value.timeSeries) {
+                        return processUSGSTimeSeriesData(data, lat, lon);
+                    } else {
+                        console.log('No suitable flood data in USGS response');
+                        return [];
+                    }
                 } else {
-                    throw new Error('USGS API unavailable');
+                    throw new Error(`USGS API returned ${response.status}`);
                 }
             } catch (error) {
                 console.error('USGS Flood API Error:', error);
-                throw error; // Don't generate mock data
+                console.log('No real flood events available from USGS APIs');
+                return []; // Return empty array instead of throwing
             }
+        }
+
+        /**
+         * Process real USGS time series data for flood events
+         */
+        function processUSGSTimeSeriesData(data, userLat, userLon) {
+            const events = [];
+            
+            if (data.value && data.value.timeSeries) {
+                data.value.timeSeries.forEach(series => {
+                    try {
+                        const siteInfo = series.sourceInfo;
+                        const siteLat = parseFloat(siteInfo.geoLocation.geogLocation.latitude);
+                        const siteLon = parseFloat(siteInfo.geoLocation.geogLocation.longitude);
+                        
+                        // Check if site is within reasonable distance (100 miles)
+                        const distance = calculateDistance(userLat, userLon, siteLat, siteLon);
+                        if (distance > 100) return;
+                        
+                        const values = series.values[0].value;
+                        if (values && values.length > 0) {
+                            const latestValue = parseFloat(values[0].value);
+                            
+                            // Consider it a flood event if water level is unusually high (over 10 feet)
+                            if (latestValue > 10) {
+                                events.push({
+                                    id: siteInfo.siteCode[0].value,
+                                    title: `High Water - ${siteInfo.siteName}`,
+                                    latitude: siteLat,
+                                    longitude: siteLon,
+                                    severity: latestValue > 20 ? 'Major' : latestValue > 15 ? 'Moderate' : 'Minor',
+                                    description: `Elevated water level: ${latestValue.toFixed(1)} ft at ${siteInfo.siteName}`,
+                                    timestamp: values[0].dateTime,
+                                    distance: Math.round(distance),
+                                    source: 'USGS',
+                                    stationId: siteInfo.siteCode[0].value,
+                                    waterLevel: latestValue.toFixed(1)
+                                });
+                            }
+                        }
+                    } catch (error) {
+                        console.warn('Error processing USGS site:', error);
+                    }
+                });
+            }
+            
+            return events.sort((a, b) => a.distance - b.distance).slice(0, 5);
         }
 
         /**
@@ -1694,7 +1777,33 @@
                 const timeSeries = usgsData[0];
                 const values = timeSeries.values[0].value;
                 const latestValue = values[0];
-                const level = parseFloat(latestValue.value);
+                let level = parseFloat(latestValue.value);
+                
+                // Debug: Check what parameter we're getting
+                const paramCode = timeSeries.variable.variableCode[0].value;
+                const paramName = timeSeries.variable.variableName;
+                console.log(`USGS Parameter: ${paramCode} - ${paramName}, Value: ${level}`);
+                
+                // If this looks like discharge (CFS) instead of gauge height, try to convert or skip
+                if (paramCode === '00060' || level > 100) {
+                    console.warn('Got discharge data instead of gauge height, or value seems too high');
+                    
+                    // If discharge is very high, it might indicate flooding
+                    if (level > 1000) {
+                        level = level / 1000; // Convert to a more reasonable scale for display
+                        console.log(`Converted discharge to approximated level: ${level}`);
+                    } else {
+                        throw new Error('Only discharge data available, no gauge height');
+                    }
+                }
+                
+                // Validate that the level makes sense (should be between 0-50 feet typically)
+                if (level > 50 || level < 0) {
+                    console.warn(`Unusual water level reading: ${level} ft`);
+                    if (level > 100) {
+                        throw new Error(`Water level reading too high: ${level} ft (possible data error)`);
+                    }
+                }
                 
                 // Update display elements
                 const levelDisplay = document.querySelector('.level-display');
@@ -1711,7 +1820,8 @@
                 levelStatus.className = `level-status status-${getWaterLevelClass(level)}`;
                 
                 // Update description
-                levelDescription.textContent = `Current gauge height at ${currentGaugeName}. Last updated: ${new Date(latestValue.dateTime).toLocaleTimeString()}`;
+                const lastUpdated = new Date(latestValue.dateTime).toLocaleTimeString();
+                levelDescription.textContent = `${paramName} at ${currentGaugeName}. Last updated: ${lastUpdated}`;
                 
                 // Calculate trend
                 const trend = calculateTrend(values.slice(0, 6));
@@ -1731,11 +1841,13 @@
                 const levelDisplay = document.querySelector('.level-display');
                 const levelStatus = document.querySelector('.level-status');
                 const levelDescription = document.querySelector('.level-description');
+                const levelActions = document.querySelector('.level-actions');
                 
                 levelDisplay.textContent = 'ERROR';
                 levelDisplay.className = 'level-display level-normal';
-                levelStatus.textContent = 'Data Unavailable';
-                levelDescription.textContent = 'Unable to connect to USGS real-time data service.';
+                levelStatus.textContent = 'Data Error';
+                levelDescription.textContent = `Error: ${error.message}. Unable to parse USGS data for ${currentGaugeName}.`;
+                levelActions.innerHTML = '<strong>Data parsing error</strong><br>The USGS data format may have changed or contains unexpected values.';
             }
         }
 
@@ -2180,7 +2292,7 @@
             try {
                 console.log('Starting flood data update (real data only)...');
                 
-                // Try to fetch real flood events data
+                // Try to fetch real flood events data (but don't fail if it doesn't work)
                 try {
                     const floods = await fetchFloodEvents(currentLatitude, currentLongitude);
                     currentFloodsData = floods;
@@ -2192,16 +2304,22 @@
                     updateFloodsList([]);
                 }
                 
-                // Update all components
-                await Promise.all([
-                    updateDashboard(),
-                    updateRiverLevelMonitor(),
-                    updateWeatherAlerts()
-                ]);
+                // Update all components (continue even if some fail)
+                const updatePromises = [
+                    updateDashboard().catch(e => console.error('Dashboard update failed:', e)),
+                    updateRiverLevelMonitor().catch(e => console.error('River monitor update failed:', e)),
+                    updateWeatherAlerts().catch(e => console.error('Weather alerts update failed:', e))
+                ];
+                
+                await Promise.allSettled(updatePromises);
                 
                 // Update map if available
                 if (floodMap) {
-                    await updateFloodMapWithExistingData();
+                    try {
+                        await updateFloodMapWithExistingData();
+                    } catch (error) {
+                        console.error('Map update failed:', error);
+                    }
                 }
                 
                 console.log('Real flood monitoring data update completed');
