@@ -967,58 +967,10 @@
         <div class="container">
             <h2 class="section-title" id="emergency-contacts-title">Critical Emergency Contacts</h2>
             <div class="emergency-contacts">
-                <!-- DEBUG: Test button to manually trigger contacts update -->
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <button onclick="testContactsUpdate()" style="background: #FF4444; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
-                        🔧 TEST: Load Denver Contacts
-                    </button>
-                    <button onclick="testContactsUpdate('los_angeles_ca')" style="background: #44AA44; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">
-                        🔧 TEST: Load LA Contacts
-                    </button>
-                </div>
-                
-                <div id="emergency-contacts-grid" class="contacts-grid">
-                    <!-- Default contacts will be loaded here immediately -->
-                    <div class="contact-card">
-                        <div class="contact-type">Emergency Services</div>
-                        <div class="contact-name">Fire Department</div>
-                        <div class="contact-number">911</div>
-                        <div class="contact-description">For immediate life-threatening emergencies and rescue operations</div>
-                    </div>
-                    
-                    <div class="contact-card">
-                        <div class="contact-type">Earthquake Information</div>
-                        <div class="contact-name">USGS Earthquake Hazards</div>
-                        <div class="contact-number">(303) 273-8500</div>
-                        <div class="contact-description">Real-time earthquake data and scientific information</div>
-                    </div>
-                    
-                    <div class="contact-card">
-                        <div class="contact-type">Emergency Management</div>
-                        <div class="contact-name">Denver Emergency Mgmt</div>
-                        <div class="contact-number">(720) 913-1311</div>
-                        <div class="contact-description">Local emergency coordination and public safety information</div>
-                    </div>
-                    
-                    <div class="contact-card">
-                        <div class="contact-type">Utilities Emergency</div>
-                        <div class="contact-name">Xcel Energy</div>
-                        <div class="contact-number">(800) 895-1999</div>
-                        <div class="contact-description">Report gas leaks and electrical hazards after earthquakes</div>
-                    </div>
-                    
-                    <div class="contact-card">
-                        <div class="contact-type">Red Cross Shelter</div>
-                        <div class="contact-name">American Red Cross</div>
-                        <div class="contact-number">(303) 722-7474</div>
-                        <div class="contact-description">Emergency shelter locations and disaster relief services</div>
-                    </div>
-                    
-                    <div class="contact-card">
-                        <div class="contact-type">Structural Assessment</div>
-                        <div class="contact-name">Building Inspection</div>
-                        <div class="contact-number">(720) 865-2500</div>
-                        <div class="contact-description">Post-earthquake building safety inspections</div>
+                <div class="contacts-grid" id="emergency-contacts-grid">
+                    <!-- Emergency contacts will be populated automatically based on location -->
+                    <div style="text-align: center; padding: 40px; color: #CCCCCC;">
+                        Loading emergency contacts for your location...
                     </div>
                 </div>
             </div>
@@ -1041,7 +993,73 @@
     </section>
 
     <script>
-        // Emergency Contacts Database - Complete version from your code
+        // =========================
+        // GLOBAL FUNCTIONS FIRST 
+        // =========================
+        
+        // Simple force load function that should definitely work
+        function forceLoadContacts() {
+            console.log('FORCE LOADING CONTACTS...');
+            const container = document.getElementById('emergency-contacts-grid');
+            
+            // Directly insert Denver contacts
+            container.innerHTML = `
+                <div class="contact-card">
+                    <div class="contact-type">Emergency Services</div>
+                    <div class="contact-name">Fire Department</div>
+                    <div class="contact-number">911</div>
+                    <div class="contact-description">For immediate life-threatening emergencies and active fire reports</div>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-type">Evacuation Info</div>
+                    <div class="contact-name">Jefferson County Sheriff</div>
+                    <div class="contact-number">(303) 277-0211</div>
+                    <div class="contact-description">Non-emergency line for evacuation status and road closures</div>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-type">Fire Information</div>
+                    <div class="contact-name">CO Fire Information</div>
+                    <div class="contact-number">(303) 275-5360</div>
+                    <div class="contact-description">Current fire conditions, restrictions, and weather updates</div>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-type">Utilities Emergency</div>
+                    <div class="contact-name">Xcel Energy</div>
+                    <div class="contact-number">(800) 895-1999</div>
+                    <div class="contact-description">Report power lines down or request emergency shutoffs</div>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-type">Red Cross Shelter</div>
+                    <div class="contact-name">American Red Cross</div>
+                    <div class="contact-number">(303) 722-7474</div>
+                    <div class="contact-description">Emergency shelter locations and disaster relief services</div>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-type">Animal Services</div>
+                    <div class="contact-name">Jefferson County Animal Control</div>
+                    <div class="contact-number">(303) 271-5070</div>
+                    <div class="contact-description">Emergency pet sheltering and large animal evacuation</div>
+                </div>
+            `;
+            
+            console.log('FORCE LOAD COMPLETE - check if contacts changed!');
+            
+            // Update title too
+            const titleElement = document.getElementById('emergency-contacts-title');
+            if (titleElement) {
+                titleElement.textContent = 'Emergency Contacts - Denver, CO (FORCE LOADED)';
+            }
+        }
+
+        // Test function to manually trigger contacts update (GLOBAL)
+        function testContactsUpdate(cityKey = 'denver_co') {
+            console.log(`[TEST] Manual test button clicked for: ${cityKey}`);
+            forceLoadContacts(); // Just use force load for now
+        }
+
+        // =========================
+        // EMERGENCY CONTACTS DATABASE
+        // =========================
         const EMERGENCY_CONTACTS_DB = {
             'phoenix_az': {
                 cityName: 'Phoenix, AZ',
@@ -1355,7 +1373,7 @@
             if (cityKey) {
                 updateEmergencyContacts(cityKey);
                 
-                // Also update the location for earthquake data
+                // STEP 7: Also update the location for earthquake data
                 const [lat, lon] = citySelect.value.split(',').map(Number);
                 currentLatitude = lat;
                 currentLongitude = lon;
