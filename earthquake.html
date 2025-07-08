@@ -377,6 +377,22 @@
             margin-bottom: 8px;
         }
 
+        .city-selector {
+            background: #1a1a1a;
+            border: 1px solid #444444;
+            border-radius: 4px;
+            color: #FFFFFF;
+            padding: 8px 12px;
+            margin: 12px;
+            font-size: 14px;
+            min-width: 200px;
+        }
+
+        .city-selector:focus {
+            border-color: #FFFFFF;
+            outline: none;
+        }
+
         .refresh-btn {
             background: transparent;
             border: 1px solid #FFFFFF;
@@ -783,6 +799,27 @@
                 <div class="location-controls">
                     <div class="location-display">Monitoring: <span id="earthquakes-location">Detecting your location...</span></div>
                     <div class="location-display">Search Radius: <span id="search-radius">300 miles</span></div>
+                    <select id="city-select" class="city-selector" onchange="updateContactsFromCitySelector()">
+                        <option value="">Auto-detect location</option>
+                        <option value="33.4484,-112.0740">Phoenix, AZ</option>
+                        <option value="34.0522,-118.2437">Los Angeles, CA</option>
+                        <option value="37.7749,-122.4194">San Francisco, CA</option>
+                        <option value="38.5816,-121.4944">Sacramento, CA</option>
+                        <option value="39.7392,-104.9903">Denver, CO</option>
+                        <option value="41.2033,-77.1945">Pennsylvania</option>
+                        <option value="43.6532,-116.3113">Boise, ID</option>
+                        <option value="41.8781,-87.6298">Chicago, IL</option>
+                        <option value="39.7817,-86.1478">Indianapolis, IN</option>
+                        <option value="38.2904,-92.6390">Missouri</option>
+                        <option value="46.8772,-96.7898">Fargo, ND</option>
+                        <option value="36.1627,-86.7816">Nashville, TN</option>
+                        <option value="30.2672,-97.7431">Austin, TX</option>
+                        <option value="32.7767,-96.7970">Dallas, TX</option>
+                        <option value="29.7604,-95.3698">Houston, TX</option>
+                        <option value="40.7608,-111.8910">Salt Lake City, UT</option>
+                        <option value="47.0379,-122.9015">Olympia, WA</option>
+                        <option value="47.6062,-122.3321">Seattle, WA</option>
+                    </select>
                 </div>
                 
                 <div id="earthquakes-list" class="earthquakes-list">
@@ -928,9 +965,10 @@
     <!-- Emergency Contacts -->
     <section class="section">
         <div class="container">
-            <h2 class="section-title">Critical Emergency Contacts</h2>
+            <h2 class="section-title" id="emergency-contacts-title">Critical Emergency Contacts</h2>
             <div class="emergency-contacts">
-                <div class="contacts-grid">
+                <div id="emergency-contacts-grid" class="contacts-grid">
+                    <!-- Contacts will be dynamically loaded here -->
                     <div class="contact-card">
                         <div class="contact-type">Emergency Services</div>
                         <div class="contact-name">Emergency Dispatch</div>
@@ -939,38 +977,10 @@
                     </div>
                     
                     <div class="contact-card">
-                        <div class="contact-type">Earthquake Information</div>
-                        <div class="contact-name">USGS Earthquake Hazards</div>
-                        <div class="contact-number">(303) 273-8500</div>
-                        <div class="contact-description">Real-time earthquake data and scientific information</div>
-                    </div>
-                    
-                    <div class="contact-card">
-                        <div class="contact-type">Emergency Management</div>
-                        <div class="contact-name">Denver Emergency Mgmt</div>
-                        <div class="contact-number">(720) 913-1311</div>
-                        <div class="contact-description">Local emergency coordination and public safety information</div>
-                    </div>
-                    
-                    <div class="contact-card">
-                        <div class="contact-type">Utilities Emergency</div>
-                        <div class="contact-name">Xcel Energy</div>
-                        <div class="contact-number">(800) 895-1999</div>
-                        <div class="contact-description">Report gas leaks and electrical hazards after earthquakes</div>
-                    </div>
-                    
-                    <div class="contact-card">
-                        <div class="contact-type">Red Cross Shelter</div>
-                        <div class="contact-name">American Red Cross</div>
-                        <div class="contact-number">(303) 722-7474</div>
-                        <div class="contact-description">Emergency shelter locations and disaster relief services</div>
-                    </div>
-                    
-                    <div class="contact-card">
-                        <div class="contact-type">Structural Assessment</div>
-                        <div class="contact-name">Building Inspection</div>
-                        <div class="contact-number">(720) 865-2500</div>
-                        <div class="contact-description">Post-earthquake building safety inspections</div>
+                        <div class="contact-type">Loading...</div>
+                        <div class="contact-name">Detecting Location</div>
+                        <div class="contact-number">...</div>
+                        <div class="contact-description">Please wait while we load local emergency contacts</div>
                     </div>
                 </div>
             </div>
@@ -993,558 +1003,344 @@
     </section>
 
     <script>
-        // Global variables
-        let currentLatitude = 39.7392; // Default to Denver
-        let currentLongitude = -104.9903;
-        let currentLocationName = 'Denver, CO';
-
-        // Initialize everything when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Earthquake page loaded, starting data collection');
-            detectUserLocation();
-        });
-
-        // Auto-detect user location
-        async function detectUserLocation() {
-            // Update initial status
-            document.getElementById('threat-level-text').innerHTML = `Current Status: <strong>DETECTING LOCATION</strong>...`;
-            
-            if (!navigator.geolocation) {
-                console.log('Geolocation not supported');
-                updateLocationDisplay('Denver, CO (Default)');
-                updateAllData();
-                return;
+        // Emergency Contacts Database - Complete version from your code
+        const EMERGENCY_CONTACTS_DB = {
+            'phoenix_az': {
+                cityName: 'Phoenix, AZ',
+                contacts: [
+                    { type: 'Emergency Services', name: 'Fire Department', number: '911', description: 'For immediate life-threatening emergencies and active fire reports' },
+                    { type: 'Evacuation Info', name: 'Maricopa County Emergency Management', number: '(602) 273-1411', description: 'Non-emergency line for evacuation status and road closures' },
+                    { type: 'Fire Information', name: 'Arizona State Forestry', number: '(602) 771-1400', description: 'Current fire conditions, restrictions, and weather updates' },
+                    { type: 'Utilities Emergency', name: 'APS Emergency Line', number: '(855) 688-2437', description: 'Report power lines down or request emergency shutoffs' },
+                    { type: 'Red Cross Shelter', name: 'American Red Cross Arizona', number: '(602) 336-6660', description: 'Emergency shelter locations and disaster relief services' },
+                    { type: 'Animal Services', name: 'Maricopa County Animal Control', number: '(602) 506-7387', description: 'Emergency pet sheltering and large animal evacuation' }
+                ]
+            },
+            'los_angeles_ca': {
+                cityName: 'Los Angeles, CA',
+                contacts: [
+                    { type: 'Emergency Services', name: 'Fire Department', number: '911', description: 'For immediate life-threatening emergencies and active fire reports' },
+                    { type: 'Evacuation Info', name: 'LA County Emergency Management', number: '(323) 881-2300', description: 'Non-emergency line for evacuation status and road closures' },
+                    { type: 'Fire Information', name: 'CAL FIRE Information Line', number: '(916) 653-7772', description: 'Current fire conditions, restrictions, and weather updates' },
+                    { type: 'Utilities Emergency', name: 'LADWP Emergency', number: '(800) 342-5397', description: 'Report power lines down or request emergency shutoffs' },
+                    { type: 'Red Cross Shelter', name: 'American Red Cross LA', number: '(323) 739-5200', description: 'Emergency shelter locations and disaster relief services' },
+                    { type: 'Animal Services', name: 'LA Animal Services', number: '(888) 452-7381', description: 'Emergency pet sheltering and large animal evacuation' }
+                ]
+            },
+            'san_francisco_ca': {
+                cityName: 'San Francisco, CA',
+                contacts: [
+                    { type: 'Emergency Services', name: 'Fire Department', number: '911', description: 'For immediate life-threatening emergencies and active fire reports' },
+                    { type: 'Evacuation Info', name: 'SF Emergency Management', number: '(415) 558-2700', description: 'Non-emergency line for evacuation status and road closures' },
+                    { type: 'Fire Information', name: 'CAL FIRE Bay Area', number: '(707) 967-5941', description: 'Current fire conditions, restrictions, and weather updates' },
+                    { type: 'Utilities Emergency', name: 'PG&E Emergency Line', number: '(800) 743-5000', description: 'Report power lines down or request emergency shutoffs' },
+                    { type: 'Red Cross Shelter', name: 'American Red Cross Bay Area', number: '(415) 427-8000', description: 'Emergency shelter locations and disaster relief services' },
+                    { type: 'Animal Services', name: 'SF Animal Control', number: '(415) 554-6364', description: 'Emergency pet sheltering and large animal evacuation' }
+                ]
+            },
+            'sacramento_ca': {
+                cityName: 'Sacramento, CA',
+                contacts: [
+                    { type: 'Emergency Services', name: 'Fire Department', number: '911', description: 'For immediate life-threatening emergencies and active fire reports' },
+                    { type: 'Evacuation Info', name: 'Sacramento County Emergency Services', number: '(916) 874-6851', description: 'Non-emergency line for evacuation status and road closures' },
+                    { type: 'Fire Information', name: 'CAL FIRE Sacramento Unit', number: '(530) 889-0111', description: 'Current fire conditions, restrictions, and weather updates' },
+                    { type: 'Utilities Emergency', name: 'SMUD Emergency Line', number: '(888) 456-7683', description: 'Report power lines down or request emergency shutoffs' },
+                    { type: 'Red Cross Shelter', name: 'American Red Cross Sacramento', number: '(916) 993-7070', description: 'Emergency shelter locations and disaster relief services' },
+                    { type: 'Animal Services', name: 'Sacramento County Animal Control', number: '(916) 874-6894', description: 'Emergency pet sheltering and large animal evacuation' }
+                ]
+            },
+            'denver_co': {
+                cityName: 'Denver, CO',
+                contacts: [
+                    { type: 'Emergency Services', name: 'Fire Department', number: '911', description: 'For immediate life-threatening emergencies and active fire reports' },
+                    { type: 'Evacuation Info', name: 'Jefferson County Sheriff', number: '(303) 277-0211', description: 'Non-emergency line for evacuation status and road closures' },
+                    { type: 'Fire Information', name: 'CO Fire Information', number: '(303) 275-5360', description: 'Current fire conditions, restrictions, and weather updates' },
+                    { type: 'Utilities Emergency', name: 'Xcel Energy', number: '(800) 895-1999', description: 'Report power lines down or request emergency shutoffs' },
+                    { type: 'Red Cross Shelter', name: 'American Red Cross', number: '(303) 722-7474', description: 'Emergency shelter locations and disaster relief services' },
+                    { type: 'Animal Services', name: 'Jefferson County Animal Control', number: '(303) 271-5070', description: 'Emergency pet sheltering and large animal evacuation' }
+                ]
+            },
+            'pennsylvania': {
+                cityName: 'Pennsylvania',
+                contacts: [
+                    { type: 'Emergency Services', name: 'Fire Department', number: '911', description: 'For immediate life-threatening emergencies and active fire reports' },
+                    { type: 'Evacuation Info', name: 'PA Emergency Management', number: '(717) 651-2001', description: 'Non-emergency line for evacuation status and road closures' },
+                    { type: 'Fire Information', name: 'PA Department of Conservation', number: '(717) 787-2925', description: 'Current fire conditions, restrictions, and weather updates' },
+                    { type: 'Utilities Emergency', name: 'PPL Electric Emergency', number: '(800) 342-5775', description: 'Report power lines down or request emergency shutoffs' },
+                    { type: 'Red Cross Shelter', name: 'American Red Cross PA', number: '(717) 526-1681', description: 'Emergency shelter locations and disaster relief services' },
+                    { type: 'Animal Services', name: 'PA Department of Agriculture', number: '(717) 772-2852', description: 'Emergency pet sheltering and large animal evacuation' }
+                ]
+            },
+            'boise_id': {
+                cityName: 'Boise, ID',
+                contacts: [
+                    { type: 'Emergency Services', name: 'Fire Department', number: '911', description: 'For immediate life-threatening emergencies and active fire reports' },
+                    { type: 'Evacuation Info', name: 'Ada County Emergency Management', number: '(208) 577-4750', description: 'Non-emergency line for evacuation status and road closures' },
+                    { type: 'Fire Information', name: 'Idaho Department of Lands', number: '(208) 334-3316', description: 'Current fire conditions, restrictions, and weather updates' },
+                    { type: 'Utilities Emergency', name: 'Idaho Power Emergency', number: '(208) 388-2323', description: 'Report power lines down or request emergency shutoffs' },
+                    { type: 'Red Cross Shelter', name: 'American Red Cross Idaho', number: '(208) 375-0596', description: 'Emergency shelter locations and disaster relief services' },
+                    { type: 'Animal Services', name: 'Ada County Animal Control', number: '(208) 577-4262', description: 'Emergency pet sheltering and large animal evacuation' }
+                ]
+            },
+            'chicago_il': {
+                cityName: 'Chicago, IL',
+                contacts: [
+                    { type: 'Emergency Services', name: 'Fire Department', number: '911', description: 'For immediate life-threatening emergencies and active fire reports' },
+                    { type: 'Evacuation Info', name: 'Chicago Emergency Management', number: '(312) 746-5100', description: 'Non-emergency line for evacuation status and road closures' },
+                    { type: 'Fire Information', name: 'IL Emergency Management', number: '(217) 782-7860', description: 'Current conditions, restrictions, and weather updates' },
+                    { type: 'Utilities Emergency', name: 'ComEd Emergency Line', number: '(800) 334-7661', description: 'Report power lines down or request emergency shutoffs' },
+                    { type: 'Red Cross Shelter', name: 'American Red Cross Chicago', number: '(312) 729-6100', description: 'Emergency shelter locations and disaster relief services' },
+                    { type: 'Animal Services', name: 'Chicago Animal Control', number: '(312) 747-1406', description: 'Emergency pet sheltering and large animal evacuation' }
+                ]
+            },
+            'indianapolis_in': {
+                cityName: 'Indianapolis, IN',
+                contacts: [
+                    { type: 'Emergency Services', name: 'Fire Department', number: '911', description: 'For immediate life-threatening emergencies and active fire reports' },
+                    { type: 'Evacuation Info', name: 'Marion County Emergency Management', number: '(317) 327-3722', description: 'Non-emergency line for evacuation status and road closures' },
+                    { type: 'Fire Information', name: 'IN Department of Natural Resources', number: '(317) 232-4200', description: 'Current conditions, restrictions, and weather updates' },
+                    { type: 'Utilities Emergency', name: 'Indianapolis Power & Light', number: '(317) 261-8111', description: 'Report power lines down or request emergency shutoffs' },
+                    { type: 'Red Cross Shelter', name: 'American Red Cross Indiana', number: '(317) 684-7800', description: 'Emergency shelter locations and disaster relief services' },
+                    { type: 'Animal Services', name: 'Indianapolis Animal Control', number: '(317) 327-1397', description: 'Emergency pet sheltering and large animal evacuation' }
+                ]
+            },
+            'missouri': {
+                cityName: 'Missouri',
+                contacts: [
+                    { type: 'Emergency Services', name: 'Fire Department', number: '911', description: 'For immediate life-threatening emergencies and active fire reports' },
+                    { type: 'Evacuation Info', name: 'MO Emergency Management', number: '(573) 526-9100', description: 'Non-emergency line for evacuation status and road closures' },
+                    { type: 'Fire Information', name: 'MO Department of Conservation', number: '(573) 751-4115', description: 'Current fire conditions, restrictions, and weather updates' },
+                    { type: 'Utilities Emergency', name: 'Ameren Missouri Emergency', number: '(800) 552-7583', description: 'Report power lines down or request emergency shutoffs' },
+                    { type: 'Red Cross Shelter', name: 'American Red Cross Missouri', number: '(314) 516-2700', description: 'Emergency shelter locations and disaster relief services' },
+                    { type: 'Animal Services', name: 'MO Department of Agriculture', number: '(573) 751-3377', description: 'Emergency pet sheltering and large animal evacuation' }
+                ]
+            },
+            'fargo_nd': {
+                cityName: 'Fargo, ND',
+                contacts: [
+                    { type: 'Emergency Services', name: 'Fire Department', number: '911', description: 'For immediate life-threatening emergencies and active fire reports' },
+                    { type: 'Evacuation Info', name: 'Cass County Emergency Management', number: '(701) 241-5555', description: 'Non-emergency line for evacuation status and road closures' },
+                    { type: 'Fire Information', name: 'ND Forest Service', number: '(701) 328-9945', description: 'Current fire conditions, restrictions, and weather updates' },
+                    { type: 'Utilities Emergency', name: 'Xcel Energy North Dakota', number: '(800) 895-1999', description: 'Report power lines down or request emergency shutoffs' },
+                    { type: 'Red Cross Shelter', name: 'American Red Cross Dakota', number: '(701) 232-7601', description: 'Emergency shelter locations and disaster relief services' },
+                    { type: 'Animal Services', name: 'Cass County Animal Control', number: '(701) 241-5888', description: 'Emergency pet sheltering and large animal evacuation' }
+                ]
+            },
+            'nashville_tn': {
+                cityName: 'Nashville, TN',
+                contacts: [
+                    { type: 'Emergency Services', name: 'Fire Department', number: '911', description: 'For immediate life-threatening emergencies and active fire reports' },
+                    { type: 'Evacuation Info', name: 'Davidson County Emergency Management', number: '(615) 862-8740', description: 'Non-emergency line for evacuation status and road closures' },
+                    { type: 'Fire Information', name: 'TN Division of Forestry', number: '(615) 837-5520', description: 'Current fire conditions, restrictions, and weather updates' },
+                    { type: 'Utilities Emergency', name: 'Nashville Electric Service', number: '(615) 736-6900', description: 'Report power lines down or request emergency shutoffs' },
+                    { type: 'Red Cross Shelter', name: 'American Red Cross Tennessee', number: '(615) 250-4300', description: 'Emergency shelter locations and disaster relief services' },
+                    { type: 'Animal Services', name: 'Metro Animal Control', number: '(615) 862-7928', description: 'Emergency pet sheltering and large animal evacuation' }
+                ]
+            },
+            'austin_tx': {
+                cityName: 'Austin, TX',
+                contacts: [
+                    { type: 'Emergency Services', name: 'Fire Department', number: '911', description: 'For immediate life-threatening emergencies and active fire reports' },
+                    { type: 'Evacuation Info', name: 'Travis County Emergency Services', number: '(512) 854-4050', description: 'Non-emergency line for evacuation status and road closures' },
+                    { type: 'Fire Information', name: 'TX A&M Forest Service', number: '(979) 458-6606', description: 'Current fire conditions, restrictions, and weather updates' },
+                    { type: 'Utilities Emergency', name: 'Austin Energy Emergency', number: '(512) 322-9100', description: 'Report power lines down or request emergency shutoffs' },
+                    { type: 'Red Cross Shelter', name: 'American Red Cross Central Texas', number: '(512) 928-4271', description: 'Emergency shelter locations and disaster relief services' },
+                    { type: 'Animal Services', name: 'Austin Animal Services', number: '(311)', description: 'Emergency pet sheltering and large animal evacuation' }
+                ]
+            },
+            'dallas_tx': {
+                cityName: 'Dallas, TX',
+                contacts: [
+                    { type: 'Emergency Services', name: 'Fire Department', number: '911', description: 'For immediate life-threatening emergencies and active fire reports' },
+                    { type: 'Evacuation Info', name: 'Dallas County Emergency Management', number: '(214) 819-6300', description: 'Non-emergency line for evacuation status and road closures' },
+                    { type: 'Fire Information', name: 'TX A&M Forest Service', number: '(979) 458-6606', description: 'Current fire conditions, restrictions, and weather updates' },
+                    { type: 'Utilities Emergency', name: 'Oncor Emergency Line', number: '(888) 313-4747', description: 'Report power lines down or request emergency shutoffs' },
+                    { type: 'Red Cross Shelter', name: 'American Red Cross North Texas', number: '(214) 678-8200', description: 'Emergency shelter locations and disaster relief services' },
+                    { type: 'Animal Services', name: 'Dallas Animal Services', number: '(214) 670-7694', description: 'Emergency pet sheltering and large animal evacuation' }
+                ]
+            },
+            'houston_tx': {
+                cityName: 'Houston, TX',
+                contacts: [
+                    { type: 'Emergency Services', name: 'Fire Department', number: '911', description: 'For immediate life-threatening emergencies and active fire reports' },
+                    { type: 'Evacuation Info', name: 'Harris County Emergency Management', number: '(713) 881-3100', description: 'Non-emergency line for evacuation status and road closures' },
+                    { type: 'Fire Information', name: 'TX A&M Forest Service', number: '(979) 458-6606', description: 'Current fire conditions, restrictions, and weather updates' },
+                    { type: 'Utilities Emergency', name: 'CenterPoint Energy Emergency', number: '(713) 207-2222', description: 'Report power lines down or request emergency shutoffs' },
+                    { type: 'Red Cross Shelter', name: 'American Red Cross Gulf Coast', number: '(713) 313-2700', description: 'Emergency shelter locations and disaster relief services' },
+                    { type: 'Animal Services', name: 'Harris County Animal Control', number: '(281) 999-3191', description: 'Emergency pet sheltering and large animal evacuation' }
+                ]
+            },
+            'salt_lake_city_ut': {
+                cityName: 'Salt Lake City, UT',
+                contacts: [
+                    { type: 'Emergency Services', name: 'Fire Department', number: '911', description: 'For immediate life-threatening emergencies and active fire reports' },
+                    { type: 'Evacuation Info', name: 'Salt Lake County Emergency Management', number: '(385) 468-6700', description: 'Non-emergency line for evacuation status and road closures' },
+                    { type: 'Fire Information', name: 'Utah Division of Forestry', number: '(801) 538-5555', description: 'Current fire conditions, restrictions, and weather updates' },
+                    { type: 'Utilities Emergency', name: 'Rocky Mountain Power Emergency', number: '(888) 221-7070', description: 'Report power lines down or request emergency shutoffs' },
+                    { type: 'Red Cross Shelter', name: 'American Red Cross Utah', number: '(801) 323-7000', description: 'Emergency shelter locations and disaster relief services' },
+                    { type: 'Animal Services', name: 'Salt Lake County Animal Control', number: '(385) 468-7387', description: 'Emergency pet sheltering and large animal evacuation' }
+                ]
+            },
+            'olympia_wa': {
+                cityName: 'Olympia, WA',
+                contacts: [
+                    { type: 'Emergency Services', name: 'Fire Department', number: '911', description: 'For immediate life-threatening emergencies and active fire reports' },
+                    { type: 'Evacuation Info', name: 'Thurston County Emergency Management', number: '(360) 754-2933', description: 'Non-emergency line for evacuation status and road closures' },
+                    { type: 'Fire Information', name: 'WA Department of Natural Resources', number: '(360) 902-1450', description: 'Current fire conditions, restrictions, and weather updates' },
+                    { type: 'Utilities Emergency', name: 'Puget Sound Energy Emergency', number: '(888) 225-5773', description: 'Report power lines down or request emergency shutoffs' },
+                    { type: 'Red Cross Shelter', name: 'American Red Cross Pacific Northwest', number: '(206) 323-2345', description: 'Emergency shelter locations and disaster relief services' },
+                    { type: 'Animal Services', name: 'Thurston County Animal Control', number: '(360) 786-5490', description: 'Emergency pet sheltering and large animal evacuation' }
+                ]
+            },
+            'seattle_wa': {
+                cityName: 'Seattle, WA',
+                contacts: [
+                    { type: 'Emergency Services', name: 'Fire Department', number: '911', description: 'For immediate life-threatening emergencies and active fire reports' },
+                    { type: 'Evacuation Info', name: 'King County Emergency Management', number: '(206) 296-3830', description: 'Non-emergency line for evacuation status and road closures' },
+                    { type: 'Fire Information', name: 'WA Department of Natural Resources', number: '(360) 902-1450', description: 'Current fire conditions, restrictions, and weather updates' },
+                    { type: 'Utilities Emergency', name: 'Seattle City Light Emergency', number: '(206) 684-3000', description: 'Report power lines down or request emergency shutoffs' },
+                    { type: 'Red Cross Shelter', name: 'American Red Cross Puget Sound', number: '(206) 323-2345', description: 'Emergency shelter locations and disaster relief services' },
+                    { type: 'Animal Services', name: 'Seattle Animal Control', number: '(206) 386-7387', description: 'Emergency pet sheltering and large animal evacuation' }
+                ]
             }
-
-            try {
-                const position = await new Promise((resolve, reject) => {
-                    navigator.geolocation.getCurrentPosition(resolve, reject, {
-                        timeout: 10000,
-                        enableHighAccuracy: true
-                    });
-                });
-
-                currentLatitude = position.coords.latitude;
-                currentLongitude = position.coords.longitude;
-                
-                document.getElementById('threat-level-text').innerHTML = `Current Status: <strong>LOADING DATA</strong>...`;
-                
-                const locationName = await getCityName(currentLatitude, currentLongitude);
-                currentLocationName = locationName;
-                updateLocationDisplay(locationName);
-                
-                console.log(`Location detected: ${locationName} (${currentLatitude}, ${currentLongitude})`);
-                updateAllData();
-                
-            } catch (error) {
-                console.log('Location detection failed:', error.message);
-                updateLocationDisplay('Denver, CO (Default - Location Access Denied)');
-                updateAllData();
-            }
-        }
-
-        // Get city name from coordinates
-        async function getCityName(lat, lon) {
-            try {
-                const response = await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&count=1`);
-                const data = await response.json();
-                
-                if (data.results && data.results.length > 0) {
-                    const result = data.results[0];
-                    const city = result.name || result.admin1 || 'Unknown City';
-                    const state = result.admin1 || result.country_code || '';
-                    return state ? `${city}, ${state}` : city;
-                }
-                return 'Your Location';
-            } catch (error) {
-                console.error('Reverse geocoding failed:', error);
-                return 'Your Location';
-            }
-        }
-
-        // Update all location displays
-        function updateLocationDisplay(locationName) {
-            document.getElementById('dashboard-location').textContent = locationName;
-            document.getElementById('earthquakes-location').textContent = locationName;
-            document.getElementById('risk-location').textContent = locationName;
-        }
-
-        // Update all data sources
-        function updateAllData() {
-            console.log('Starting earthquake data updates...');
-            updateEarthquakeData();
-            updateSeismicRiskAssessment();
-            updateThreatLevelDisplay();
-        }
-
-        // Calculate distance between two coordinates (in miles)
-        function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 3959; // Earth's radius in miles
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c;
-        }
-
-        // Format time ago
-        function timeAgo(dateString) {
-            const now = new Date();
-            const eventTime = new Date(dateString);
-            const diffMs = now - eventTime;
-            const diffMins = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMs / 3600000);
-            const diffDays = Math.floor(diffMs / 86400000);
-            
-            if (diffMins < 60) {
-                return `${diffMins} min ago`;
-            } else if (diffHours < 24) {
-                return `${diffHours} hr ago`;
-            } else {
-                return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-            }
-        }
-
-        // Update earthquake data from USGS
-        async function updateEarthquakeData() {
-            const earthquakesIndicator = document.getElementById('earthquakes-indicator');
-            const largestIndicator = document.getElementById('largest-indicator');
-            const activityIndicator = document.getElementById('activity-indicator');
-            
-            earthquakesIndicator.className = 'update-indicator updating';
-            largestIndicator.className = 'update-indicator updating';
-            activityIndicator.className = 'update-indicator updating';
-            
-            try {
-                // Get earthquakes from last 7 days within 300 miles, magnitude 2.5+
-                const response = await fetch(`https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${getDateDaysAgo(7)}&latitude=${currentLatitude}&longitude=${currentLongitude}&maxradiuskm=483&minmagnitude=2.5`);
-                
-                if (!response.ok) {
-                    throw new Error('Failed to fetch earthquake data');
-                }
-                
-                const data = await response.json();
-                const earthquakes = data.features || [];
-                
-                // Update earthquake count
-                document.getElementById('earthquakes-count').textContent = earthquakes.length;
-                
-                // Find largest earthquake
-                let largestMag = 0;
-                let largestQuake = null;
-                earthquakes.forEach(eq => {
-                    const mag = eq.properties.mag;
-                    if (mag > largestMag) {
-                        largestMag = mag;
-                        largestQuake = eq;
-                    }
-                });
-                
-                // Update largest earthquake display
-                if (largestQuake) {
-                    document.getElementById('largest-magnitude').textContent = `M${largestMag.toFixed(1)}`;
-                    document.getElementById('largest-status').textContent = largestQuake.properties.place.split(',')[0];
-                    document.getElementById('largest-detail').textContent = timeAgo(largestQuake.properties.time);
-                } else {
-                    document.getElementById('largest-magnitude').textContent = 'M0.0';
-                    document.getElementById('largest-status').textContent = 'No Significant Activity';
-                    document.getElementById('largest-detail').textContent = 'No earthquakes M2.5+ this week';
-                }
-                
-                // Calculate activity level
-                const activityLevel = calculateActivityLevel(earthquakes);
-                document.getElementById('activity-level').textContent = activityLevel.level;
-                document.getElementById('activity-status').textContent = activityLevel.description;
-                document.getElementById('activity-detail').textContent = `${earthquakes.length} earthquakes in 7 days`;
-                
-                // Update status based on count
-                updateEarthquakeStatus(earthquakes.length);
-                
-                // Update recent earthquakes list
-                updateEarthquakesList(earthquakes);
-                
-                earthquakesIndicator.className = 'update-indicator';
-                largestIndicator.className = 'update-indicator';
-                activityIndicator.className = 'update-indicator';
-                
-                console.log(`Found ${earthquakes.length} earthquakes near ${currentLocationName}`);
-                
-            } catch (error) {
-                console.error('Error fetching earthquake data:', error);
-                
-                // Update with error state
-                document.getElementById('earthquakes-count').textContent = 'Error';
-                document.getElementById('earthquakes-status').textContent = 'Data Unavailable';
-                document.getElementById('earthquakes-detail').textContent = 'Unable to connect to USGS';
-                
-                document.getElementById('largest-magnitude').textContent = 'Error';
-                document.getElementById('largest-status').textContent = 'Data Unavailable';
-                document.getElementById('largest-detail').textContent = 'Unable to connect to USGS';
-                
-                document.getElementById('activity-level').textContent = 'Error';
-                document.getElementById('activity-status').textContent = 'Data Unavailable';
-                document.getElementById('activity-detail').textContent = 'Unable to connect to USGS';
-                
-                earthquakesIndicator.className = 'update-indicator error';
-                largestIndicator.className = 'update-indicator error';
-                activityIndicator.className = 'update-indicator error';
-                
-                // Show error in list
-                document.getElementById('earthquakes-list').innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #FF4444;">
-                        <div style="font-size: 18px; margin-bottom: 8px;">Unable to Load Earthquake Data</div>
-                        <div style="color: #CCCCCC;">Could not fetch data from USGS. Please try refreshing.</div>
-                    </div>
-                `;
-            }
-        }
-
-        // Get date string for N days ago
-        function getDateDaysAgo(days) {
-            const date = new Date();
-            date.setDate(date.getDate() - days);
-            return date.toISOString().split('T')[0];
-        }
-
-        // Calculate activity level based on earthquake count
-        function calculateActivityLevel(earthquakes) {
-            const count = earthquakes.length;
-            
-            if (count === 0) {
-                return { level: 'Quiet', description: 'Very Low Activity' };
-            } else if (count <= 5) {
-                return { level: 'Low', description: 'Normal Activity' };
-            } else if (count <= 15) {
-                return { level: 'Moderate', description: 'Above Normal' };
-            } else if (count <= 30) {
-                return { level: 'High', description: 'Elevated Activity' };
-            } else {
-                return { level: 'Very High', description: 'Exceptional Activity' };
-            }
-        }
-
-        // Update earthquake status based on count
-        function updateEarthquakeStatus(count) {
-            const statusElement = document.getElementById('earthquakes-status');
-            
-            if (count === 0) {
-                statusElement.textContent = 'Quiet Period';
-                statusElement.className = 'data-status status-normal';
-            } else if (count <= 5) {
-                statusElement.textContent = 'Normal Activity';
-                statusElement.className = 'data-status status-normal';
-            } else if (count <= 15) {
-                statusElement.textContent = 'Elevated Activity';
-                statusElement.className = 'data-status status-watch';
-            } else {
-                statusElement.textContent = 'High Activity';
-                statusElement.className = 'data-status status-warning';
-            }
-        }
-
-        // Update recent earthquakes list
-        function updateEarthquakesList(earthquakes) {
-            const listContainer = document.getElementById('earthquakes-list');
-            
-            if (earthquakes.length === 0) {
-                listContainer.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #CCCCCC;">
-                        <div style="font-size: 18px; margin-bottom: 8px; color: #44AA44;">No Recent Earthquakes</div>
-                        <div>No earthquakes magnitude 2.5+ detected within 300 miles in the last 7 days.</div>
-                    </div>
-                `;
-                return;
-            }
-            
-            // Sort by magnitude (largest first)
-            earthquakes.sort((a, b) => b.properties.mag - a.properties.mag);
-            
-            // Take top 10 earthquakes
-            const topEarthquakes = earthquakes.slice(0, 10);
-            
-            let earthquakesHTML = '';
-            
-            topEarthquakes.forEach(eq => {
-                const props = eq.properties;
-                const coords = eq.geometry.coordinates;
-                const magnitude = props.mag.toFixed(1);
-                const place = props.place;
-                const time = new Date(props.time).toLocaleString();
-                const timeAgoText = timeAgo(props.time);
-                const depth = coords[2].toFixed(1);
-                const distance = calculateDistance(currentLatitude, currentLongitude, coords[1], coords[0]).toFixed(0);
-                
-                // Determine magnitude class for coloring
-                let magClass = 'magnitude-1';
-                if (magnitude >= 6.0) magClass = 'magnitude-4';
-                else if (magnitude >= 4.0) magClass = 'magnitude-3';
-                else if (magnitude >= 3.0) magClass = 'magnitude-2';
-                
-                earthquakesHTML += `
-                    <div class="earthquake-item">
-                        <div class="earthquake-magnitude ${magClass}">M${magnitude}</div>
-                        <div class="earthquake-info">
-                            <div class="earthquake-location">${place}</div>
-                            <div class="earthquake-meta">
-                                <strong>Time:</strong> ${timeAgoText} (${time})<br>
-                                <strong>Depth:</strong> ${depth} km
-                            </div>
-                        </div>
-                        <div class="earthquake-distance">${distance} mi</div>
-                    </div>
-                `;
-            });
-            
-            listContainer.innerHTML = earthquakesHTML;
-        }
-
-        // Update seismic risk assessment
-        function updateSeismicRiskAssessment() {
-            const riskIndicator = document.getElementById('risk-indicator');
-            riskIndicator.className = 'update-indicator updating';
-            
-            try {
-                // Calculate risk based on location (simplified assessment)
-                const riskAssessment = calculateSeismicRisk(currentLatitude, currentLongitude);
-                
-                // Update PGA (Peak Ground Acceleration)
-                document.getElementById('pga-risk').textContent = riskAssessment.pga.level;
-                document.getElementById('pga-risk').className = `risk-value ${riskAssessment.pga.class}`;
-                document.getElementById('pga-description').textContent = riskAssessment.pga.description;
-                
-                // Update fault distance
-                document.getElementById('fault-distance').textContent = riskAssessment.faultDistance.distance;
-                document.getElementById('fault-distance').className = `risk-value ${riskAssessment.faultDistance.class}`;
-                
-                // Update historical activity
-                document.getElementById('historical-activity').textContent = riskAssessment.historical.level;
-                document.getElementById('historical-activity').className = `risk-value ${riskAssessment.historical.class}`;
-                
-                // Update liquefaction risk
-                document.getElementById('liquefaction-risk').textContent = riskAssessment.liquefaction.level;
-                document.getElementById('liquefaction-risk').className = `risk-value ${riskAssessment.liquefaction.class}`;
-                
-                // Update overall risk level
-                document.getElementById('risk-level').textContent = riskAssessment.overall.level;
-                document.getElementById('risk-status').textContent = riskAssessment.overall.description;
-                document.getElementById('risk-detail').textContent = riskAssessment.overall.detail;
-                
-                riskIndicator.className = 'update-indicator';
-                
-                console.log(`Risk assessment completed for ${currentLocationName}: ${riskAssessment.overall.level}`);
-                
-            } catch (error) {
-                console.error('Error calculating seismic risk:', error);
-                
-                riskIndicator.className = 'update-indicator error';
-                document.getElementById('risk-level').textContent = 'Error';
-                document.getElementById('risk-status').textContent = 'Assessment Failed';
-                document.getElementById('risk-detail').textContent = 'Unable to calculate risk';
-            }
-        }
-
-        // Calculate seismic risk based on location (simplified)
-        function calculateSeismicRisk(lat, lon) {
-            let overallRisk = 'Moderate';
-            let pgaLevel = 'Moderate';
-            let pgaClass = 'risk-moderate';
-            let faultDistance = '50+ mi';
-            let faultClass = 'risk-low';
-            let historicalLevel = 'Moderate';
-            let historicalClass = 'risk-moderate';
-            let liquefactionLevel = 'Low';
-            let liquefactionClass = 'risk-low';
-            
-            // California - Very High Risk
-            if (lon < -115 && lat > 32 && lat < 42) {
-                overallRisk = 'Very High';
-                pgaLevel = 'Very High';
-                pgaClass = 'risk-very-high';
-                faultDistance = '< 10 mi';
-                faultClass = 'risk-very-high';
-                historicalLevel = 'Very High';
-                historicalClass = 'risk-very-high';
-                liquefactionLevel = 'High';
-                liquefactionClass = 'risk-high';
-            }
-            // Alaska - Very High Risk
-            else if (lat > 60) {
-                overallRisk = 'Very High';
-                pgaLevel = 'Very High';
-                pgaClass = 'risk-very-high';
-                faultDistance = '< 25 mi';
-                faultClass = 'risk-high';
-                historicalLevel = 'Very High';
-                historicalClass = 'risk-very-high';
-            }
-            // Pacific Northwest - High Risk
-            else if (lon < -115 && lat > 42 && lat < 49) {
-                overallRisk = 'High';
-                pgaLevel = 'High';
-                pgaClass = 'risk-high';
-                faultDistance = '< 50 mi';
-                faultClass = 'risk-moderate';
-                historicalLevel = 'High';
-                historicalClass = 'risk-high';
-            }
-            // New Madrid Seismic Zone (Missouri/Tennessee area)
-            else if (lon > -95 && lon < -85 && lat > 35 && lat < 40) {
-                overallRisk = 'High';
-                pgaLevel = 'High';
-                pgaClass = 'risk-high';
-                faultDistance = '< 30 mi';
-                faultClass = 'risk-moderate';
-                liquefactionLevel = 'High';
-                liquefactionClass = 'risk-high';
-            }
-            // Charleston Seismic Zone (South Carolina)
-            else if (lon > -85 && lon < -75 && lat > 30 && lat < 35) {
-                overallRisk = 'Moderate';
-                pgaLevel = 'Moderate';
-                pgaClass = 'risk-moderate';
-            }
-            // Eastern US - Generally Low Risk
-            else if (lon > -95) {
-                overallRisk = 'Low';
-                pgaLevel = 'Low';
-                pgaClass = 'risk-low';
-                faultDistance = '100+ mi';
-                faultClass = 'risk-low';
-                historicalLevel = 'Low';
-                historicalClass = 'risk-low';
-            }
-            
-            return {
-                overall: {
-                    level: overallRisk,
-                    description: overallRisk === 'Very High' ? 'Major Earthquake Zone' :
-                               overallRisk === 'High' ? 'High Seismic Activity' :
-                               overallRisk === 'Moderate' ? 'Moderate Risk Zone' : 'Low Seismic Risk',
-                    detail: overallRisk === 'Very High' ? 'Prepare for major earthquakes' :
-                           overallRisk === 'High' ? 'Significant earthquake potential' :
-                           overallRisk === 'Moderate' ? 'Occasional earthquake activity' : 'Rare earthquake activity'
-                },
-                pga: {
-                    level: pgaLevel,
-                    class: pgaClass,
-                    description: pgaLevel === 'Very High' ? 'Severe ground shaking expected' :
-                               pgaLevel === 'High' ? 'Strong ground shaking possible' :
-                               pgaLevel === 'Moderate' ? 'Moderate shaking possible' : 'Light shaking expected'
-                },
-                faultDistance: {
-                    distance: faultDistance,
-                    class: faultClass
-                },
-                historical: {
-                    level: historicalLevel,
-                    class: historicalClass
-                },
-                liquefaction: {
-                    level: liquefactionLevel,
-                    class: liquefactionClass
-                }
-            };
-        }
-
-        // Update threat level display
-        function updateThreatLevelDisplay() {
-            const threatText = document.getElementById('threat-level-text');
-            
-            // Get current risk level
-            const riskLevel = document.getElementById('risk-level').textContent;
-            
-            let statusText = 'MODERATE SEISMIC RISK';
-            let statusColor = '#FFAA44';
-            
-            if (riskLevel === 'Very High') {
-                statusText = 'VERY HIGH SEISMIC RISK';
-                statusColor = '#FF4444';
-            } else if (riskLevel === 'High') {
-                statusText = 'HIGH SEISMIC RISK';
-                statusColor = '#FFAA44';
-            } else if (riskLevel === 'Low') {
-                statusText = 'LOW SEISMIC RISK';
-                statusColor = '#44AA44';
-            }
-            
-            threatText.innerHTML = `Current Status: <strong>${statusText}</strong> - ${currentLocationName}`;
-            
-            // Update threat indicator color
-            const indicator = document.querySelector('.threat-indicator');
-            if (indicator) {
-                indicator.style.background = statusColor;
-            }
-        }
-
-        // Manual refresh functions
-        function refreshEarthquakeData() {
-            document.getElementById('earthquakes-count').textContent = 'Loading...';
-            document.getElementById('largest-magnitude').textContent = 'Loading...';
-            document.getElementById('activity-level').textContent = 'Loading...';
-            updateEarthquakeData();
-        }
-
-        function refreshRiskAssessment() {
-            document.getElementById('risk-level').textContent = 'Loading...';
-            updateSeismicRiskAssessment();
-        }
-
-        // Affiliate tracking function
-        function trackAffiliate(productId, retailer) {
-            console.log(`Affiliate click tracked: ${productId} -> ${retailer}`);
-            alert(`Redirecting to ${retailer} for ${productId}...\n\nIn production, this would:\n• Track the affiliate click\n• Redirect to the actual product page\n• Earn commission if purchase is made`);
-            return false;
-        }
-
-        // Generate earthquake plan functionality
-        function generateEarthquakePlan() {
-            alert('Generating your personalized earthquake action plan...\n\nThis will include:\n• Seismic risk assessment for your area\n• Home earthquake retrofitting recommendations\n• Drop, Cover, Hold practice scenarios\n• Emergency supply checklists\n• Family communication plan');
-        }
-
-        // Update data every 30 minutes
-        setInterval(updateAllData, 1800000);
-
-        // Smooth scrolling for navigation
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-
-        // Animate elements on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
         };
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-in');
+        // City coordinate to database key mapping
+        const CITY_COORDINATES_TO_KEY = {
+            '33.4484,-112.0740': 'phoenix_az',
+            '34.0522,-118.2437': 'los_angeles_ca',
+            '37.7749,-122.4194': 'san_francisco_ca',
+            '38.5816,-121.4944': 'sacramento_ca',
+            '39.7392,-104.9903': 'denver_co',
+            '41.2033,-77.1945': 'pennsylvania',
+            '43.6532,-116.3113': 'boise_id',
+            '41.8781,-87.6298': 'chicago_il',
+            '39.7817,-86.1478': 'indianapolis_in',
+            '38.2904,-92.6390': 'missouri',
+            '46.8772,-96.7898': 'fargo_nd',
+            '36.1627,-86.7816': 'nashville_tn',
+            '30.2672,-97.7431': 'austin_tx',
+            '32.7767,-96.7970': 'dallas_tx',
+            '29.7604,-95.3698': 'houston_tx',
+            '40.7608,-111.8910': 'salt_lake_city_ut',
+            '47.0379,-122.9015': 'olympia_wa',
+            '47.6062,-122.3321': 'seattle_wa'
+        };
+
+        /**
+         * Updates emergency contacts based on selected city
+         * @param {string} cityKey - The database key for the city
+         * @param {string} containerId - The ID of the container to update (default: 'emergency-contacts-grid')
+         */
+        function updateEmergencyContacts(cityKey, containerId = 'emergency-contacts-grid') {
+            const contacts = EMERGENCY_CONTACTS_DB[cityKey];
+            const container = document.getElementById(containerId);
+            
+            if (!contacts || !container) {
+                console.warn(`No contacts found for ${cityKey} or container ${containerId} not found`);
+                return;
+            }
+            
+            // Generate contacts grid HTML
+            const contactsHTML = contacts.contacts.map(contact => `
+                <div class="contact-card">
+                    <div class="contact-type">${contact.type}</div>
+                    <div class="contact-name">${contact.name}</div>
+                    <div class="contact-number">${contact.number}</div>
+                    <div class="contact-description">${contact.description}</div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = contactsHTML;
+            
+            // Update page title if element exists
+            const titleElement = document.getElementById('emergency-contacts-title');
+            if (titleElement) {
+                titleElement.textContent = `Emergency Contacts - ${contacts.cityName}`;
+            }
+            
+            console.log(`Emergency contacts updated for ${contacts.cityName}`);
+        }
+
+        /**
+         * Gets emergency contacts by city coordinates
+         * @param {string} coordinates - Coordinates in format "lat,lon"
+         * @returns {Object|null} Emergency contacts object or null if not found
+         */
+        function getContactsByCoordinates(coordinates) {
+            const cityKey = CITY_COORDINATES_TO_KEY[coordinates];
+            return cityKey ? EMERGENCY_CONTACTS_DB[cityKey] : null;
+        }
+
+        /**
+         * Updates emergency contacts when city selector changes
+         * Call this function in your city selector's onchange event
+         */
+        function updateContactsFromCitySelector() {
+            const citySelect = document.getElementById('city-select');
+            if (!citySelect || !citySelect.value) {
+                // If auto-detect is selected, use current location
+                if (currentLatitude && currentLongitude) {
+                    const cityKey = getCityKeyFromCoordinates(currentLatitude, currentLongitude);
+                    if (cityKey) {
+                        updateEmergencyContacts(cityKey);
+                    }
+                }
+                return;
+            }
+            
+            const cityKey = CITY_COORDINATES_TO_KEY[citySelect.value];
+            if (cityKey) {
+                updateEmergencyContacts(cityKey);
+                
+                // Also update the location for earthquake data
+                const [lat, lon] = citySelect.value.split(',').map(Number);
+                currentLatitude = lat;
+                currentLongitude = lon;
+                
+                // Get city name from database
+                const contacts = EMERGENCY_CONTACTS_DB[cityKey];
+                if (contacts) {
+                    currentLocationName = contacts.cityName;
+                    updateLocationDisplay(currentLocationName);
+                    updateAllData();
+                }
+            }
+        }
+
+        /**
+         * Gets city key from coordinates (for auto-detected location)
+         * @param {number} lat - Latitude
+         * @param {number} lon - Longitude
+         * @returns {string|null} City key or null if not found
+         */
+        function getCityKeyFromCoordinates(lat, lon) {
+            // Find closest city from our database
+            let closestCity = null;
+            let minDistance = Infinity;
+            
+            Object.entries(CITY_COORDINATES_TO_KEY).forEach(([coords, key]) => {
+                const [cityLat, cityLon] = coords.split(',').map(Number);
+                const distance = Math.sqrt(
+                    Math.pow(lat - cityLat, 2) + Math.pow(lon - cityLon, 2)
+                );
+                
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestCity = key;
                 }
             });
-        }, observerOptions);
+            
+            // Only return if within reasonable distance (about 2 degrees)
+            return minDistance < 2 ? closestCity : 'denver_co'; // Default to Denver
+        }
 
-        document.querySelectorAll('.equipment-card, .contact-card, .earthquake-item').forEach(el => {
-            observer.observe(el);
-        });
-
-        // Emergency contact click to call (on mobile)
-        document.querySelectorAll('.contact-number').forEach(number => {
-            number.addEventListener('click', function() {
-                if (/Mobi|Android/i.test(navigator.userAgent)) {
-                    window.location.href = 'tel:' + this.textContent.replace(/\D/g, '');
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+        /**
+         * Initialize emergency contacts with auto-detected location
+         * @param {number} lat - User's latitude
+         * @param {number} lon - User's longitude
+         */
+        function initializeEmergencyContacts(lat, lon) {
+            const cityKey = getCityKeyFromCoordinates(lat, lon);
+            updateEmergencyContacts(cityKey);
+        }
