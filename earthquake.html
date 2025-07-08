@@ -3,7 +3,13 @@
 <head>
    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://api.allorigins.win https://corsproxy.io https://api.codetabs.com https://geocoding-api.open-meteo.com https://earthquake.usgs.gov; connect-src 'self' https://fonts.googleapis.com https://api.allorigins.win https://corsproxy.io https://api.codetabs.com https://geocoding-api.open-meteo.com https://earthquake.usgs.gov; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://api.allorigins.win https://corsproxy.io https://api.codetabs.com https://geocoding-api.open-meteo.com https://earthquake.usgs.gov https://unpkg.com; connect-src 'self' https://fonts.googleapis.com https://api.allorigins.win https://corsproxy.io https://api.codetabs.com https://geocoding-api.open-meteo.com https://earthquake.usgs.gov https://unpkg.com https://*.tile.openstreetmap.org; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; img-src 'self' data: https://*.tile.openstreetmap.org;">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <title>Earthquake Emergency Preparedness - EmergencyEssentials</title>
     <meta name="description" content="Comprehensive earthquake preparedness guide with seismic monitoring, safety strategies, and professional equipment recommendations.">
     
@@ -790,6 +796,23 @@
         </div>
     </section>
 
+    <!-- Interactive Earthquake Map -->
+    <section class="section">
+        <div class="container">
+            <div class="recent-earthquakes">
+                <h2 style="color: #FFFFFF; margin-bottom: 16px; font-weight: 300;">Live Earthquake Map</h2>
+                <p style="color: #CCCCCC; margin-bottom: 20px;">Interactive map showing earthquakes within 500 miles of your location. Click map to enable zoom/pan.</p>
+                
+                <div id="earthquake-map" style="width: 100%; height: 500px; background: #161616; border: 1px solid #444444; border-radius: 8px; position: relative; margin-bottom: 30px;">
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: #CCCCCC;">
+                        <div style="font-size: 18px; margin-bottom: 8px;">Loading earthquake map...</div>
+                        <div style="color: #999999;">Initializing map and earthquake data</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Recent Earthquakes List -->
     <section class="section">
         <div class="container">
@@ -798,7 +821,7 @@
                 
                 <div class="location-controls">
                     <div class="location-display">Monitoring: <span id="earthquakes-location">Detecting your location...</span></div>
-                    <div class="location-display">Search Radius: <span id="search-radius">300 miles</span></div>
+                    <div class="location-display">Search Radius: <span id="search-radius">500 miles</span></div>
                     <select id="city-select" class="city-selector" onchange="updateContactsFromCitySelector()">
                         <option value="">Auto-detect location</option>
                         <option value="33.4484,-112.0740">Phoenix, AZ</option>
@@ -1001,6 +1024,10 @@
         let currentLocationName = "Unknown Location";
         let earthquakeData = [];
         let lastUpdateTime = null;
+        let earthquakeMap = null;
+        let mapMarkers = [];
+        let userLocationMarker = null;
+        let mapClickEnabled = false;
 
         // =========================
         // EMERGENCY CONTACTS DATABASE
@@ -1229,11 +1256,273 @@
         };
 
         // =========================
-        // EARTHQUAKE API FUNCTIONS
+        // EARTHQUAKE MAP FUNCTIONS
         // =========================
 
         /**
-         * Fetches earthquake data from USGS API
+         * Initializes the Leaflet earthquake map
+         */
+        function initializeEarthquakeMap() {
+            console.log('[MAP] Initializing earthquake map...');
+            
+            if (!currentLatitude || !currentLongitude) {
+                console.log('[MAP] No coordinates available for map initialization');
+                return;
+            }
+
+            try {
+                // Initialize map centered on user location
+                earthquakeMap = L.map('earthquake-map', {
+                    center: [currentLatitude, currentLongitude],
+                    zoom: 7,
+                    scrollWheelZoom: false, // Disable scroll zoom initially
+                    doubleClickZoom: false, // Disable double-click zoom initially
+                    dragging: false, // Disable dragging initially
+                    touchZoom: false, // Disable touch zoom initially
+                    boxZoom: false, // Disable box zoom
+                    keyboard: false // Disable keyboard navigation
+                });
+
+                // Add tile layer (using OpenStreetMap)
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 18
+                }).addTo(earthquakeMap);
+
+                // Add click handler to enable interactions
+                earthquakeMap.on('click', enableMapInteractions);
+
+                // Add overlay message
+                addMapOverlay();
+
+                // Add user location marker
+                addUserLocationMarker();
+
+                // Add earthquake markers
+                updateEarthquakeMarkers();
+
+                console.log('[MAP] Earthquake map initialized successfully');
+
+            } catch (error) {
+                console.error('[MAP] Error initializing map:', error);
+                showMapError();
+            }
+        }
+
+        /**
+         * Adds overlay message to inform users to click to interact
+         */
+        function addMapOverlay() {
+            const mapContainer = document.getElementById('earthquake-map');
+            
+            const overlay = document.createElement('div');
+            overlay.id = 'map-overlay';
+            overlay.style.cssText = `
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 12px;
+                border-radius: 6px;
+                font-size: 14px;
+                text-align: center;
+                z-index: 1000;
+                pointer-events: none;
+                border: 1px solid #444;
+            `;
+            overlay.innerHTML = '🗺️ Click map to enable zoom and pan • Showing earthquakes within 500 miles';
+            
+            mapContainer.appendChild(overlay);
+        }
+
+        /**
+         * Enables map interactions when clicked
+         */
+        function enableMapInteractions() {
+            if (mapClickEnabled) return;
+            
+            console.log('[MAP] Enabling map interactions');
+            mapClickEnabled = true;
+
+            // Enable all interactions
+            earthquakeMap.scrollWheelZoom.enable();
+            earthquakeMap.doubleClickZoom.enable();
+            earthquakeMap.dragging.enable();
+            earthquakeMap.touchZoom.enable();
+            earthquakeMap.boxZoom.enable();
+            earthquakeMap.keyboard.enable();
+
+            // Update overlay message
+            const overlay = document.getElementById('map-overlay');
+            if (overlay) {
+                overlay.innerHTML = '🗺️ Map interactions enabled • Zoom and pan freely';
+                overlay.style.background = 'rgba(68, 170, 68, 0.8)';
+                
+                // Hide overlay after 3 seconds
+                setTimeout(() => {
+                    if (overlay) overlay.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        /**
+         * Adds user location marker to map
+         */
+        function addUserLocationMarker() {
+            if (!earthquakeMap || !currentLatitude || !currentLongitude) return;
+
+            // Remove existing user marker
+            if (userLocationMarker) {
+                earthquakeMap.removeLayer(userLocationMarker);
+            }
+
+            // Create custom icon for user location
+            const userIcon = L.divIcon({
+                html: `<div style="
+                    width: 20px; 
+                    height: 20px; 
+                    background: #44AAFF; 
+                    border: 3px solid white; 
+                    border-radius: 50%; 
+                    box-shadow: 0 0 10px rgba(68, 170, 255, 0.5);
+                "></div>`,
+                className: 'user-location-marker',
+                iconSize: [20, 20],
+                iconAnchor: [10, 10]
+            });
+
+            userLocationMarker = L.marker([currentLatitude, currentLongitude], {
+                icon: userIcon
+            }).addTo(earthquakeMap);
+
+            userLocationMarker.bindPopup(`
+                <div style="color: black; font-weight: bold;">
+                    📍 Your Location<br>
+                    <small>${currentLocationName}</small>
+                </div>
+            `);
+
+            console.log('[MAP] User location marker added');
+        }
+
+        /**
+         * Updates earthquake markers on the map
+         */
+        function updateEarthquakeMarkers() {
+            if (!earthquakeMap) return;
+
+            console.log('[MAP] Updating earthquake markers...');
+
+            // Remove existing earthquake markers
+            mapMarkers.forEach(marker => earthquakeMap.removeLayer(marker));
+            mapMarkers = [];
+
+            // Add new markers for each earthquake
+            earthquakeData.forEach(earthquake => {
+                const coords = earthquake.geometry.coordinates;
+                const props = earthquake.properties;
+                const lat = coords[1];
+                const lon = coords[0];
+                const mag = props.mag;
+                const place = props.place;
+                const time = new Date(props.time);
+                const depth = coords[2];
+
+                // Create marker with size/color based on magnitude
+                const markerSize = Math.max(8, Math.min(30, mag * 6));
+                const markerColor = getMagnitudeColor(mag);
+
+                const earthquakeIcon = L.divIcon({
+                    html: `<div style="
+                        width: ${markerSize}px; 
+                        height: ${markerSize}px; 
+                        background: ${markerColor}; 
+                        border: 2px solid white; 
+                        border-radius: 50%; 
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: ${Math.max(8, markerSize * 0.4)}px;
+                        font-weight: bold;
+                        color: white;
+                        text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+                        box-shadow: 0 0 5px rgba(0,0,0,0.3);
+                    ">${mag.toFixed(1)}</div>`,
+                    className: 'earthquake-marker',
+                    iconSize: [markerSize, markerSize],
+                    iconAnchor: [markerSize/2, markerSize/2]
+                });
+
+                const marker = L.marker([lat, lon], {
+                    icon: earthquakeIcon
+                }).addTo(earthquakeMap);
+
+                // Create popup with earthquake details
+                const distance = calculateDistance(currentLatitude, currentLongitude, lat, lon);
+                marker.bindPopup(`
+                    <div style="color: black; min-width: 200px;">
+                        <div style="font-weight: bold; font-size: 16px; margin-bottom: 8px;">
+                            Magnitude ${mag.toFixed(1)} Earthquake
+                        </div>
+                        <div style="margin-bottom: 4px;"><strong>Location:</strong> ${place}</div>
+                        <div style="margin-bottom: 4px;"><strong>Time:</strong> ${time.toLocaleString()}</div>
+                        <div style="margin-bottom: 4px;"><strong>Depth:</strong> ${depth.toFixed(1)} km</div>
+                        <div style="margin-bottom: 4px;"><strong>Distance:</strong> ${distance.toFixed(0)} miles from you</div>
+                        <div style="font-size: 12px; color: #666; margin-top: 8px;">
+                            Source: USGS Earthquake Hazards Program
+                        </div>
+                    </div>
+                `);
+
+                mapMarkers.push(marker);
+            });
+
+            console.log(`[MAP] Added ${mapMarkers.length} earthquake markers`);
+        }
+
+        /**
+         * Gets marker color based on earthquake magnitude
+         */
+        function getMagnitudeColor(magnitude) {
+            if (magnitude >= 5.0) return '#FF4444'; // Red - Strong
+            if (magnitude >= 4.0) return '#FFAA44'; // Orange - Moderate  
+            if (magnitude >= 3.0) return '#FFDD44'; // Yellow - Light
+            return '#44AA44'; // Green - Minor
+        }
+
+        /**
+         * Shows map error message
+         */
+        function showMapError() {
+            const mapContainer = document.getElementById('earthquake-map');
+            mapContainer.innerHTML = `
+                <div style="
+                    position: absolute; 
+                    top: 50%; 
+                    left: 50%; 
+                    transform: translate(-50%, -50%); 
+                    text-align: center; 
+                    color: #CCCCCC;
+                ">
+                    <div style="font-size: 18px; margin-bottom: 8px; color: #FF4444;">
+                        ⚠️ Map Failed to Load
+                    </div>
+                    <div style="color: #999999;">
+                        Unable to initialize earthquake map.<br>
+                        Please check your internet connection.
+                    </div>
+                </div>
+            `;
+        }
+
+        // =========================
+        // EARTHQUAKE API FUNCTIONS (UPDATED FOR MAP)
+        // =========================
+
+        /**
+         * Fetches earthquake data from USGS API (500 mile radius)
          */
         async function fetchEarthquakeData() {
             if (!currentLatitude || !currentLongitude) {
@@ -1241,7 +1530,7 @@
                 return [];
             }
 
-            const radiusKm = 482; // ~300 miles
+            const radiusKm = 804; // ~500 miles
             const minMagnitude = 2.5;
             const endtime = new Date().toISOString();
             const starttime = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(); // 7 days ago
@@ -1421,7 +1710,7 @@
                 listContainer.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: #CCCCCC;">
                         <div style="font-size: 18px; margin-bottom: 8px;">No recent earthquakes detected</div>
-                        <div style="color: #999999;">No magnitude 2.5+ earthquakes in the past 7 days within 300 miles</div>
+                        <div style="color: #CCCCCC;">No magnitude 2.5+ earthquakes in the past 7 days within 500 miles</div>
                     </div>
                 `;
                 return;
@@ -1627,6 +1916,16 @@
             await updateEarthquakeDashboard();
             updateEarthquakesList();
             updateSeismicRisk();
+            
+            // Update map if it exists
+            if (earthquakeMap) {
+                updateEarthquakeMarkers();
+            } else {
+                // Initialize map if coordinates are available
+                if (currentLatitude && currentLongitude) {
+                    initializeEarthquakeMap();
+                }
+            }
             
             lastUpdateTime = new Date();
             console.log('[UPDATE] All data updated successfully');
