@@ -1261,13 +1261,26 @@
          * @param {string} containerId - The ID of the container to update (default: 'emergency-contacts-grid')
          */
         function updateEmergencyContacts(cityKey, containerId = 'emergency-contacts-grid') {
+            console.log(`[DEBUG] updateEmergencyContacts called with cityKey: ${cityKey}`);
+            
             const contacts = EMERGENCY_CONTACTS_DB[cityKey];
             const container = document.getElementById(containerId);
             
-            if (!contacts || !container) {
-                console.warn(`No contacts found for ${cityKey} or container ${containerId} not found`);
+            console.log(`[DEBUG] Found contacts:`, contacts);
+            console.log(`[DEBUG] Found container:`, container);
+            
+            if (!contacts) {
+                console.error(`[ERROR] No contacts found for cityKey: ${cityKey}`);
+                console.log(`[DEBUG] Available cities:`, Object.keys(EMERGENCY_CONTACTS_DB));
                 return;
             }
+            
+            if (!container) {
+                console.error(`[ERROR] Container not found: ${containerId}`);
+                return;
+            }
+            
+            console.log(`[DEBUG] Generating HTML for ${contacts.contacts.length} contacts`);
             
             // Generate contacts grid HTML
             const contactsHTML = contacts.contacts.map(contact => `
@@ -1279,15 +1292,26 @@
                 </div>
             `).join('');
             
+            console.log(`[DEBUG] Generated HTML length: ${contactsHTML.length}`);
+            console.log(`[DEBUG] First 200 chars of HTML:`, contactsHTML.substring(0, 200));
+            
+            // Update the container
             container.innerHTML = contactsHTML;
             
             // Update page title if element exists
             const titleElement = document.getElementById('emergency-contacts-title');
             if (titleElement) {
                 titleElement.textContent = `Emergency Contacts - ${contacts.cityName}`;
+                console.log(`[DEBUG] Updated title to: Emergency Contacts - ${contacts.cityName}`);
             }
             
-            console.log(`Emergency contacts updated for ${contacts.cityName}`);
+            console.log(`[SUCCESS] Emergency contacts updated for ${contacts.cityName}`);
+            
+            // Verify the update worked
+            setTimeout(() => {
+                const updatedContainer = document.getElementById(containerId);
+                console.log(`[DEBUG] Verification - container children count:`, updatedContainer?.children?.length);
+            }, 100);
         }
 
         /**
