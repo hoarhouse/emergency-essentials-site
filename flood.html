@@ -1545,16 +1545,62 @@
         }
 
         /**
-         * Fetch precipitation data - shows API unavailable message
+         * Fetch precipitation data from Weather.gov (no API key required)
          */
         async function fetchPrecipitationData(lat, lon) {
             const indicator = document.getElementById('precipitation-indicator');
             indicator.className = 'update-indicator updating';
             
             try {
-                // This would require a real weather API key
-                // For now, we'll show that the API is not configured
-                throw new Error('Precipitation API requires configuration');
+                // Use Weather.gov gridpoints API to get precipitation data
+                const gridResponse = await fetch(`https://api.weather.gov/points/${lat},${lon}`);
+                if (!gridResponse.ok) {
+                    throw new Error(`Weather.gov grid API returned ${gridResponse.status}`);
+                }
+                
+                const gridData = await gridResponse.json();
+                const gridId = gridData.properties.gridId;
+                const gridX = gridData.properties.gridX;
+                const gridY = gridData.properties.gridY;
+                
+                // Get current conditions and recent observations
+                const obsResponse = await fetch(`https://api.weather.gov/gridpoints/${gridId}/${gridX},${gridY}/stations`);
+                if (!obsResponse.ok) {
+                    throw new Error(`Weather station API returned ${obsResponse.status}`);
+                }
+                
+                const obsData = await obsResponse.json();
+                if (obsData.features && obsData.features.length > 0) {
+                    // Get observations from the nearest station
+                    const stationId = obsData.features[0].properties.stationIdentifier;
+                    const observationsResponse = await fetch(`https://api.weather.gov/stations/${stationId}/observations/latest`);
+                    
+                    if (observationsResponse.ok) {
+                        const latestObs = await observationsResponse.json();
+                        const precipValue = latestObs.properties.precipitationLastHour?.value;
+                        
+                        indicator.className = 'update-indicator';
+                        
+                        if (precipValue !== null && precipValue !== undefined) {
+                            // Convert from mm to inches
+                            const precipInches = (precipValue * 0.0393701).toFixed(2);
+                            return {
+                                last24h: precipInches,
+                                status: precipInches > 1 ? 'Heavy' : precipInches > 0.1 ? 'Light' : 'None',
+                                source: 'Weather.gov'
+                            };
+                        } else {
+                            return {
+                                last24h: '0.0',
+                                status: 'No recent rain',
+                                source: 'Weather.gov'
+                            };
+                        }
+                    }
+                }
+                
+                throw new Error('No precipitation data available from nearby stations');
+                
             } catch (error) {
                 console.error('Precipitation API Error:', error);
                 indicator.className = 'update-indicator error';
@@ -1563,18 +1609,36 @@
         }
 
         /**
-         * Fetch flood events data from real USGS sources only
+         * Fetch flood events data from real USGS sources with improved API calls
          */
         async function fetchFloodEvents(lat, lon) {
             try {
                 console.log(`Fetching flood events for ${lat}, ${lon}`);
                 
-                // Get nearby USGS sites with current data
-                const response = await fetch(`https://waterservices.usgs.gov/nwis/iv/?format=json&bBox=${lon-1},${lat-1},${lon+1},${lat+1}&parameterCd=00065,00060&siteStatus=active`);
+                // Try multiple USGS APIs for better coverage
+                
+                // First, try the flood conditions API
+                try {
+                    const floodResponse = await fetch(`https://waterwatch.usgs.gov/webservices/floodstage?format=json&state=all`);
+                    if (floodResponse.ok) {
+                        const floodData = await floodResponse.json();
+                        console.log('USGS flood stage API response:', floodData);
+                        
+                        if (floodData && Array.isArray(floodData)) {
+                            return processUSGSFloodStageData(floodData, lat, lon);
+                        }
+                    }
+                } catch (floodError) {
+                    console.warn('Flood stage API failed:', floodError);
+                }
+                
+                // Fallback: Get sites with recent high water from instantaneous values
+                const bbox = `${lon-2},${lat-2},${lon+2},${lat+2}`;
+                const response = await fetch(`https://waterservices.usgs.gov/nwis/iv/?format=json&bBox=${bbox}&parameterCd=00065&siteStatus=active&period=P1D`);
                 
                 if (response.ok) {
                     const data = await response.json();
-                    console.log('USGS flood API response:', data);
+                    console.log('USGS instantaneous values API response:', data);
                     
                     if (data.value && data.value.timeSeries) {
                         return processUSGSTimeSeriesData(data, lat, lon);
@@ -1587,9 +1651,118 @@
                 }
             } catch (error) {
                 console.error('USGS Flood API Error:', error);
-                console.log('No real flood events available from USGS APIs');
-                return [];
+                console.log('Trying simplified flood detection...');
+                
+                // Final fallback: just check a few known high-traffic gauges
+                return await fetchKnownGaugeStatus(lat, lon);
             }
+        }
+
+        /**
+         * Process USGS flood stage data from the dedicated flood API
+         */
+        function processUSGSFloodStageData(floodData, userLat, userLon) {
+            const events = [];
+            
+            floodData.forEach(site => {
+                try {
+                    if (site.stage_va && site.flood_stage_va) {
+                        const currentStage = parseFloat(site.stage_va);
+                        const floodStage = parseFloat(site.flood_stage_va);
+                        const siteLat = parseFloat(site.dec_lat_va);
+                        const siteLon = parseFloat(site.dec_long_va);
+                        
+                        // Calculate distance
+                        const distance = calculateDistance(userLat, userLon, siteLat, siteLon);
+                        if (distance > 200) return; // Only within 200 miles
+                        
+                        // Check if at or above flood stage
+                        if (currentStage >= floodStage) {
+                            const severity = currentStage >= (floodStage * 1.5) ? 'Major' : 
+                                           currentStage >= (floodStage * 1.2) ? 'Moderate' : 'Minor';
+                            
+                            events.push({
+                                id: site.site_no,
+                                title: `Flood Stage - ${site.station_nm}`,
+                                latitude: siteLat,
+                                longitude: siteLon,
+                                severity: severity,
+                                description: `Current: ${currentStage.toFixed(1)} ft | Flood Stage: ${floodStage.toFixed(1)} ft`,
+                                timestamp: new Date().toISOString(),
+                                distance: Math.round(distance),
+                                source: 'USGS Flood Stage',
+                                stationId: site.site_no,
+                                waterLevel: currentStage.toFixed(1)
+                            });
+                        }
+                    }
+                } catch (error) {
+                    console.warn('Error processing flood stage site:', error);
+                }
+            });
+            
+            return events.sort((a, b) => a.distance - b.distance).slice(0, 10);
+        }
+
+        /**
+         * Fallback: Check status of known major gauge stations
+         */
+        async function fetchKnownGaugeStatus(lat, lon) {
+            const knownGauges = [
+                '09380000', // Colorado River at Lees Ferry, AZ
+                '08377200', // Rio Grande at Otowi Bridge, NM
+                '06934500', // Missouri River at Hermann, MO
+                '07022000', // Mississippi River at Thebes, IL
+                '11447650', // Sacramento River at Freeport, CA
+                '14211720', // Willamette River at Portland, OR
+                '01646500', // Potomac River at Washington DC
+                '02231000'  // St. Johns River at Jacksonville, FL
+            ];
+            
+            const events = [];
+            const gaugePromises = knownGauges.map(async (gaugeId) => {
+                try {
+                    const response = await fetch(`https://waterservices.usgs.gov/nwis/iv/?format=json&sites=${gaugeId}&parameterCd=00065&period=P1D`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.value && data.value.timeSeries && data.value.timeSeries.length > 0) {
+                            const series = data.value.timeSeries[0];
+                            const siteInfo = series.sourceInfo;
+                            const values = series.values[0].value;
+                            
+                            if (values && values.length > 0) {
+                                const currentLevel = parseFloat(values[0].value);
+                                const siteLat = parseFloat(siteInfo.geoLocation.geogLocation.latitude);
+                                const siteLon = parseFloat(siteInfo.geoLocation.geogLocation.longitude);
+                                const distance = calculateDistance(lat, lon, siteLat, siteLon);
+                                
+                                // Consider levels above 15 feet as notable
+                                if (currentLevel > 15 && distance < 500) {
+                                    return {
+                                        id: gaugeId,
+                                        title: `High Water - ${siteInfo.siteName}`,
+                                        latitude: siteLat,
+                                        longitude: siteLon,
+                                        severity: currentLevel > 25 ? 'Major' : currentLevel > 20 ? 'Moderate' : 'Minor',
+                                        description: `Current water level: ${currentLevel.toFixed(1)} ft`,
+                                        timestamp: values[0].dateTime,
+                                        distance: Math.round(distance),
+                                        source: 'USGS Major Rivers',
+                                        stationId: gaugeId,
+                                        waterLevel: currentLevel.toFixed(1)
+                                    };
+                                }
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.warn(`Error checking gauge ${gaugeId}:`, error);
+                }
+                return null;
+            });
+            
+            const results = await Promise.all(gaugePromises);
+            return results.filter(event => event !== null).sort((a, b) => a.distance - b.distance);
         }
 
         /**
@@ -1681,11 +1854,14 @@
                 
                 // Try to fetch real precipitation data
                 try {
-                    await fetchPrecipitationData(currentLatitude, currentLongitude);
+                    const precipitationData = await fetchPrecipitationData(currentLatitude, currentLongitude);
+                    document.getElementById('precipitation-value').textContent = `${precipitationData.last24h}"`;
+                    document.getElementById('precipitation-status').textContent = precipitationData.status;
+                    document.getElementById('precipitation-detail').textContent = `Source: ${precipitationData.source}`;
                 } catch (error) {
                     document.getElementById('precipitation-value').textContent = 'N/A';
-                    document.getElementById('precipitation-status').textContent = 'API Not Configured';
-                    document.getElementById('precipitation-detail').textContent = 'Requires weather API key';
+                    document.getElementById('precipitation-status').textContent = 'Weather.gov Error';
+                    document.getElementById('precipitation-detail').textContent = 'No recent observations';
                 }
                 
                 // Try to fetch real USGS river data
@@ -1697,12 +1873,17 @@
                         document.getElementById('river-level-value').textContent = `${parsedData.value.toFixed(1)} ft`;
                         document.getElementById('river-status').textContent = getWaterLevelStatus(parsedData.value);
                         document.getElementById('river-detail').textContent = currentGaugeName;
+                        
+                        // Update streamflow card with related info
+                        document.getElementById('streamflow-value').textContent = 'See River Level';
+                        document.getElementById('streamflow-status').textContent = 'Same gauge';
+                        document.getElementById('streamflow-detail').textContent = 'Water level available';
                     } else if (parsedData.type === 'discharge') {
                         document.getElementById('river-level-value').textContent = `${parsedData.value.toFixed(0)} cfs`;
                         document.getElementById('river-status').textContent = getDischargeStatus(parsedData.value);
                         document.getElementById('river-detail').textContent = currentGaugeName;
                         
-                        // Update streamflow card too
+                        // Update streamflow card with the same data
                         document.getElementById('streamflow-value').textContent = `${parsedData.value.toFixed(0)} cfs`;
                         document.getElementById('streamflow-status').textContent = getDischargeStatus(parsedData.value);
                         document.getElementById('streamflow-detail').textContent = 'Cubic feet per second';
@@ -1710,11 +1891,11 @@
                 } catch (error) {
                     document.getElementById('river-level-value').textContent = 'N/A';
                     document.getElementById('river-status').textContent = 'USGS API Error';
-                    document.getElementById('river-detail').textContent = error.message;
+                    document.getElementById('river-detail').textContent = 'Check connection';
                     
                     document.getElementById('streamflow-value').textContent = 'N/A';
                     document.getElementById('streamflow-status').textContent = 'USGS API Error';
-                    document.getElementById('streamflow-detail').textContent = 'Same as water level';
+                    document.getElementById('streamflow-detail').textContent = 'Check connection';
                 }
                 
                 // Try to fetch real weather alerts
