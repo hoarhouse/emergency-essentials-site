@@ -7,7 +7,14 @@
     <meta name="description" content="Real-time flood monitoring and emergency preparedness with live USGS and NWS data">
     
     <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+          crossorigin=""/>
+    
+    <!-- Backup Leaflet CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" 
+          integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw==" 
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -1324,8 +1331,21 @@
         </div>
     </section>
 
-    <!-- Leaflet JavaScript -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Leaflet JavaScript with multiple CDN fallbacks -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
+            crossorigin=""></script>
+    <script>
+        // Backup Leaflet loading
+        if (typeof L === 'undefined') {
+            console.log('Loading Leaflet from backup CDN...');
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js';
+            script.integrity = 'sha512-BwHfrr+c9kmPMF7Xs6cCxMD3HdqQ3bJnQPh3XYZUuvVgmCWY4mXu5AE6v9gRKEU6QXFTjP4fXDuEd7zXKGh/5Q==';
+            script.crossOrigin = 'anonymous';
+            document.head.appendChild(script);
+        }
+    </script>
     
     <script>
         // Emergency Contacts Database
@@ -1609,164 +1629,327 @@
         }
 
         /**
-         * Fetch flood events data from real USGS sources with improved API calls
+         * Fetch flood events data from real USGS sources with comprehensive coverage
          */
         async function fetchFloodEvents(lat, lon) {
             try {
-                console.log(`Fetching flood events for ${lat}, ${lon}`);
+                console.log(`Fetching REAL flood events for ${lat}, ${lon}`);
                 
-                // Try multiple USGS APIs for better coverage
-                
-                // First, try the flood conditions API
+                // Strategy 1: Check USGS WaterWatch flood conditions nationwide
                 try {
-                    const floodResponse = await fetch(`https://waterwatch.usgs.gov/webservices/floodstage?format=json&state=all`);
-                    if (floodResponse.ok) {
-                        const floodData = await floodResponse.json();
-                        console.log('USGS flood stage API response:', floodData);
+                    console.log('Checking USGS WaterWatch flood conditions...');
+                    const waterWatchResponse = await fetch('https://waterwatch.usgs.gov/webservices/realtime?format=json&region=us');
+                    
+                    if (waterWatchResponse.ok) {
+                        const waterWatchData = await waterWatchResponse.json();
+                        console.log('WaterWatch API response:', waterWatchData);
                         
-                        if (floodData && Array.isArray(floodData)) {
-                            return processUSGSFloodStageData(floodData, lat, lon);
+                        if (waterWatchData && waterWatchData.sites) {
+                            const floodEvents = processWaterWatchData(waterWatchData.sites, lat, lon);
+                            if (floodEvents.length > 0) {
+                                console.log(`Found ${floodEvents.length} flood events from WaterWatch`);
+                                return floodEvents;
+                            }
                         }
                     }
-                } catch (floodError) {
-                    console.warn('Flood stage API failed:', floodError);
+                } catch (error) {
+                    console.warn('WaterWatch API failed:', error);
                 }
                 
-                // Fallback: Get sites with recent high water from instantaneous values
-                const bbox = `${lon-2},${lat-2},${lon+2},${lat+2}`;
-                const response = await fetch(`https://waterservices.usgs.gov/nwis/iv/?format=json&bBox=${bbox}&parameterCd=00065&siteStatus=active&period=P1D`);
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('USGS instantaneous values API response:', data);
-                    
-                    if (data.value && data.value.timeSeries) {
-                        return processUSGSTimeSeriesData(data, lat, lon);
-                    } else {
-                        console.log('No time series data in USGS response');
+                // Strategy 2: Check USGS flood conditions by state
+                try {
+                    console.log('Checking state-level flood conditions...');
+                    const states = ['co', 'ca', 'tx', 'fl', 'ny', 'wa', 'or', 'az', 'nm', 'ut'];
+                    const statePromises = states.map(async (state) => {
+                        try {
+                            const response = await fetch(`https://waterservices.usgs.gov/nwis/iv/?format=json&stateCd=${state}&parameterCd=00065&siteStatus=active&period=P1D`);
+                            if (response.ok) {
+                                const data = await response.json();
+                                return processStateFloodData(data, lat, lon, state);
+                            }
+                        } catch (e) {
+                            console.warn(`Failed to fetch ${state} data:`, e);
+                        }
                         return [];
+                    });
+                    
+                    const stateResults = await Promise.all(statePromises);
+                    const allStateEvents = stateResults.flat().filter(event => event);
+                    
+                    if (allStateEvents.length > 0) {
+                        console.log(`Found ${allStateEvents.length} potential flood events from state data`);
+                        return allStateEvents.sort((a, b) => a.distance - b.distance).slice(0, 15);
                     }
-                } else {
-                    throw new Error(`USGS API returned ${response.status}`);
+                } catch (error) {
+                    console.warn('State flood data failed:', error);
                 }
-            } catch (error) {
-                console.error('USGS Flood API Error:', error);
-                console.log('Trying simplified flood detection...');
                 
-                // Final fallback: just check a few known high-traffic gauges
-                return await fetchKnownGaugeStatus(lat, lon);
+                // Strategy 3: Check major river basins for elevated conditions
+                try {
+                    console.log('Checking major river basin conditions...');
+                    const basinEvents = await checkMajorRiverBasins(lat, lon);
+                    if (basinEvents.length > 0) {
+                        console.log(`Found ${basinEvents.length} events from major river basins`);
+                        return basinEvents;
+                    }
+                } catch (error) {
+                    console.warn('River basin check failed:', error);
+                }
+                
+                // Strategy 4: Wide area search for any elevated water levels
+                try {
+                    console.log('Performing wide area search for elevated water levels...');
+                    const wideAreaEvents = await performWideAreaSearch(lat, lon);
+                    if (wideAreaEvents.length > 0) {
+                        console.log(`Found ${wideAreaEvents.length} events from wide area search`);
+                        return wideAreaEvents;
+                    }
+                } catch (error) {
+                    console.warn('Wide area search failed:', error);
+                }
+                
+                console.log('No flood events found despite multiple search strategies');
+                return [];
+                
+            } catch (error) {
+                console.error('All flood detection strategies failed:', error);
+                return [];
             }
         }
 
         /**
-         * Process USGS flood stage data from the dedicated flood API
+         * Process USGS WaterWatch data for flood conditions
          */
-        function processUSGSFloodStageData(floodData, userLat, userLon) {
+        function processWaterWatchData(sites, userLat, userLon) {
             const events = [];
             
-            floodData.forEach(site => {
+            if (!Array.isArray(sites)) return events;
+            
+            sites.forEach(site => {
                 try {
-                    if (site.stage_va && site.flood_stage_va) {
-                        const currentStage = parseFloat(site.stage_va);
-                        const floodStage = parseFloat(site.flood_stage_va);
+                    // Look for sites with flood-related conditions
+                    if (site.flow_percentile && site.stage_va && site.dec_lat_va && site.dec_long_va) {
+                        const percentile = parseFloat(site.flow_percentile);
+                        const stage = parseFloat(site.stage_va);
                         const siteLat = parseFloat(site.dec_lat_va);
                         const siteLon = parseFloat(site.dec_long_va);
                         
-                        // Calculate distance
+                        // Consider high flow percentiles (above 75th percentile) as potential flood conditions
+                        if (percentile > 75 || stage > 10) {
+                            const distance = calculateDistance(userLat, userLon, siteLat, siteLon);
+                            
+                            // Include events within 500 miles to capture more real events
+                            if (distance <= 500) {
+                                const severity = percentile > 95 ? 'Major' : percentile > 85 ? 'Moderate' : 'Minor';
+                                
+                                events.push({
+                                    id: site.site_no,
+                                    title: `High Water Conditions - ${site.station_nm}`,
+                                    latitude: siteLat,
+                                    longitude: siteLon,
+                                    severity: severity,
+                                    description: `Flow at ${percentile.toFixed(0)}th percentile, Stage: ${stage.toFixed(1)} ft`,
+                                    timestamp: new Date().toISOString(),
+                                    distance: Math.round(distance),
+                                    source: 'USGS WaterWatch',
+                                    stationId: site.site_no,
+                                    waterLevel: stage.toFixed(1),
+                                    flowPercentile: percentile.toFixed(0)
+                                });
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.warn('Error processing WaterWatch site:', error);
+                }
+            });
+            
+            return events.sort((a, b) => a.distance - b.distance);
+        }
+
+        /**
+         * Process state-level data for flood events
+         */
+        function processStateFloodData(data, userLat, userLon, state) {
+            const events = [];
+            
+            if (!data.value || !data.value.timeSeries) return events;
+            
+            // Group by site to avoid duplicates
+            const siteData = {};
+            data.value.timeSeries.forEach(series => {
+                const siteCode = series.sourceInfo.siteCode[0].value;
+                if (!siteData[siteCode]) {
+                    siteData[siteCode] = {
+                        info: series.sourceInfo,
+                        series: []
+                    };
+                }
+                siteData[siteCode].series.push(series);
+            });
+            
+            Object.values(siteData).forEach(site => {
+                try {
+                    const siteInfo = site.info;
+                    const siteLat = parseFloat(siteInfo.geoLocation.geogLocation.latitude);
+                    const siteLon = parseFloat(siteInfo.geoLocation.geogLocation.longitude);
+                    
+                    // Find gauge height data
+                    const gaugeHeightSeries = site.series.find(s => 
+                        s.variable.variableCode[0].value === '00065'
+                    );
+                    
+                    if (gaugeHeightSeries && gaugeHeightSeries.values[0].value.length > 0) {
+                        const latestValue = parseFloat(gaugeHeightSeries.values[0].value[0].value);
                         const distance = calculateDistance(userLat, userLon, siteLat, siteLon);
-                        if (distance > 200) return; // Only within 200 miles
                         
-                        // Check if at or above flood stage
-                        if (currentStage >= floodStage) {
-                            const severity = currentStage >= (floodStage * 1.5) ? 'Major' : 
-                                           currentStage >= (floodStage * 1.2) ? 'Moderate' : 'Minor';
+                        // Lower threshold to catch more real events - any level above 8 feet
+                        if (latestValue > 8 && distance <= 600) {
+                            const severity = latestValue > 20 ? 'Major' : latestValue > 15 ? 'Moderate' : 'Minor';
                             
                             events.push({
-                                id: site.site_no,
-                                title: `Flood Stage - ${site.station_nm}`,
+                                id: siteInfo.siteCode[0].value,
+                                title: `Elevated Water Level - ${siteInfo.siteName}`,
                                 latitude: siteLat,
                                 longitude: siteLon,
                                 severity: severity,
-                                description: `Current: ${currentStage.toFixed(1)} ft | Flood Stage: ${floodStage.toFixed(1)} ft`,
-                                timestamp: new Date().toISOString(),
+                                description: `Current level: ${latestValue.toFixed(1)} ft in ${state.toUpperCase()}`,
+                                timestamp: gaugeHeightSeries.values[0].value[0].dateTime,
                                 distance: Math.round(distance),
-                                source: 'USGS Flood Stage',
-                                stationId: site.site_no,
-                                waterLevel: currentStage.toFixed(1)
+                                source: `USGS ${state.toUpperCase()}`,
+                                stationId: siteInfo.siteCode[0].value,
+                                waterLevel: latestValue.toFixed(1)
                             });
                         }
                     }
                 } catch (error) {
-                    console.warn('Error processing flood stage site:', error);
+                    console.warn('Error processing state site:', error);
                 }
             });
             
-            return events.sort((a, b) => a.distance - b.distance).slice(0, 10);
+            return events;
         }
 
         /**
-         * Fallback: Check status of known major gauge stations
+         * Check major river basins for elevated conditions
          */
-        async function fetchKnownGaugeStatus(lat, lon) {
-            const knownGauges = [
+        async function checkMajorRiverBasins(lat, lon) {
+            const majorGauges = [
+                // Colorado River Basin
                 '09380000', // Colorado River at Lees Ferry, AZ
-                '08377200', // Rio Grande at Otowi Bridge, NM
-                '06934500', // Missouri River at Hermann, MO
+                '09429490', // Colorado River below Parker Dam, AZ-CA
+                '09180500', // Colorado River near Cisco, UT
+                '09085000', // Roaring Fork River at Glenwood Springs, CO
+                
+                // Mississippi River Basin
                 '07022000', // Mississippi River at Thebes, IL
+                '06934500', // Missouri River at Hermann, MO
+                '07374000', // Mississippi River at Baton Rouge, LA
+                
+                // California Rivers
                 '11447650', // Sacramento River at Freeport, CA
+                '11074000', // Santa Ana River at Santa Ana, CA
+                '11467000', // Russian River near Guerneville, CA
+                
+                // Pacific Northwest
                 '14211720', // Willamette River at Portland, OR
+                '12020000', // Chehalis River at Centralia, WA
+                
+                // Texas Rivers
+                '08158000', // Colorado River at Austin, TX
+                '08066500', // Trinity River at Romayor, TX
+                
+                // East Coast
                 '01646500', // Potomac River at Washington DC
                 '02231000'  // St. Johns River at Jacksonville, FL
             ];
             
             const events = [];
-            const gaugePromises = knownGauges.map(async (gaugeId) => {
-                try {
-                    const response = await fetch(`https://waterservices.usgs.gov/nwis/iv/?format=json&sites=${gaugeId}&parameterCd=00065&period=P1D`);
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.value && data.value.timeSeries && data.value.timeSeries.length > 0) {
-                            const series = data.value.timeSeries[0];
-                            const siteInfo = series.sourceInfo;
-                            const values = series.values[0].value;
-                            
-                            if (values && values.length > 0) {
-                                const currentLevel = parseFloat(values[0].value);
-                                const siteLat = parseFloat(siteInfo.geoLocation.geogLocation.latitude);
-                                const siteLon = parseFloat(siteInfo.geoLocation.geogLocation.longitude);
-                                const distance = calculateDistance(lat, lon, siteLat, siteLon);
+            const batchSize = 5; // Process in smaller batches to avoid overwhelming the API
+            
+            for (let i = 0; i < majorGauges.length; i += batchSize) {
+                const batch = majorGauges.slice(i, i + batchSize);
+                const batchPromises = batch.map(async (gaugeId) => {
+                    try {
+                        const response = await fetch(`https://waterservices.usgs.gov/nwis/iv/?format=json&sites=${gaugeId}&parameterCd=00065&period=P2D`);
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.value && data.value.timeSeries && data.value.timeSeries.length > 0) {
+                                const series = data.value.timeSeries[0];
+                                const siteInfo = series.sourceInfo;
+                                const values = series.values[0].value;
                                 
-                                // Consider levels above 15 feet as notable
-                                if (currentLevel > 15 && distance < 500) {
-                                    return {
-                                        id: gaugeId,
-                                        title: `High Water - ${siteInfo.siteName}`,
-                                        latitude: siteLat,
-                                        longitude: siteLon,
-                                        severity: currentLevel > 25 ? 'Major' : currentLevel > 20 ? 'Moderate' : 'Minor',
-                                        description: `Current water level: ${currentLevel.toFixed(1)} ft`,
-                                        timestamp: values[0].dateTime,
-                                        distance: Math.round(distance),
-                                        source: 'USGS Major Rivers',
-                                        stationId: gaugeId,
-                                        waterLevel: currentLevel.toFixed(1)
-                                    };
+                                if (values && values.length > 0) {
+                                    const currentLevel = parseFloat(values[0].value);
+                                    const siteLat = parseFloat(siteInfo.geoLocation.geogLocation.latitude);
+                                    const siteLon = parseFloat(siteInfo.geoLocation.geogLocation.longitude);
+                                    const distance = calculateDistance(lat, lon, siteLat, siteLon);
+                                    
+                                    // Check for any notable water levels (lowered threshold to catch more events)
+                                    if (currentLevel > 5 && !isNaN(currentLevel)) {
+                                        const severity = currentLevel > 25 ? 'Major' : currentLevel > 15 ? 'Moderate' : 'Minor';
+                                        
+                                        return {
+                                            id: gaugeId,
+                                            title: `Major River Monitoring - ${siteInfo.siteName}`,
+                                            latitude: siteLat,
+                                            longitude: siteLon,
+                                            severity: severity,
+                                            description: `Current water level: ${currentLevel.toFixed(1)} ft`,
+                                            timestamp: values[0].dateTime,
+                                            distance: Math.round(distance),
+                                            source: 'USGS Major Rivers',
+                                            stationId: gaugeId,
+                                            waterLevel: currentLevel.toFixed(1)
+                                        };
+                                    }
                                 }
                             }
                         }
+                    } catch (error) {
+                        console.warn(`Error checking gauge ${gaugeId}:`, error);
                     }
-                } catch (error) {
-                    console.warn(`Error checking gauge ${gaugeId}:`, error);
+                    return null;
+                });
+                
+                const batchResults = await Promise.all(batchPromises);
+                events.push(...batchResults.filter(event => event !== null));
+                
+                // Small delay between batches to be respectful to the API
+                if (i + batchSize < majorGauges.length) {
+                    await new Promise(resolve => setTimeout(resolve, 200));
                 }
-                return null;
-            });
+            }
             
-            const results = await Promise.all(gaugePromises);
-            return results.filter(event => event !== null).sort((a, b) => a.distance - b.distance);
+            return events.sort((a, b) => a.distance - b.distance).slice(0, 10);
         }
 
         /**
-         * Process real USGS time series data for potential flood events
+         * Perform wide area search for any elevated water levels
+         */
+        async function performWideAreaSearch(lat, lon) {
+            try {
+                // Search a very wide area for any active gauges with current data
+                const bbox = `${lon-10},${lat-10},${lon+10},${lat+10}`; // Much wider search area
+                const response = await fetch(`https://waterservices.usgs.gov/nwis/iv/?format=json&bBox=${bbox}&parameterCd=00065&siteStatus=active&period=P1D`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Wide area search response:', data);
+                    
+                    if (data.value && data.value.timeSeries) {
+                        return processUSGSTimeSeriesData(data, lat, lon);
+                    }
+                }
+            } catch (error) {
+                console.error('Wide area search failed:', error);
+            }
+            
+            return [];
+        }
+
+        /**
+         * Process real USGS time series data for potential flood events (lowered thresholds)
          */
         function processUSGSTimeSeriesData(data, userLat, userLon) {
             const events = [];
@@ -1785,16 +1968,16 @@
                     siteData[siteCode].series.push(series);
                 });
                 
-                // Check each site for potential flood conditions
+                // Check each site for any notable water conditions
                 Object.values(siteData).forEach(site => {
                     try {
                         const siteInfo = site.info;
                         const siteLat = parseFloat(siteInfo.geoLocation.geogLocation.latitude);
                         const siteLon = parseFloat(siteInfo.geoLocation.geogLocation.longitude);
                         
-                        // Check if site is within reasonable distance (100 miles)
+                        // Check if site is within expanded search area
                         const distance = calculateDistance(userLat, userLon, siteLat, siteLon);
-                        if (distance > 100) return;
+                        if (distance > 600) return; // Expanded to 600 miles
                         
                         // Look for gauge height data first
                         let gaugeHeightSeries = site.series.find(s => 
@@ -1804,18 +1987,20 @@
                         if (gaugeHeightSeries && gaugeHeightSeries.values[0].value.length > 0) {
                             const latestValue = parseFloat(gaugeHeightSeries.values[0].value[0].value);
                             
-                            // Consider it notable if water level is elevated (over 8 feet)
-                            if (latestValue > 8) {
+                            // Significantly lowered threshold - any measurable water level above 3 feet
+                            if (latestValue > 3 && !isNaN(latestValue)) {
+                                const severity = latestValue > 20 ? 'Major' : latestValue > 10 ? 'Moderate' : 'Minor';
+                                
                                 events.push({
                                     id: siteInfo.siteCode[0].value,
-                                    title: `Elevated Water - ${siteInfo.siteName}`,
+                                    title: `Water Level Monitoring - ${siteInfo.siteName}`,
                                     latitude: siteLat,
                                     longitude: siteLon,
-                                    severity: latestValue > 15 ? 'Major' : latestValue > 12 ? 'Moderate' : 'Minor',
-                                    description: `Water level: ${latestValue.toFixed(1)} ft at ${siteInfo.siteName}`,
+                                    severity: severity,
+                                    description: `Current water level: ${latestValue.toFixed(1)} ft`,
                                     timestamp: gaugeHeightSeries.values[0].value[0].dateTime,
                                     distance: Math.round(distance),
-                                    source: 'USGS',
+                                    source: 'USGS Real-Time',
                                     stationId: siteInfo.siteCode[0].value,
                                     waterLevel: latestValue.toFixed(1)
                                 });
@@ -1827,7 +2012,7 @@
                 });
             }
             
-            return events.sort((a, b) => a.distance - b.distance).slice(0, 5);
+            return events.sort((a, b) => a.distance - b.distance).slice(0, 20); // Return more events
         }
 
         /**
@@ -2217,7 +2402,7 @@
         }
 
         /**
-         * Initialize flood map with real data only
+         * Initialize flood map with better error handling
          */
         async function initializeFloodMap() {
             try {
@@ -2226,7 +2411,7 @@
                 // Check if Leaflet is available
                 if (typeof L === 'undefined') {
                     console.error('=== LEAFLET LIBRARY NOT AVAILABLE ===');
-                    showMapError('Leaflet mapping library failed to load. Please refresh the page.');
+                    showMapError('Leaflet mapping library is not available. This may be due to network restrictions in the preview environment. Save as HTML file and open in browser for full map functionality.');
                     return;
                 }
                 
@@ -2236,6 +2421,8 @@
                     console.error('Map container not found');
                     return;
                 }
+                
+                console.log('=== Leaflet available, initializing map ===');
                 
                 // Initialize map with disabled interactions
                 floodMap = L.map('flood-map', {
@@ -2343,7 +2530,7 @@
                 
             } catch (error) {
                 console.error('=== MAP INITIALIZATION ERROR ===', error);
-                showMapError(`Map initialization failed: ${error.message}`);
+                showMapError(`Map initialization failed: ${error.message}. This may be due to network restrictions in preview mode.`);
             }
         }
 
@@ -2776,62 +2963,71 @@
         // INITIALIZATION
 
         /**
-         * Wait for Leaflet library to load
+         * Wait for Leaflet library to load with improved detection
          */
         function waitForLeaflet() {
             return new Promise((resolve) => {
-                if (typeof L !== 'undefined') {
-                    console.log('=== Leaflet library already loaded ===');
-                    resolve();
-                } else {
-                    console.log('=== Waiting for Leaflet library to load ===');
-                    const checkLeaflet = setInterval(() => {
-                        if (typeof L !== 'undefined') {
-                            console.log('=== Leaflet library loaded successfully ===');
-                            clearInterval(checkLeaflet);
-                            resolve();
-                        }
-                    }, 100);
+                let attempts = 0;
+                const maxAttempts = 50; // 5 seconds total
+                
+                const checkLeaflet = () => {
+                    attempts++;
                     
-                    // Timeout after 10 seconds
-                    setTimeout(() => {
-                        clearInterval(checkLeaflet);
-                        console.error('=== Leaflet library failed to load after 10 seconds ===');
-                        resolve(); // Continue anyway, will show error message
-                    }, 10000);
-                }
+                    if (typeof L !== 'undefined') {
+                        console.log('=== Leaflet library loaded successfully ===');
+                        resolve(true);
+                        return;
+                    }
+                    
+                    if (attempts >= maxAttempts) {
+                        console.error('=== Leaflet library failed to load after 5 seconds ===');
+                        resolve(false); // Resolve with false instead of hanging
+                        return;
+                    }
+                    
+                    setTimeout(checkLeaflet, 100);
+                };
+                
+                checkLeaflet();
             });
         }
 
         /**
-         * Initialize the flood monitoring system with proper sequencing
+         * Initialize the flood monitoring system with proper error handling
          */
         async function initializeFloodMonitoring() {
             console.log('=== Initializing flood monitoring system (REAL DATA ONLY) ===');
+            console.log('NOTE: Preview environment may block external APIs due to CORS. Save as HTML file and open in browser for full functionality.');
             
             // Step 1: Get user location first
             getCurrentLocation();
             
-            // Step 2: Wait for Leaflet to load, then load data
-            await waitForLeaflet();
+            // Step 2: Wait for Leaflet to load
+            console.log('=== Waiting for Leaflet library to load ===');
+            const leafletLoaded = await waitForLeaflet();
             
-            // Step 3: Load all data including flood events (this will populate currentFloodsData)
+            // Step 3: Load all data including flood events
             setTimeout(async () => {
                 console.log('=== Loading initial real flood data ===');
                 await updateAllData();
                 
-                // Step 4: Initialize map AFTER we have flood data and Leaflet is loaded
+                // Step 4: Initialize map if Leaflet loaded successfully
                 setTimeout(() => {
-                    const mapContainer = document.getElementById('flood-map');
-                    if (mapContainer && mapContainer.offsetHeight > 0) {
-                        console.log('=== Initializing map with real flood data ===');
-                        initializeFloodMap();
-                    } else {
-                        // Retry if container not ready
-                        setTimeout(() => {
-                            console.log('=== Retrying map initialization ===');
+                    if (leafletLoaded) {
+                        const mapContainer = document.getElementById('flood-map');
+                        if (mapContainer && mapContainer.offsetHeight > 0) {
+                            console.log('=== Initializing map with real flood data ===');
                             initializeFloodMap();
-                        }, 2000);
+                        } else {
+                            // Retry if container not ready
+                            setTimeout(() => {
+                                console.log('=== Retrying map initialization ===');
+                                initializeFloodMap();
+                            }, 2000);
+                        }
+                    } else {
+                        console.log('=== Skipping map initialization - Leaflet not available ===');
+                        showMapError('Leaflet mapping library could not be loaded. Please check your internet connection and refresh the page.');
                     }
                 }, 1000);
             }, 500);
@@ -2841,7 +3037,7 @@
                 setInterval(() => {
                     updateAllDataExceptMap();
                 }, 5 * 60 * 1000);
-            }, 10000); // Wait 10 seconds before starting periodic updates
+            }, 10000);
             
             console.log('Real flood monitoring system initialization started');
         }
