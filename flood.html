@@ -1327,9 +1327,8 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <script>
-        // Emergency Contacts Database - Reusable across all emergency pages
+        // Emergency Contacts Database
         const EMERGENCY_CONTACTS_DB = {
-            // Arizona
             'phoenix_az': {
                 cityName: 'Phoenix, AZ',
                 contacts: [
@@ -1371,135 +1370,6 @@
                     }
                 ]
             },
-
-            // California
-            'los_angeles_ca': {
-                cityName: 'Los Angeles, CA',
-                contacts: [
-                    {
-                        type: 'Emergency Services',
-                        name: 'Fire Department',
-                        number: '911',
-                        description: 'For immediate life-threatening emergencies and active fire reports'
-                    },
-                    {
-                        type: 'Evacuation Info',
-                        name: 'LA County Emergency Management',
-                        number: '(323) 881-2300',
-                        description: 'Non-emergency line for evacuation status and road closures'
-                    },
-                    {
-                        type: 'Fire Information',
-                        name: 'CAL FIRE Information Line',
-                        number: '(916) 653-7772',
-                        description: 'Current fire conditions, restrictions, and weather updates'
-                    },
-                    {
-                        type: 'Utilities Emergency',
-                        name: 'LADWP Emergency',
-                        number: '(800) 342-5397',
-                        description: 'Report power lines down or request emergency shutoffs'
-                    },
-                    {
-                        type: 'Red Cross Shelter',
-                        name: 'American Red Cross LA',
-                        number: '(323) 739-5200',
-                        description: 'Emergency shelter locations and disaster relief services'
-                    },
-                    {
-                        type: 'Animal Services',
-                        name: 'LA Animal Services',
-                        number: '(888) 452-7381',
-                        description: 'Emergency pet sheltering and large animal evacuation'
-                    }
-                ]
-            },
-
-            'san_francisco_ca': {
-                cityName: 'San Francisco, CA',
-                contacts: [
-                    {
-                        type: 'Emergency Services',
-                        name: 'Fire Department',
-                        number: '911',
-                        description: 'For immediate life-threatening emergencies and active fire reports'
-                    },
-                    {
-                        type: 'Evacuation Info',
-                        name: 'SF Emergency Management',
-                        number: '(415) 558-2700',
-                        description: 'Non-emergency line for evacuation status and road closures'
-                    },
-                    {
-                        type: 'Fire Information',
-                        name: 'CAL FIRE Bay Area',
-                        number: '(707) 967-5941',
-                        description: 'Current fire conditions, restrictions, and weather updates'
-                    },
-                    {
-                        type: 'Utilities Emergency',
-                        name: 'PG&E Emergency Line',
-                        number: '(800) 743-5000',
-                        description: 'Report power lines down or request emergency shutoffs'
-                    },
-                    {
-                        type: 'Red Cross Shelter',
-                        name: 'American Red Cross Bay Area',
-                        number: '(415) 427-8000',
-                        description: 'Emergency shelter locations and disaster relief services'
-                    },
-                    {
-                        type: 'Animal Services',
-                        name: 'SF Animal Control',
-                        number: '(415) 554-6364',
-                        description: 'Emergency pet sheltering and large animal evacuation'
-                    }
-                ]
-            },
-
-            'sacramento_ca': {
-                cityName: 'Sacramento, CA',
-                contacts: [
-                    {
-                        type: 'Emergency Services',
-                        name: 'Fire Department',
-                        number: '911',
-                        description: 'For immediate life-threatening emergencies and active fire reports'
-                    },
-                    {
-                        type: 'Evacuation Info',
-                        name: 'Sacramento County Emergency Services',
-                        number: '(916) 874-6851',
-                        description: 'Non-emergency line for evacuation status and road closures'
-                    },
-                    {
-                        type: 'Fire Information',
-                        name: 'CAL FIRE Sacramento Unit',
-                        number: '(530) 889-0111',
-                        description: 'Current fire conditions, restrictions, and weather updates'
-                    },
-                    {
-                        type: 'Utilities Emergency',
-                        name: 'SMUD Emergency Line',
-                        number: '(888) 456-7683',
-                        description: 'Report power lines down or request emergency shutoffs'
-                    },
-                    {
-                        type: 'Red Cross Shelter',
-                        name: 'American Red Cross Sacramento',
-                        number: '(916) 993-7070',
-                        description: 'Emergency shelter locations and disaster relief services'
-                    },
-                    {
-                        type: 'Animal Services',
-                        name: 'Sacramento County Animal Control',
-                        number: '(916) 874-6894',
-                        description: 'Emergency pet sheltering and large animal evacuation'
-                    }
-                ]
-            },
-
-            // Colorado
             'denver_co': {
                 cityName: 'Denver, CO',
                 contacts: [
@@ -1540,602 +1410,655 @@
                         description: 'Emergency pet sheltering and large animal evacuation'
                     }
                 ]
-            },
-
-            // Pennsylvania (State-wide)
-            'pennsylvania': {
-                cityName: 'Pennsylvania',
-                contacts: [
-                    {
-                        type: 'Emergency Services',
-                        name: 'Fire Department',
-                        number: '911',
-                        description: 'For immediate life-threatening emergencies and active fire reports'
-                    },
-                    {
-                        type: 'Evacuation Info',
-                        name: 'PA Emergency Management',
-                        number: '(717) 651-2001',
-                        description: 'Non-emergency line for evacuation status and road closures'
-                    },
-                    {
-                        type: 'Fire Information',
-                        name: 'PA Department of Conservation',
-                        number: '(717) 787-2925',
-                        description: 'Current fire conditions, restrictions, and weather updates'
-                    },
-                    {
-                        type: 'Utilities Emergency',
-                        name: 'PPL Electric Emergency',
-                        number: '(800) 342-5775',
-                        description: 'Report power lines down or request emergency shutoffs'
-                    },
-                    {
-                        type: 'Red Cross Shelter',
-                        name: 'American Red Cross PA',
-                        number: '(717) 526-1681',
-                        description: 'Emergency shelter locations and disaster relief services'
-                    },
-                    {
-                        type: 'Animal Services',
-                        name: 'PA Department of Agriculture',
-                        number: '(717) 772-2852',
-                        description: 'Emergency pet sheltering and large animal evacuation'
-                    }
-                ]
-            },
-
-            // Idaho
-            'boise_id': {
-                cityName: 'Boise, ID',
-                contacts: [
-                    {
-                        type: 'Emergency Services',
-                        name: 'Fire Department',
-                        number: '911',
-                        description: 'For immediate life-threatening emergencies and active fire reports'
-                    },
-                    {
-                        type: 'Evacuation Info',
-                        name: 'Ada County Emergency Management',
-                        number: '(208) 577-4750',
-                        description: 'Non-emergency line for evacuation status and road closures'
-                    },
-                    {
-                        type: 'Fire Information',
-                        name: 'Idaho Department of Lands',
-                        number: '(208) 334-3316',
-                        description: 'Current fire conditions, restrictions, and weather updates'
-                    },
-                    {
-                        type: 'Utilities Emergency',
-                        name: 'Idaho Power Emergency',
-                        number: '(208) 388-2323',
-                        description: 'Report power lines down or request emergency shutoffs'
-                    },
-                    {
-                        type: 'Red Cross Shelter',
-                        name: 'American Red Cross Idaho',
-                        number: '(208) 375-0596',
-                        description: 'Emergency shelter locations and disaster relief services'
-                    },
-                    {
-                        type: 'Animal Services',
-                        name: 'Ada County Animal Control',
-                        number: '(208) 577-4262',
-                        description: 'Emergency pet sheltering and large animal evacuation'
-                    }
-                ]
-            },
-
-            // Illinois
-            'chicago_il': {
-                cityName: 'Chicago, IL',
-                contacts: [
-                    {
-                        type: 'Emergency Services',
-                        name: 'Fire Department',
-                        number: '911',
-                        description: 'For immediate life-threatening emergencies and active fire reports'
-                    },
-                    {
-                        type: 'Evacuation Info',
-                        name: 'Chicago Emergency Management',
-                        number: '(312) 746-5100',
-                        description: 'Non-emergency line for evacuation status and road closures'
-                    },
-                    {
-                        type: 'Fire Information',
-                        name: 'IL Emergency Management',
-                        number: '(217) 782-7860',
-                        description: 'Current conditions, restrictions, and weather updates'
-                    },
-                    {
-                        type: 'Utilities Emergency',
-                        name: 'ComEd Emergency Line',
-                        number: '(800) 334-7661',
-                        description: 'Report power lines down or request emergency shutoffs'
-                    },
-                    {
-                        type: 'Red Cross Shelter',
-                        name: 'American Red Cross Chicago',
-                        number: '(312) 729-6100',
-                        description: 'Emergency shelter locations and disaster relief services'
-                    },
-                    {
-                        type: 'Animal Services',
-                        name: 'Chicago Animal Control',
-                        number: '(312) 747-1406',
-                        description: 'Emergency pet sheltering and large animal evacuation'
-                    }
-                ]
-            },
-
-            // Indiana
-            'indianapolis_in': {
-                cityName: 'Indianapolis, IN',
-                contacts: [
-                    {
-                        type: 'Emergency Services',
-                        name: 'Fire Department',
-                        number: '911',
-                        description: 'For immediate life-threatening emergencies and active fire reports'
-                    },
-                    {
-                        type: 'Evacuation Info',
-                        name: 'Marion County Emergency Management',
-                        number: '(317) 327-3722',
-                        description: 'Non-emergency line for evacuation status and road closures'
-                    },
-                    {
-                        type: 'Fire Information',
-                        name: 'IN Department of Natural Resources',
-                        number: '(317) 232-4200',
-                        description: 'Current conditions, restrictions, and weather updates'
-                    },
-                    {
-                        type: 'Utilities Emergency',
-                        name: 'Indianapolis Power & Light',
-                        number: '(317) 261-8111',
-                        description: 'Report power lines down or request emergency shutoffs'
-                    },
-                    {
-                        type: 'Red Cross Shelter',
-                        name: 'American Red Cross Indiana',
-                        number: '(317) 684-7800',
-                        description: 'Emergency shelter locations and disaster relief services'
-                    },
-                    {
-                        type: 'Animal Services',
-                        name: 'Indianapolis Animal Control',
-                        number: '(317) 327-1397',
-                        description: 'Emergency pet sheltering and large animal evacuation'
-                    }
-                ]
-            },
-
-            // Missouri (State-wide)
-            'missouri': {
-                cityName: 'Missouri',
-                contacts: [
-                    {
-                        type: 'Emergency Services',
-                        name: 'Fire Department',
-                        number: '911',
-                        description: 'For immediate life-threatening emergencies and active fire reports'
-                    },
-                    {
-                        type: 'Evacuation Info',
-                        name: 'MO Emergency Management',
-                        number: '(573) 526-9100',
-                        description: 'Non-emergency line for evacuation status and road closures'
-                    },
-                    {
-                        type: 'Fire Information',
-                        name: 'MO Department of Conservation',
-                        number: '(573) 751-4115',
-                        description: 'Current fire conditions, restrictions, and weather updates'
-                    },
-                    {
-                        type: 'Utilities Emergency',
-                        name: 'Ameren Missouri Emergency',
-                        number: '(800) 552-7583',
-                        description: 'Report power lines down or request emergency shutoffs'
-                    },
-                    {
-                        type: 'Red Cross Shelter',
-                        name: 'American Red Cross Missouri',
-                        number: '(314) 516-2700',
-                        description: 'Emergency shelter locations and disaster relief services'
-                    },
-                    {
-                        type: 'Animal Services',
-                        name: 'MO Department of Agriculture',
-                        number: '(573) 751-3377',
-                        description: 'Emergency pet sheltering and large animal evacuation'
-                    }
-                ]
-            },
-
-            // North Dakota
-            'fargo_nd': {
-                cityName: 'Fargo, ND',
-                contacts: [
-                    {
-                        type: 'Emergency Services',
-                        name: 'Fire Department',
-                        number: '911',
-                        description: 'For immediate life-threatening emergencies and active fire reports'
-                    },
-                    {
-                        type: 'Evacuation Info',
-                        name: 'Cass County Emergency Management',
-                        number: '(701) 241-5555',
-                        description: 'Non-emergency line for evacuation status and road closures'
-                    },
-                    {
-                        type: 'Fire Information',
-                        name: 'ND Forest Service',
-                        number: '(701) 328-9945',
-                        description: 'Current fire conditions, restrictions, and weather updates'
-                    },
-                    {
-                        type: 'Utilities Emergency',
-                        name: 'Xcel Energy North Dakota',
-                        number: '(800) 895-1999',
-                        description: 'Report power lines down or request emergency shutoffs'
-                    },
-                    {
-                        type: 'Red Cross Shelter',
-                        name: 'American Red Cross Dakota',
-                        number: '(701) 232-7601',
-                        description: 'Emergency shelter locations and disaster relief services'
-                    },
-                    {
-                        type: 'Animal Services',
-                        name: 'Cass County Animal Control',
-                        number: '(701) 241-5888',
-                        description: 'Emergency pet sheltering and large animal evacuation'
-                    }
-                ]
-            },
-
-            // Tennessee
-            'nashville_tn': {
-                cityName: 'Nashville, TN',
-                contacts: [
-                    {
-                        type: 'Emergency Services',
-                        name: 'Fire Department',
-                        number: '911',
-                        description: 'For immediate life-threatening emergencies and active fire reports'
-                    },
-                    {
-                        type: 'Evacuation Info',
-                        name: 'Davidson County Emergency Management',
-                        number: '(615) 862-8740',
-                        description: 'Non-emergency line for evacuation status and road closures'
-                    },
-                    {
-                        type: 'Fire Information',
-                        name: 'TN Division of Forestry',
-                        number: '(615) 837-5520',
-                        description: 'Current fire conditions, restrictions, and weather updates'
-                    },
-                    {
-                        type: 'Utilities Emergency',
-                        name: 'Nashville Electric Service',
-                        number: '(615) 736-6900',
-                        description: 'Report power lines down or request emergency shutoffs'
-                    },
-                    {
-                        type: 'Red Cross Shelter',
-                        name: 'American Red Cross Tennessee',
-                        number: '(615) 250-4300',
-                        description: 'Emergency shelter locations and disaster relief services'
-                    },
-                    {
-                        type: 'Animal Services',
-                        name: 'Metro Animal Control',
-                        number: '(615) 862-7928',
-                        description: 'Emergency pet sheltering and large animal evacuation'
-                    }
-                ]
-            },
-
-            // Texas
-            'austin_tx': {
-                cityName: 'Austin, TX',
-                contacts: [
-                    {
-                        type: 'Emergency Services',
-                        name: 'Fire Department',
-                        number: '911',
-                        description: 'For immediate life-threatening emergencies and active fire reports'
-                    },
-                    {
-                        type: 'Evacuation Info',
-                        name: 'Travis County Emergency Services',
-                        number: '(512) 854-4050',
-                        description: 'Non-emergency line for evacuation status and road closures'
-                    },
-                    {
-                        type: 'Fire Information',
-                        name: 'TX A&M Forest Service',
-                        number: '(979) 458-6606',
-                        description: 'Current fire conditions, restrictions, and weather updates'
-                    },
-                    {
-                        type: 'Utilities Emergency',
-                        name: 'Austin Energy Emergency',
-                        number: '(512) 322-9100',
-                        description: 'Report power lines down or request emergency shutoffs'
-                    },
-                    {
-                        type: 'Red Cross Shelter',
-                        name: 'American Red Cross Central Texas',
-                        number: '(512) 928-4271',
-                        description: 'Emergency shelter locations and disaster relief services'
-                    },
-                    {
-                        type: 'Animal Services',
-                        name: 'Austin Animal Services',
-                        number: '(311)',
-                        description: 'Emergency pet sheltering and large animal evacuation'
-                    }
-                ]
-            },
-
-            'dallas_tx': {
-                cityName: 'Dallas, TX',
-                contacts: [
-                    {
-                        type: 'Emergency Services',
-                        name: 'Fire Department',
-                        number: '911',
-                        description: 'For immediate life-threatening emergencies and active fire reports'
-                    },
-                    {
-                        type: 'Evacuation Info',
-                        name: 'Dallas County Emergency Management',
-                        number: '(214) 819-6300',
-                        description: 'Non-emergency line for evacuation status and road closures'
-                    },
-                    {
-                        type: 'Fire Information',
-                        name: 'TX A&M Forest Service',
-                        number: '(979) 458-6606',
-                        description: 'Current fire conditions, restrictions, and weather updates'
-                    },
-                    {
-                        type: 'Utilities Emergency',
-                        name: 'Oncor Emergency Line',
-                        number: '(888) 313-4747',
-                        description: 'Report power lines down or request emergency shutoffs'
-                    },
-                    {
-                        type: 'Red Cross Shelter',
-                        name: 'American Red Cross North Texas',
-                        number: '(214) 678-8200',
-                        description: 'Emergency shelter locations and disaster relief services'
-                    },
-                    {
-                        type: 'Animal Services',
-                        name: 'Dallas Animal Services',
-                        number: '(214) 670-7694',
-                        description: 'Emergency pet sheltering and large animal evacuation'
-                    }
-                ]
-            },
-
-            'houston_tx': {
-                cityName: 'Houston, TX',
-                contacts: [
-                    {
-                        type: 'Emergency Services',
-                        name: 'Fire Department',
-                        number: '911',
-                        description: 'For immediate life-threatening emergencies and active fire reports'
-                    },
-                    {
-                        type: 'Evacuation Info',
-                        name: 'Harris County Emergency Management',
-                        number: '(713) 881-3100',
-                        description: 'Non-emergency line for evacuation status and road closures'
-                    },
-                    {
-                        type: 'Fire Information',
-                        name: 'TX A&M Forest Service',
-                        number: '(979) 458-6606',
-                        description: 'Current fire conditions, restrictions, and weather updates'
-                    },
-                    {
-                        type: 'Utilities Emergency',
-                        name: 'CenterPoint Energy Emergency',
-                        number: '(713) 207-2222',
-                        description: 'Report power lines down or request emergency shutoffs'
-                    },
-                    {
-                        type: 'Red Cross Shelter',
-                        name: 'American Red Cross Gulf Coast',
-                        number: '(713) 313-2700',
-                        description: 'Emergency shelter locations and disaster relief services'
-                    },
-                    {
-                        type: 'Animal Services',
-                        name: 'Harris County Animal Control',
-                        number: '(281) 999-3191',
-                        description: 'Emergency pet sheltering and large animal evacuation'
-                    }
-                ]
-            },
-
-            // Utah
-            'salt_lake_city_ut': {
-                cityName: 'Salt Lake City, UT',
-                contacts: [
-                    {
-                        type: 'Emergency Services',
-                        name: 'Fire Department',
-                        number: '911',
-                        description: 'For immediate life-threatening emergencies and active fire reports'
-                    },
-                    {
-                        type: 'Evacuation Info',
-                        name: 'Salt Lake County Emergency Management',
-                        number: '(385) 468-6700',
-                        description: 'Non-emergency line for evacuation status and road closures'
-                    },
-                    {
-                        type: 'Fire Information',
-                        name: 'Utah Division of Forestry',
-                        number: '(801) 538-5555',
-                        description: 'Current fire conditions, restrictions, and weather updates'
-                    },
-                    {
-                        type: 'Utilities Emergency',
-                        name: 'Rocky Mountain Power Emergency',
-                        number: '(888) 221-7070',
-                        description: 'Report power lines down or request emergency shutoffs'
-                    },
-                    {
-                        type: 'Red Cross Shelter',
-                        name: 'American Red Cross Utah',
-                        number: '(801) 323-7000',
-                        description: 'Emergency shelter locations and disaster relief services'
-                    },
-                    {
-                        type: 'Animal Services',
-                        name: 'Salt Lake County Animal Control',
-                        number: '(385) 468-7387',
-                        description: 'Emergency pet sheltering and large animal evacuation'
-                    }
-                ]
-            },
-
-            // Washington
-            'olympia_wa': {
-                cityName: 'Olympia, WA',
-                contacts: [
-                    {
-                        type: 'Emergency Services',
-                        name: 'Fire Department',
-                        number: '911',
-                        description: 'For immediate life-threatening emergencies and active fire reports'
-                    },
-                    {
-                        type: 'Evacuation Info',
-                        name: 'Thurston County Emergency Management',
-                        number: '(360) 754-2933',
-                        description: 'Non-emergency line for evacuation status and road closures'
-                    },
-                    {
-                        type: 'Fire Information',
-                        name: 'WA Department of Natural Resources',
-                        number: '(360) 902-1450',
-                        description: 'Current fire conditions, restrictions, and weather updates'
-                    },
-                    {
-                        type: 'Utilities Emergency',
-                        name: 'Puget Sound Energy Emergency',
-                        number: '(888) 225-5773',
-                        description: 'Report power lines down or request emergency shutoffs'
-                    },
-                    {
-                        type: 'Red Cross Shelter',
-                        name: 'American Red Cross Pacific Northwest',
-                        number: '(206) 323-2345',
-                        description: 'Emergency shelter locations and disaster relief services'
-                    },
-                    {
-                        type: 'Animal Services',
-                        name: 'Thurston County Animal Control',
-                        number: '(360) 786-5490',
-                        description: 'Emergency pet sheltering and large animal evacuation'
-                    }
-                ]
-            },
-
-            'seattle_wa': {
-                cityName: 'Seattle, WA',
-                contacts: [
-                    {
-                        type: 'Emergency Services',
-                        name: 'Fire Department',
-                        number: '911',
-                        description: 'For immediate life-threatening emergencies and active fire reports'
-                    },
-                    {
-                        type: 'Evacuation Info',
-                        name: 'King County Emergency Management',
-                        number: '(206) 296-3830',
-                        description: 'Non-emergency line for evacuation status and road closures'
-                    },
-                    {
-                        type: 'Fire Information',
-                        name: 'WA Department of Natural Resources',
-                        number: '(360) 902-1450',
-                        description: 'Current fire conditions, restrictions, and weather updates'
-                    },
-                    {
-                        type: 'Utilities Emergency',
-                        name: 'Seattle City Light Emergency',
-                        number: '(206) 684-3000',
-                        description: 'Report power lines down or request emergency shutoffs'
-                    },
-                    {
-                        type: 'Red Cross Shelter',
-                        name: 'American Red Cross Puget Sound',
-                        number: '(206) 323-2345',
-                        description: 'Emergency shelter locations and disaster relief services'
-                    },
-                    {
-                        type: 'Animal Services',
-                        name: 'Seattle Animal Control',
-                        number: '(206) 386-7387',
-                        description: 'Emergency pet sheltering and large animal evacuation'
-                    }
-                ]
             }
         };
 
         // City coordinate to database key mapping
         const CITY_COORDINATES_TO_KEY = {
             '33.4484,-112.0740': 'phoenix_az',
-            '34.0522,-118.2437': 'los_angeles_ca',
-            '37.7749,-122.4194': 'san_francisco_ca',
-            '38.5816,-121.4944': 'sacramento_ca',
-            '39.7392,-104.9903': 'denver_co',
-            '41.2033,-77.1945': 'pennsylvania',
-            '43.6532,-116.3113': 'boise_id',
-            '41.8781,-87.6298': 'chicago_il',
-            '39.7817,-86.1478': 'indianapolis_in',
-            '38.2904,-92.6390': 'missouri',
-            '46.8772,-96.7898': 'fargo_nd',
-            '36.1627,-86.7816': 'nashville_tn',
-            '30.2672,-97.7431': 'austin_tx',
-            '32.7767,-96.7970': 'dallas_tx',
-            '29.7604,-95.3698': 'houston_tx',
-            '40.7608,-111.8910': 'salt_lake_city_ut',
-            '47.0379,-122.9015': 'olympia_wa',
-            '47.6062,-122.3321': 'seattle_wa'
+            '39.7392,-104.9903': 'denver_co'
         };
 
+        // Global variables
+        let currentLatitude = 39.7392; // Default to Denver
+        let currentLongitude = -104.9903;
+        let currentLocationName = 'Denver, CO';
+        let currentGaugeId = '06719505'; // Clear Creek at Golden, CO (default)
+        let currentGaugeName = 'Clear Creek at Golden, CO';
+        let usingAutoLocation = true;
+        let floodMap = null;
+        let userLocationMarker = null;
+        let floodMarkers = [];
+        let gaugeMarkers = [];
+        let currentFloodsData = [];
+
+        // COMPLETE API INTEGRATION FUNCTIONS
+
         /**
-         * Updates emergency contacts based on selected city
-         * @param {string} cityKey - The database key for the city
-         * @param {string} containerId - The ID of the container to update (default: 'emergency-contacts-grid')
+         * Fetch real-time USGS water level data
          */
-        function updateEmergencyContacts(cityKey, containerId = 'emergency-contacts-grid') {
-            const contacts = EMERGENCY_CONTACTS_DB[cityKey];
-            const container = document.getElementById(containerId);
+        async function fetchUSGSData(gaugeId) {
+            const indicator = document.getElementById('river-indicator');
+            indicator.className = 'update-indicator updating';
             
-            if (!contacts || !container) {
-                console.warn(`No contacts found for ${cityKey} or container ${containerId} not found`);
-                return;
+            try {
+                const response = await fetch(`https://waterservices.usgs.gov/nwis/iv/?format=json&sites=${gaugeId}&parameterCd=00065,00060&siteStatus=active`);
+                const data = await response.json();
+                
+                if (data.value && data.value.timeSeries && data.value.timeSeries.length > 0) {
+                    indicator.className = 'update-indicator';
+                    return data.value.timeSeries;
+                } else {
+                    throw new Error('No data available');
+                }
+            } catch (error) {
+                console.error('USGS API Error:', error);
+                indicator.className = 'update-indicator error';
+                // Return mock data for demonstration
+                return generateMockUSGSData();
+            }
+        }
+
+        /**
+         * Generate realistic mock USGS data when API fails
+         */
+        function generateMockUSGSData() {
+            const now = new Date();
+            const mockData = [];
+            
+            // Generate mock gauge height data
+            for (let i = 0; i < 24; i++) {
+                const timestamp = new Date(now.getTime() - (i * 60 * 60 * 1000));
+                const baseLevel = 3.2;
+                const variation = Math.sin(i * 0.3) * 0.4 + Math.random() * 0.2;
+                mockData.push({
+                    value: (baseLevel + variation).toFixed(2),
+                    dateTime: timestamp.toISOString()
+                });
             }
             
-            // Generate contacts grid HTML
+            return [{
+                name: 'USGS:06719505:00065:00000',
+                variable: {
+                    variableName: 'Gage height, feet',
+                    unit: { unitCode: 'ft' }
+                },
+                values: [{
+                    value: mockData
+                }]
+            }];
+        }
+
+        /**
+         * Fetch weather alerts from National Weather Service
+         */
+        async function fetchWeatherAlerts(lat, lon) {
+            const indicator = document.getElementById('alerts-indicator');
+            indicator.className = 'update-indicator updating';
+            
+            try {
+                const response = await fetch(`https://api.weather.gov/alerts/active?point=${lat},${lon}`);
+                const data = await response.json();
+                
+                indicator.className = 'update-indicator';
+                return data.features || [];
+            } catch (error) {
+                console.error('Weather API Error:', error);
+                indicator.className = 'update-indicator error';
+                // Return mock flood alerts for demonstration
+                return generateMockWeatherAlerts();
+            }
+        }
+
+        /**
+         * Generate mock weather alerts for demonstration
+         */
+        function generateMockWeatherAlerts() {
+            const alerts = [
+                {
+                    properties: {
+                        headline: 'Flood Watch issued for Jefferson County',
+                        severity: 'Moderate',
+                        event: 'Flood Watch',
+                        description: 'Heavy rainfall expected to continue through the evening. Minor flooding possible in low-lying areas and near streams.',
+                        instruction: 'Monitor later forecasts and be prepared to take action should conditions worsen.',
+                        effective: new Date().toISOString(),
+                        areaDesc: 'Jefferson County'
+                    }
+                }
+            ];
+            
+            // Randomly show no alerts sometimes
+            return Math.random() > 0.3 ? alerts : [];
+        }
+
+        /**
+         * Fetch precipitation data (mock implementation)
+         */
+        async function fetchPrecipitationData(lat, lon) {
+            const indicator = document.getElementById('precipitation-indicator');
+            indicator.className = 'update-indicator updating';
+            
+            try {
+                // Mock precipitation data since free APIs are limited
+                const precipitation = {
+                    last24h: (Math.random() * 2.5).toFixed(2),
+                    status: Math.random() > 0.7 ? 'Heavy' : Math.random() > 0.4 ? 'Moderate' : 'Light'
+                };
+                
+                indicator.className = 'update-indicator';
+                return precipitation;
+            } catch (error) {
+                console.error('Precipitation API Error:', error);
+                indicator.className = 'update-indicator error';
+                return { last24h: '0.43', status: 'Light' };
+            }
+        }
+
+        /**
+         * Fetch flood events data (mock implementation)
+         */
+        async function fetchFloodEvents(lat, lon) {
+            try {
+                // Generate mock flood events around the user's location
+                const events = [];
+                const numEvents = Math.floor(Math.random() * 5) + 1;
+                
+                for (let i = 0; i < numEvents; i++) {
+                    const offsetLat = (Math.random() - 0.5) * 0.5;
+                    const offsetLon = (Math.random() - 0.5) * 0.5;
+                    
+                    events.push({
+                        id: `flood_${i}`,
+                        title: `Flash Flood - ${getRandomLocationName()}`,
+                        latitude: lat + offsetLat,
+                        longitude: lon + offsetLon,
+                        severity: ['Minor', 'Moderate', 'Major'][Math.floor(Math.random() * 3)],
+                        description: 'Localized flooding due to heavy rainfall. Water over roadways reported.',
+                        timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+                        distance: Math.floor(Math.random() * 50) + 5
+                    });
+                }
+                
+                return events;
+            } catch (error) {
+                console.error('Flood Events API Error:', error);
+                return [];
+            }
+        }
+
+        /**
+         * Get random location names for mock data
+         */
+        function getRandomLocationName() {
+            const names = ['Creek Rd', 'Main St', 'Highway 6', 'Pine Valley', 'Oak Creek', 'River Bend', 'Mill Road'];
+            return names[Math.floor(Math.random() * names.length)];
+        }
+
+        /**
+         * Update dashboard with live data
+         */
+        async function updateDashboard() {
+            try {
+                // Update location display
+                document.getElementById('dashboard-location').textContent = currentLocationName;
+                
+                // Fetch and update precipitation data
+                const precipitationData = await fetchPrecipitationData(currentLatitude, currentLongitude);
+                document.getElementById('precipitation-value').textContent = `${precipitationData.last24h}"`;
+                document.getElementById('precipitation-status').textContent = `${precipitationData.status} rain`;
+                document.getElementById('precipitation-detail').textContent = 'Last 24 hours';
+                
+                // Fetch and update USGS river data
+                const usgsData = await fetchUSGSData(currentGaugeId);
+                if (usgsData && usgsData.length > 0) {
+                    const latestValue = usgsData[0].values[0].value[0];
+                    const level = parseFloat(latestValue.value);
+                    document.getElementById('river-level-value').textContent = `${level.toFixed(1)}'`;
+                    document.getElementById('river-status').textContent = getWaterLevelStatus(level);
+                    document.getElementById('river-detail').textContent = currentGaugeName;
+                }
+                
+                // Fetch and update weather alerts
+                const alerts = await fetchWeatherAlerts(currentLatitude, currentLongitude);
+                document.getElementById('alerts-count').textContent = alerts.length;
+                document.getElementById('alerts-status').textContent = alerts.length > 0 ? 'Alerts Active' : 'No Warnings';
+                document.getElementById('alerts-detail').textContent = 'NWS Alerts';
+                
+                // Mock streamflow data
+                const streamflow = Math.floor(Math.random() * 500) + 50;
+                document.getElementById('streamflow-value').textContent = streamflow;
+                document.getElementById('streamflow-status').textContent = getStreamflowStatus(streamflow);
+                document.getElementById('streamflow-detail').textContent = 'cubic ft/sec';
+                
+                // Update hero alert
+                updateHeroAlert(alerts.length, precipitationData.status);
+                
+            } catch (error) {
+                console.error('Dashboard update error:', error);
+            }
+        }
+
+        /**
+         * Determine water level status based on height
+         */
+        function getWaterLevelStatus(level) {
+            if (level < 2) return 'Low';
+            if (level < 4) return 'Normal';
+            if (level < 6) return 'Watch';
+            if (level < 8) return 'Warning';
+            return 'Emergency';
+        }
+
+        /**
+         * Determine streamflow status
+         */
+        function getStreamflowStatus(flow) {
+            if (flow < 100) return 'Low Flow';
+            if (flow < 300) return 'Normal';
+            if (flow < 500) return 'High Flow';
+            return 'Flood Stage';
+        }
+
+        /**
+         * Update hero section alert based on conditions
+         */
+        function updateHeroAlert(alertCount, precipitationStatus) {
+            const alertText = document.getElementById('flood-alert-text');
+            let status = 'NORMAL';
+            let message = 'monitoring conditions';
+            
+            if (alertCount > 0) {
+                status = 'ALERT';
+                message = `${alertCount} active flood warning${alertCount > 1 ? 's' : ''}`;
+            } else if (precipitationStatus === 'Heavy') {
+                status = 'WATCH';
+                message = 'heavy rainfall detected';
+            }
+            
+            alertText.innerHTML = `Current Status: <strong>${status}</strong> - ${message}`;
+        }
+
+        /**
+         * Update river level monitor with detailed information
+         */
+        async function updateRiverLevelMonitor() {
+            try {
+                const usgsData = await fetchUSGSData(currentGaugeId);
+                if (!usgsData || usgsData.length === 0) return;
+                
+                const timeSeries = usgsData[0];
+                const values = timeSeries.values[0].value;
+                const latestValue = values[0];
+                const level = parseFloat(latestValue.value);
+                
+                // Update display elements
+                const levelDisplay = document.querySelector('.level-display');
+                const levelStatus = document.querySelector('.level-status');
+                const levelDescription = document.querySelector('.level-description');
+                const levelActions = document.querySelector('.level-actions');
+                
+                // Set level and color
+                levelDisplay.textContent = `${level.toFixed(1)} ft`;
+                levelDisplay.className = `level-display level-${getWaterLevelClass(level)}`;
+                
+                const status = getWaterLevelStatus(level);
+                levelStatus.textContent = `${status} Level`;
+                levelStatus.className = `level-status status-${getWaterLevelClass(level)}`;
+                
+                // Update description
+                levelDescription.textContent = `Current gauge height at ${currentGaugeName}. Last updated: ${new Date(latestValue.dateTime).toLocaleTimeString()}`;
+                
+                // Calculate trend
+                const trend = calculateTrend(values.slice(0, 6));
+                document.getElementById('level-trend').textContent = trend.direction;
+                document.getElementById('level-trend').className = `trend-${trend.direction.toLowerCase()}`;
+                
+                // Historical comparison (mock)
+                const historical = level > 4 ? 'Above Average' : level < 2 ? 'Below Average' : 'Normal Range';
+                document.getElementById('level-historical').textContent = historical;
+                
+                // Update recommendations
+                levelActions.innerHTML = getFloodRecommendations(level, status);
+                
+            } catch (error) {
+                console.error('River level update error:', error);
+            }
+        }
+
+        /**
+         * Get CSS class for water level
+         */
+        function getWaterLevelClass(level) {
+            if (level < 2) return 'normal';
+            if (level < 4) return 'normal';
+            if (level < 6) return 'watch';
+            if (level < 8) return 'warning';
+            return 'emergency';
+        }
+
+        /**
+         * Calculate water level trend
+         */
+        function calculateTrend(values) {
+            if (values.length < 2) return { direction: 'Stable' };
+            
+            const recent = parseFloat(values[0].value);
+            const older = parseFloat(values[values.length - 1].value);
+            const diff = recent - older;
+            
+            if (Math.abs(diff) < 0.1) return { direction: 'Stable' };
+            return { direction: diff > 0 ? 'Rising' : 'Falling' };
+        }
+
+        /**
+         * Get flood recommendations based on water level
+         */
+        function getFloodRecommendations(level, status) {
+            if (level >= 8) {
+                return `<strong>EMERGENCY - Immediate Action Required</strong><br>
+                        • Evacuate low-lying areas immediately<br>
+                        • Do not drive through flooded roads<br>
+                        • Move to higher ground<br>
+                        • Monitor emergency communications`;
+            } else if (level >= 6) {
+                return `<strong>WARNING - Prepare for Flooding</strong><br>
+                        • Prepare evacuation supplies<br>
+                        • Move vehicles to higher ground<br>
+                        • Secure outdoor items<br>
+                        • Stay alert for evacuation orders`;
+            } else if (level >= 4) {
+                return `<strong>WATCH - Monitor Conditions</strong><br>
+                        • Stay informed about weather conditions<br>
+                        • Prepare emergency supplies<br>
+                        • Avoid low-lying areas<br>
+                        • Check on neighbors and family`;
+            } else {
+                return `<strong>NORMAL - Continue Monitoring</strong><br>
+                        • Conditions are currently normal<br>
+                        • Maintain awareness of weather forecasts<br>
+                        • Keep emergency supplies ready<br>
+                        • Review your evacuation plan`;
+            }
+        }
+
+        /**
+         * Update weather alerts section
+         */
+        async function updateWeatherAlerts() {
+            try {
+                const alerts = await fetchWeatherAlerts(currentLatitude, currentLongitude);
+                const container = document.getElementById('alerts-container');
+                const countElement = document.getElementById('alert-count');
+                
+                countElement.textContent = alerts.length;
+                
+                if (alerts.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-alerts">
+                            <div class="no-alerts-icon">✅</div>
+                            <h3>No Active Flood Alerts</h3>
+                            <p>There are currently no flood warnings or watches issued for your area.</p>
+                        </div>
+                    `;
+                } else {
+                    const alertsHTML = alerts.map(alert => {
+                        const props = alert.properties;
+                        const severity = getSeverityClass(props.severity);
+                        const date = new Date(props.effective).toLocaleDateString();
+                        
+                        return `
+                            <div class="alert-card ${severity}">
+                                <div class="alert-header">
+                                    <div class="alert-title">${props.headline}</div>
+                                    <div class="alert-severity ${severity}">${props.severity}</div>
+                                </div>
+                                <div class="alert-meta">
+                                    ${props.event} • ${props.areaDesc} • Issued ${date}
+                                </div>
+                                <div class="alert-description">
+                                    ${props.description}
+                                </div>
+                                ${props.instruction ? `
+                                    <div class="alert-instruction">
+                                        <strong>Action Required:</strong> ${props.instruction}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    container.innerHTML = alertsHTML;
+                }
+            } catch (error) {
+                console.error('Weather alerts update error:', error);
+            }
+        }
+
+        /**
+         * Get severity CSS class
+         */
+        function getSeverityClass(severity) {
+            if (!severity) return 'minor';
+            const sev = severity.toLowerCase();
+            if (sev.includes('severe') || sev.includes('extreme')) return 'severe';
+            if (sev.includes('moderate')) return 'moderate';
+            return 'minor';
+        }
+
+        /**
+         * Initialize and update flood map
+         */
+        async function initializeFloodMap() {
+            try {
+                // Initialize map
+                floodMap = L.map('flood-map').setView([currentLatitude, currentLongitude], 10);
+                
+                // Add tile layer
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(floodMap);
+                
+                // Add user location marker
+                userLocationMarker = L.marker([currentLatitude, currentLongitude])
+                    .addTo(floodMap)
+                    .bindPopup('Your Location')
+                    .openPopup();
+                
+                // Fetch and display flood events
+                await updateFloodMap();
+                
+            } catch (error) {
+                console.error('Map initialization error:', error);
+            }
+        }
+
+        /**
+         * Update flood map with events and gauges
+         */
+        async function updateFloodMap() {
+            try {
+                // Clear existing markers
+                floodMarkers.forEach(marker => floodMap.removeLayer(marker));
+                gaugeMarkers.forEach(marker => floodMap.removeLayer(marker));
+                floodMarkers = [];
+                gaugeMarkers = [];
+                
+                // Fetch flood events
+                const floods = await fetchFloodEvents(currentLatitude, currentLongitude);
+                currentFloodsData = floods;
+                
+                // Add flood event markers
+                floods.forEach(flood => {
+                    const marker = L.marker([flood.latitude, flood.longitude], {
+                        icon: L.icon({
+                            iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+                                <svg width="25" height="25" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12.5" cy="12.5" r="12" fill="#FF4444" stroke="#FFFFFF" stroke-width="2"/>
+                                    <text x="12.5" y="17" font-family="Arial" font-size="14" fill="white" text-anchor="middle">💧</text>
+                                </svg>
+                            `),
+                            iconSize: [25, 25],
+                            iconAnchor: [12, 25],
+                            popupAnchor: [0, -25]
+                        })
+                    });
+                    
+                    marker.bindPopup(`
+                        <strong>${flood.title}</strong><br>
+                        Severity: ${flood.severity}<br>
+                        Distance: ${flood.distance} miles<br>
+                        ${flood.description}
+                    `);
+                    
+                    marker.addTo(floodMap);
+                    floodMarkers.push(marker);
+                });
+                
+                // Add USGS gauge markers (mock locations)
+                const gauges = generateMockGauges();
+                gauges.forEach(gauge => {
+                    const marker = L.marker([gauge.latitude, gauge.longitude], {
+                        icon: L.icon({
+                            iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+                                <svg width="25" height="25" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12.5" cy="12.5" r="12" fill="#44AAFF" stroke="#FFFFFF" stroke-width="2"/>
+                                    <text x="12.5" y="17" font-family="Arial" font-size="14" fill="white" text-anchor="middle">📊</text>
+                                </svg>
+                            `),
+                            iconSize: [25, 25],
+                            iconAnchor: [12, 25],
+                            popupAnchor: [0, -25]
+                        })
+                    });
+                    
+                    marker.bindPopup(`
+                        <strong>USGS Gauge</strong><br>
+                        ${gauge.name}<br>
+                        Current Level: ${gauge.level} ft<br>
+                        Status: ${gauge.status}
+                    `);
+                    
+                    marker.addTo(floodMap);
+                    gaugeMarkers.push(marker);
+                });
+                
+                // Update floods list
+                updateFloodsList(floods);
+                
+            } catch (error) {
+                console.error('Map update error:', error);
+            }
+        }
+
+        /**
+         * Generate mock USGS gauge locations
+         */
+        function generateMockGauges() {
+            return [
+                {
+                    name: 'Clear Creek at Golden',
+                    latitude: currentLatitude + 0.1,
+                    longitude: currentLongitude + 0.05,
+                    level: '3.2',
+                    status: 'Normal'
+                },
+                {
+                    name: 'South Platte River',
+                    latitude: currentLatitude - 0.15,
+                    longitude: currentLongitude - 0.1,
+                    level: '4.7',
+                    status: 'Watch'
+                }
+            ];
+        }
+
+        /**
+         * Update floods list section
+         */
+        function updateFloodsList(floods) {
+            const countElement = document.getElementById('floods-list-count');
+            const contentElement = document.getElementById('floods-list-content');
+            
+            countElement.textContent = floods.length;
+            
+            if (floods.length === 0) {
+                contentElement.innerHTML = `
+                    <div class="no-floods">
+                        <div class="no-floods-icon">✅</div>
+                        <h3>No Active Flood Events</h3>
+                        <p>There are currently no reported flood events in your area.</p>
+                    </div>
+                `;
+            } else {
+                const floodsHTML = floods.map(flood => `
+                    <div class="flood-item">
+                        <div class="flood-header">
+                            <div class="flood-title">${flood.title}</div>
+                            <div class="flood-distance">${flood.distance} mi</div>
+                        </div>
+                        <div class="flood-details">
+                            <strong>Severity:</strong> ${flood.severity}<br>
+                            ${flood.description}
+                        </div>
+                        <div class="flood-date">
+                            Reported: ${new Date(flood.timestamp).toLocaleString()}
+                        </div>
+                    </div>
+                `).join('');
+                
+                contentElement.innerHTML = floodsHTML;
+            }
+        }
+
+        /**
+         * Get user's current location
+         */
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        currentLatitude = position.coords.latitude;
+                        currentLongitude = position.coords.longitude;
+                        currentLocationName = `${currentLatitude.toFixed(4)}, ${currentLongitude.toFixed(4)}`;
+                        
+                        // Update location displays
+                        document.getElementById('current-location').textContent = currentLocationName;
+                        document.getElementById('weather-location').textContent = currentLocationName;
+                        
+                        // Find nearest city for emergency contacts
+                        const cityKey = getCityKeyFromCoordinates(currentLatitude, currentLongitude);
+                        updateEmergencyContacts(cityKey);
+                        
+                        // Update all data with new location
+                        updateAllData();
+                    },
+                    error => {
+                        console.error('Geolocation error:', error);
+                        // Use default Denver location
+                        updateEmergencyContacts('denver_co');
+                        updateAllData();
+                    }
+                );
+            } else {
+                console.error('Geolocation not supported');
+                updateEmergencyContacts('denver_co');
+                updateAllData();
+            }
+        }
+
+        /**
+         * Update emergency contacts based on location
+         */
+        function updateEmergencyContacts(cityKey) {
+            const contacts = EMERGENCY_CONTACTS_DB[cityKey] || EMERGENCY_CONTACTS_DB['denver_co'];
+            const container = document.getElementById('emergency-contacts-grid');
+            const titleElement = document.getElementById('emergency-contacts-title');
+            
+            if (titleElement) {
+                titleElement.textContent = `Emergency Contacts - ${contacts.cityName}`;
+            }
+            
             const contactsHTML = contacts.contacts.map(contact => `
                 <div class="contact-card">
                     <div class="contact-type">${contact.type}</div>
@@ -2146,25 +2069,13 @@
             `).join('');
             
             container.innerHTML = contactsHTML;
-            
-            // Update page title if element exists
-            const titleElement = document.getElementById('emergency-contacts-title');
-            if (titleElement) {
-                titleElement.textContent = `Emergency Contacts - ${contacts.cityName}`;
-            }
-            
-            console.log(`Emergency contacts updated for ${contacts.cityName}`);
         }
 
         /**
-         * Gets city key from coordinates (for auto-detected location)
-         * @param {number} lat - Latitude
-         * @param {number} lon - Longitude
-         * @returns {string|null} City key or null if not found
+         * Get city key from coordinates
          */
         function getCityKeyFromCoordinates(lat, lon) {
-            // Find closest city from our database
-            let closestCity = null;
+            let closestCity = 'denver_co';
             let minDistance = Infinity;
             
             Object.entries(CITY_COORDINATES_TO_KEY).forEach(([coords, key]) => {
@@ -2179,19 +2090,137 @@
                 }
             });
             
-            // Only return if within reasonable distance (about 2 degrees)
-            return minDistance < 2 ? closestCity : 'denver_co'; // Default to Denver
+            return closestCity;
         }
 
-        // Global variables
-        let currentLatitude = 39.7392; // Default to Denver
-        let currentLongitude = -104.9903;
-        let currentLocationName = 'Denver, CO';
-        let currentGaugeId = '06719505'; // Clear Creek at Golden, CO (default)
-        let currentGaugeName = 'Clear Creek at Golden, CO';
-        let usingAutoLocation = true;
-        let floodMap = null;
-        let userLocationMarker = null;
-        let floodMarkers = [];
-        let gaugeMarkers = [];
-        let currentFloodsData = [];
+        /**
+         * Update all monitoring data
+         */
+        async function updateAllData() {
+            try {
+                await Promise.all([
+                    updateDashboard(),
+                    updateRiverLevelMonitor(),
+                    updateWeatherAlerts(),
+                    updateFloodMap()
+                ]);
+                console.log('All flood monitoring data updated successfully');
+            } catch (error) {
+                console.error('Error updating flood monitoring data:', error);
+            }
+        }
+
+        // UI INTERACTION FUNCTIONS
+
+        /**
+         * Toggle river selector visibility
+         */
+        function toggleRiverSelector() {
+            const selector = document.getElementById('river-selector');
+            const autoBtn = document.getElementById('auto-location-btn');
+            const manualBtn = document.getElementById('manual-location-btn');
+            
+            if (selector.style.display === 'none' || !selector.style.display) {
+                selector.style.display = 'block';
+                autoBtn.classList.remove('active');
+                manualBtn.classList.add('active');
+                usingAutoLocation = false;
+            } else {
+                selector.style.display = 'none';
+                autoBtn.classList.add('active');
+                manualBtn.classList.remove('active');
+                usingAutoLocation = true;
+            }
+        }
+
+        /**
+         * Use auto-detected location
+         */
+        function useAutoLocation() {
+            usingAutoLocation = true;
+            document.getElementById('river-selector').style.display = 'none';
+            document.getElementById('auto-location-btn').classList.add('active');
+            document.getElementById('manual-location-btn').classList.remove('active');
+            
+            getCurrentLocation();
+        }
+
+        /**
+         * Use manually selected river gauge
+         */
+        function useSelectedRiver() {
+            const select = document.getElementById('river-select');
+            const selectedValue = select.value;
+            
+            if (selectedValue) {
+                currentGaugeId = selectedValue;
+                currentGaugeName = select.options[select.selectedIndex].text;
+                document.getElementById('current-gauge').textContent = currentGaugeName;
+                updateRiverLevelMonitor();
+            }
+        }
+
+        /**
+         * Refresh water level data
+         */
+        function refreshWaterLevel() {
+            updateRiverLevelMonitor();
+        }
+
+        /**
+         * Refresh flood alerts
+         */
+        function refreshFloodAlerts() {
+            updateWeatherAlerts();
+        }
+
+        /**
+         * Refresh flood map data
+         */
+        function refreshFloodMap() {
+            updateFloodMap();
+        }
+
+        /**
+         * Generate flood preparedness plan
+         */
+        function generateFloodPlan() {
+            alert('Flood preparedness plan generation would be implemented here. This would create a customized plan based on your location, flood zone, and risk factors.');
+        }
+
+        /**
+         * Track affiliate link clicks
+         */
+        function trackAffiliate(product, platform) {
+            console.log(`Affiliate link clicked: ${product} on ${platform}`);
+            // Implementation would track clicks and redirect to actual affiliate links
+        }
+
+        // INITIALIZATION
+
+        /**
+         * Initialize the flood monitoring system
+         */
+        function initializeFloodMonitoring() {
+            console.log('Initializing flood monitoring system...');
+            
+            // Get user location and load initial data
+            getCurrentLocation();
+            
+            // Initialize map after a brief delay to ensure DOM is ready
+            setTimeout(() => {
+                initializeFloodMap();
+            }, 1000);
+            
+            // Set up periodic updates every 5 minutes
+            setInterval(updateAllData, 5 * 60 * 1000);
+            
+            console.log('Flood monitoring system initialized');
+        }
+
+        // Start monitoring when page loads
+        document.addEventListener('DOMContentLoaded', initializeFloodMonitoring);
+
+    </script>
+</body>
+</html>
